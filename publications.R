@@ -1,3 +1,5 @@
+message("Gentleman: Publications")
+
 # make table to copy-paste in excel
 make_pub_table_from_lavaan_models <- function(ana)
 {

@@ -1,3 +1,5 @@
+message("Gentleman: Helpers")
+
 #### alias ####
 view <- utils::View
 copy <- function(tbl) write.csv2(tbl,file="clipboard-9999", row.names=F)

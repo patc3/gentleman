@@ -1,3 +1,5 @@
+message("Gentleman: Descriptives")
+
 #### helper fn ####
 # helper fn: format p values
 format_p <- function(p)
