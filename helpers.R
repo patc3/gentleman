@@ -47,27 +47,3 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
   if(new_list |> identical(list)) warning("Searched value not found in list.")
   return(new_list)
 }
-
-
-#### scale & combine ####
-# generic fn: combine numeric vars into one on same scale (z)
-scale_and_combine <- function(df, vars, name, scale=TRUE)
-{
-  "
-  Scales all vars individually then combines one at a time (from left to right in vars)
-  
-  input:  df, vars is vector of variable names, name is new variable name
-  output: df with var added
-  "
-  
-  # scale
-  if(scale) df <- df |> mutate(across({{vars}}, ~as.numeric(scale(.))))
-  
-  # combine
-  df[,name] <- df[,vars[1]]
-  for(i in 2:length(vars)) df[,name] <- is.na(df[,name]) |> ifelse(df[,vars[i]], df[,name])
-  
-  # out
-  print("Added var" |> paste(name))
-  return(df)
-}
