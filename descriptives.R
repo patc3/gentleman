@@ -145,7 +145,7 @@ ana_fn_aov <- function(df, vars, group)
 }
 
 # ana fn: RM ANOVA
-ana_fn_rm_aov <- function(df, vars, group, id) 
+ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE) 
 {
   "
   use as ana_fn in get_desc_table() for numeric vars
@@ -159,10 +159,39 @@ ana_fn_rm_aov <- function(df, vars, group, id)
       aov(v |> paste("~", group) |> paste0("+ Error(", id, ")") |> as.formula(), data=df) |> 
         broom::tidy() |> 
         filter(stratum=="Within", term==group) |> 
-        pull(p.value) |> 
-        format_p()
+        pull(p.value)
     }, error=\(e) return(NA))
   ) |> setNames(vars)
+  
+  # effect size
+  if(add_cohen)
+  {
+    # groups
+    grps <- df[,group] |> unique()
+    
+    # get cohen
+    get_cohen <- function(var)
+    {
+      df_wide <- df |> 
+        select(all_of(c(id, group, var))) |> 
+        pivot_wider(id_cols=all_of(id), names_from=all_of(group), values_from=all_of(var)) |> 
+        select(-all_of(id)) |> 
+        as.data.frame()
+      diff <- df_wide[,2] - df_wide[,1]
+      cohen <- mean(diff, na.rm=T)/sd(diff, na.rm=T)
+      cohen |> sprintf(fmt="%.2f")
+    }
+    cohen <- vars |> lapply(get_cohen)
+    
+    # merge with p
+    ana <- cohen |> 
+      seq_along() |> 
+      lapply(\(i) cohen[[i]] |> paste0(weights::starmaker(ana[[i]]))) |> 
+      setNames(vars)
+  }
+  
+  # format p
+  if(!add_cohen) ana <- ana |> lapply(format_p)
   
   # out
   return(ana)
@@ -291,7 +320,7 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
 # to long, then send var list to get_desc_table
 # pass id=idvar to ana_fn via get_desc_table
 # ana fn is aov with Error(id)
-get_desc_time <- function(df, repeated_vars)
+get_desc_time <- function(df, repeated_vars, ...)
 {
   # pivot
   dflong <- df |> to_long(repeated_vars)
@@ -302,7 +331,8 @@ get_desc_time <- function(df, repeated_vars)
                         tbl_fn = get_desc_num_summary_table, 
                         group="Time", 
                         ana_fn = ana_fn_rm_aov, 
-                        id="id")
+                        id="id", 
+                        ...)
   
   # out
   return(tbl)
