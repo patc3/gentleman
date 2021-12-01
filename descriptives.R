@@ -267,8 +267,11 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
       Reduce(f=\(df1,df2)left_join(df1,df2,by="Var"))
     
     # p-values
-    ana <- ana_fn(df, vars, group, ...)
-    tbl_grp <- tbl_grp |> add_p_column_from_p_list(ana)
+    if(!is.null(ana_fn))
+    {
+      ana <- ana_fn(df, vars, group, ...)
+      tbl_grp <- tbl_grp |> add_p_column_from_p_list(ana)
+    }
     
     
     # combine
