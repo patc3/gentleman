@@ -179,7 +179,7 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
         as.data.frame()
       diff <- df_wide[,2] - df_wide[,1]
       cohen <- mean(diff, na.rm=T)/sd(diff, na.rm=T)
-      cohen |> sprintf(fmt="%.2f")
+      cohen |> weights::rd(2)# or sprintf(fmt="%.2f") |> sub(pattern = "^(-?)0.", replacement = "\\1.")
     }
     cohen <- vars |> lapply(get_cohen)
     
