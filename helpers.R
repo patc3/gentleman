@@ -47,3 +47,19 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
   if(new_list |> identical(list)) warning("Searched value not found in list.")
   return(new_list)
 }
+
+
+#### lists ####
+# helper fn: make named list into dataframe
+make_df_from_named_list <- function(list, var="Var")
+{
+  "
+  input: named list
+  return: data.frame
+  "
+  list |>
+    unlist() |> 
+    data.frame() |> 
+    rownames_to_column() |> 
+    setNames(c(var, "Value"))
+}
