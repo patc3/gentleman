@@ -51,7 +51,7 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 
 #### lists ####
 # helper fn: make named list into dataframe
-make_df_from_named_list <- function(list, var="Var")
+make_df_from_named_list <- function(list, index="Var", value="Value")
 {
   "
   input: named list
@@ -61,5 +61,5 @@ make_df_from_named_list <- function(list, var="Var")
     unlist() |> 
     data.frame() |> 
     rownames_to_column() |> 
-    setNames(c(var, "Value"))
+    setNames(c(index, value))
 }

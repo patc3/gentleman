@@ -124,7 +124,7 @@ ana_fn_aov <- function(df, vars, group)
         format_p()
     }, error=\(e) return(NA))
   ) |> setNames(vars) |> 
-    make_df_from_named_list(var="Var")
+    make_df_from_named_list(index="Var")
   
   # out
   return(ana)
@@ -147,7 +147,8 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
         filter(stratum=="Within", term==group) |> 
         pull(p.value)
     }, error=\(e) return(NA))
-  ) |> setNames(vars)
+  ) |> setNames(vars) |> 
+    make_df_from_named_list(index="Var", value="p")
   
   # effect size
   if(add_cohen)
@@ -172,15 +173,14 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
     # merge with p
     ana <- cohen |> 
       seq_along() |> 
-      lapply(\(i) cohen[[i]] |> paste0(weights::starmaker(ana[[i]]))) |> 
-      setNames(vars)
+      lapply(\(i) cohen[[i]] |> paste0(weights::starmaker(ana[i,"p"]))) |> 
+      setNames(vars) |> 
+      make_df_from_named_list(index="Var", value="Cohen") |> 
+      left_join(x=ana, by="Var")
   }
   
   # format p
-  if(!add_cohen) ana <- ana |> lapply(format_p)
-  
-  #as df
-  ana <- ana |> make_df_from_named_list(var="Var")
+  ana <- ana |> mutate(p=p |> format_p())
   
   # out
   return(ana)
@@ -252,7 +252,7 @@ ana_fn_chisq <- function(df, vars, group)
         format_p()
     }, error=\(e) return(NA))
   ) |> setNames(vars) |> 
-    make_df_from_named_list(var="Var")
+    make_df_from_named_list(index="Var")
   
   # out
   return(ana)
