@@ -216,7 +216,7 @@ get_desc_fac_n_and_prop <- function(df, vars)
       unlist() |> 
       as.data.frame() |> 
       {\(d) 
-        if(prop) d |> rename(`%`=1) |> mutate(`%`=sprintf("%.1f%%", `%`*100)) # format 
+        if(prop) d |> rename(`%`=1) |> mutate(`%`=sprintf("%.0f%%", `%`*100)) # format 
         else d |> rename(N=1)}() |> 
       rownames_to_column("Var")
   }
