@@ -165,18 +165,27 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
         select(-all_of(id)) |> 
         as.data.frame()
       diff <- df_wide[,2] - df_wide[,1]
-      cohen <- mean(diff, na.rm=T)/sd(diff, na.rm=T)
-      cohen |> weights::rd(2)# or sprintf(fmt="%.2f") |> sub(pattern = "^(-?)0.", replacement = "\\1.")
+      mean_diff <- mean(diff, na.rm=T)
+      cohen <- mean_diff/sd(diff, na.rm=T)
+      cohen <- cohen |> weights::rd(2)# or sprintf(fmt="%.2f") |> sub(pattern = "^(-?)0.", replacement = "\\1.")
+      mean_diff <- mean_diff |> sprintf(fmt="%.2f")
+      list(Diff=mean_diff, Cohen=cohen)
     }
     cohen <- vars |> lapply(get_cohen)
+    diff <- cohen |> lapply(\(v)v$Diff) 
+    cohen <- cohen |> lapply(\(v)v$Cohen)
     
     # merge with p
-    ana <- cohen |> 
+    ana <- diff |> 
       seq_along() |> 
-      lapply(\(i) cohen[[i]] |> paste0(weights::starmaker(ana[i,"p"]))) |> 
+      lapply(\(i) diff[[i]] |> paste0(weights::starmaker(ana[i,"p"]))) |> 
       setNames(vars) |> 
-      make_df_from_named_list(index="Var", value="Cohen") |> 
-      left_join(x=ana, by="Var")
+      make_df_from_named_list(index="Var", value="Diff") |> 
+      left_join(x=ana, by="Var") |> 
+      left_join(cohen |> 
+                  setNames(vars) |> 
+                  make_df_from_named_list("Var", "Cohen"), 
+                by="Var")
   }
   
   # format p
