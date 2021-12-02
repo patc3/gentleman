@@ -58,8 +58,8 @@ make_df_from_named_list <- function(list, index="Var", value="Value")
   return: data.frame
   "
   list |>
-    unlist() |> 
-    data.frame() |> 
+    do.call(what="rbind") |> 
+    as.data.frame() |> 
     rownames_to_column() |> 
     setNames(c(index, value))
 }
