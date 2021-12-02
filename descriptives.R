@@ -169,23 +169,19 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
       cohen <- mean_diff/sd(diff, na.rm=T)
       cohen <- cohen |> weights::rd(2)# or sprintf(fmt="%.2f") |> sub(pattern = "^(-?)0.", replacement = "\\1.")
       mean_diff <- mean_diff |> sprintf(fmt="%.2f")
-      list(Diff=mean_diff, Cohen=cohen)
+      c(Diff=mean_diff, Cohen=cohen)
     }
-    cohen <- vars |> lapply(get_cohen)
-    diff <- cohen |> lapply(\(v)v$Diff) 
-    cohen <- cohen |> lapply(\(v)v$Cohen)
+    
+    cohen <- vars |> 
+      lapply(get_cohen) |> 
+      setNames(vars) |> 
+      make_df_from_named_list("Var", value=c("Diff", "Cohen"))
+
+    # format diff with stars
+    cohen$Diff <- cohen$Diff |> paste0(weights::starmaker(ana$p))
     
     # merge with p
-    ana <- diff |> 
-      seq_along() |> 
-      lapply(\(i) diff[[i]] |> paste0(weights::starmaker(ana[i,"p"]))) |> 
-      setNames(vars) |> 
-      make_df_from_named_list(index="Var", value="Diff") |> 
-      left_join(x=ana, by="Var") |> 
-      left_join(cohen |> 
-                  setNames(vars) |> 
-                  make_df_from_named_list("Var", "Cohen"), 
-                by="Var")
+    ana <- ana |> left_join(cohen, by="Var")
   }
   
   # format p
