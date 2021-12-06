@@ -49,6 +49,7 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 }
 
 
+
 #### lists ####
 # helper fn: make named list into dataframe
 make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1:length(list[[1]])))
@@ -62,4 +63,25 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
     as.data.frame() |> 
     rownames_to_column() |> 
     setNames(c(index, value))
+}
+
+
+#### pairs ####
+# get all possible pairs from vector
+# return matrix with all possible pairs in each row
+get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
+{
+  "
+  vec is vector of vars
+  direction is permutation, combination, or reverse
+  out: matrix
+  "
+  
+  direction <- match.arg(direction)
+  pairs <- do.call("expand.grid", list(c(F,T)) |> rep(length(vec)) |> list())
+  pairs <- pairs[rowSums(pairs)==2,]
+  all_pairs <- apply(pairs, 1, \(r) vec[r |> as.logical()]) |> t()
+  if(direction=="double") all_pairs <- all_pairs |> rbind(all_pairs[,c(2,1)])
+  if(direction=="reverse") all_pairs <- all_pairs[,c(2,1)]
+  return(all_pairs)
 }
