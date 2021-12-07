@@ -1,7 +1,7 @@
 message("Gentleman: Publications")
 
 # make table to copy-paste in excel
-make_pub_table_from_lavaan_models <- function(ana)
+make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 {
   "
   input: ana list (list of lavaan models)
@@ -13,7 +13,7 @@ make_pub_table_from_lavaan_models <- function(ana)
   
   # check  that all summaries have the same format
   same_row_orders <- lapply(pe, function(x) all(x[,"rhs"] == pe[[1]][,"rhs"]))
-  if (!all(unlist(same_row_orders))) stop("Not all summaries have the same format")
+  if (check_same_format & !all(unlist(same_row_orders))) stop("Not all summaries have the same format")
   
   # get estimates, p-value from each model
   out <- subset(pe[[1]], select=rhs)
