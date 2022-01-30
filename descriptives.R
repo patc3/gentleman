@@ -290,7 +290,7 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
     tbl_grp <- df |> 
       group_by(across(all_of(group))) |> 
       group_map(.f=~tbl_fn(.x,vars) |> add_group_key_to_desc_tbl(.y)) |> 
-      Reduce(f=\(df1,df2)left_join(df1,df2,by="Var"))
+      Reduce(f=\(df1,df2)full_join(df1,df2,by="Var"))
     
     # analysis values
     if(!is.null(ana_fn))
