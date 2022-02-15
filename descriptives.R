@@ -118,7 +118,7 @@ ana_fn_aov <- function(df, vars, group)
   
   ana <- vars |> lapply(
     \(v) tryCatch({
-      aov(v |> paste("~", group) |> as.formula(), data=df) |> 
+      aov("`" |> paste0(v, "` ~ `", group, "`") |> as.formula(), data=df) |> 
         summary() |> 
         {\(s)s[[1]]$`Pr(>F)`[1]}() |> 
         format_p()
@@ -142,7 +142,7 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
   
   ana <- vars |> lapply(
     \(v) tryCatch({
-      aov(v |> paste("~", group) |> paste0("+ Error(", id, ")") |> as.formula(), data=df) |> 
+      aov("`" |> paste0(v, "` ~ `", group, "`") |> paste0("+ Error(`", id, "`)") |> as.formula(), data=df) |> 
         broom::tidy() |> 
         filter(stratum=="Within", term==group) |> 
         pull(p.value)
