@@ -58,15 +58,19 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 # compare sig effects from two pub tables
 compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", fixed=T)
 {
+  # warning
+  warning("This will miss sign reversals if the effect is significant in both tables!")
+  
+  # get significant effects in both tables
   sig <- list(table1, table2) |> 
     lapply(\(t) t |> 
              get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
              with(paste(Outcome, Predictor, sep=", ")))
   
   # output
-  print("In table1 but not in table2:")
+  print(pattern |> paste("in table1 but not in table2:"))
   (!sig[[1]] %in% sig[[2]]) |> (\(v)sig[[1]][v])()
   
-  print("In table2 but not in table1:")
+  print(pattern |> paste("in table2 but not in table1:"))
   (!sig[[2]] %in% sig[[1]]) |> (\(v)sig[[2]][v])()
 }
