@@ -43,7 +43,8 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 # get list of significant/trend effects from a pub table
 get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 {
-  table |> 
+  # get significant predictors with outcome
+  sig <- table |> 
     column_to_rownames("Predictor") |> 
     apply(1:2, grepl, pattern=pattern, fixed=fixed) |> 
     which(arr.ind=T) |> 
@@ -52,20 +53,28 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
     mutate(col=names(table |> select(-1))[col]) |> 
     rename(Outcome=col) |> 
     select(Outcome, Predictor)
+  
+  # add sign
+  sig$Sign <- NA
+  for(i in 1:nrow(sig)) sig$Sign[i] <- table |> 
+    filter(Predictor == sig$Predictor[i]) |> 
+    select(all_of(sig$Outcome[i])) |> 
+    substr(1,1)
+  sig$Sign <- (sig$Sign == "-") |> ifelse("-", "+")
+  
+  # out
+  return(sig)
 }
 
 
 # compare sig effects from two pub tables
 compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", fixed=T)
 {
-  # warning
-  warning("This will miss sign reversals if the effect is significant in both tables!")
-  
   # get significant effects in both tables
   sig <- list(table1, table2) |> 
     lapply(\(t) t |> 
              get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
-             with(paste(Outcome, Predictor, sep=": ")))
+             with(paste0(Outcome, ": ", Predictor, " (", Sign, ")")))
   
   # output
   print(pattern |> paste("in table1 but not in table2:"))
