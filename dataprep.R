@@ -27,7 +27,12 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 #### factors ####
 
 # effect coding
-make_factors_into_effect_codes <- function(df, factors, remove_selected_columns = TRUE, ignore_na = TRUE, change_which_dummy_is_removed=F)
+make_factors_into_effect_codes <- function(df, 
+                                           factors, 
+                                           remove_selected_columns = TRUE, 
+                                           ignore_na = TRUE, 
+                                           change_which_dummy_is_removed=F,
+                                           make_into_dummy_instead = c())
 {
   "
   input: df
@@ -55,15 +60,20 @@ make_factors_into_effect_codes <- function(df, factors, remove_selected_columns 
     
     # add temp var so that dummy_cols works properly
     .df$DELETE <- NA
-    codes[[v]] <- fastDummies::dummy_cols(.df, remove_first_dummy = TRUE, ignore_na = ignore_na, remove_selected_columns = TRUE)
+    codes[[v]] <- fastDummies::dummy_cols(.df, 
+                                          remove_first_dummy = TRUE, 
+                                          ignore_na = ignore_na, 
+                                          remove_selected_columns = TRUE)
     codes[[v]] <- codes[[v]] |> select(-DELETE)
   }
   
   # change 0 rows to -1 (dummy -> deviation effect)
-  for (i in 1:length(codes))
+  effect_coded <- factors |> setdiff(make_into_dummy_instead)
+  for (factor_effect in effect_coded)
   {
-    i_0s <- rowSums(codes[[i]], na.rm = T) == 0 & rowSums(is.na(codes[[i]])) != ncol(codes[[i]])
-    codes[[i]][i_0s,] <- -1 # make this 0 and compare with fn for dummies, make sure it's exactly same results
+    i_0s <- rowSums(codes[[factor_effect]], na.rm = T) == 0 & 
+      rowSums(is.na(codes[[factor_effect]])) != ncol(codes[[factor_effect]])
+    codes[[factor_effect]][i_0s,] <- -1 # make this 0 and compare with fn for dummies, make sure it's exactly same results
   }
   
   # remove original variables if requested
@@ -79,7 +89,8 @@ make_factors_into_effect_codes <- function(df, factors, remove_selected_columns 
   # out
   print("First, used fastDummies to make factors into dummies, removing the first dummy")
   print("Second, replaced 0s with -1s for rows with all 0s")
-  print("Replaced factor names with effect codes in VARS")
+  print("Effect coded:"); print(effect_coded)
+  print("Dummy coded:"); print(make_into_dummy_instead)
   return(df)
   
 }
