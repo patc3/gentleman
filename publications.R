@@ -38,3 +38,34 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
   #out
   return(out)
 }
+
+
+# get list of significant/trend effects from a pub table
+get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
+{
+  table |> 
+    column_to_rownames("Predictor") |> 
+    apply(1:2, grepl, pattern=pattern, fixed=fixed) |> 
+    which(arr.ind=T, ) |> 
+    (\(m)(data.frame(Predictor=rownames(m), m, row.names=NULL)))() |> 
+    select(-row) |> 
+    mutate(col=names(table |> select(-1))[col]) |> 
+    rename(Outcome=col)
+}
+
+
+# compare sig effects from two pub tables
+compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", fixed=T)
+{
+  sig <- list(table1, table2) |> 
+    lapply(\(t) t |> 
+             get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
+             with(paste(col, Predictor, sep=", ")))
+  
+  # output
+  print("In table1 but not in table2:")
+  (!sig[[1]] %in% sig[[2]]) |> (\(v)sig[[1]][v])()
+  
+  print("In table2 but not in table1:")
+  (!sig[[2]] %in% sig[[1]]) |> (\(v)sig[[2]][v])()
+}
