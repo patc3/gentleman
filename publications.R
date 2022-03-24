@@ -50,7 +50,8 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
     (\(m)(data.frame(Predictor=rownames(m), m, row.names=NULL)))() |> 
     select(-row) |> 
     mutate(col=names(table |> select(-1))[col]) |> 
-    rename(Outcome=col)
+    rename(Outcome=col) |> 
+    select(Outcome, Predictor)
 }
 
 
@@ -60,7 +61,7 @@ compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", f
   sig <- list(table1, table2) |> 
     lapply(\(t) t |> 
              get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
-             with(paste(col, Predictor, sep=", ")))
+             with(paste(Outcome, Predictor, sep=", ")))
   
   # output
   print("In table1 but not in table2:")
