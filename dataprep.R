@@ -11,6 +11,9 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
   output: df with var added
   "
   
+  # make factor vars into chars
+  for(v in vars) if(df[,v] |> is.factor()) df[,v] <- df[,v] |> as.character()
+  
   # scale
   if(scale) df <- df |> mutate(across({{vars}}, ~as.numeric(scale(.))))
   
