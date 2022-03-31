@@ -77,9 +77,11 @@ compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", f
              with(paste0(Outcome, ": ", Predictor, " (", Sign, ")")))
   
   # output
-  print(pattern |> paste("in table1 but not in table2:"))
-  (!sig[[1]] %in% sig[[2]]) |> (\(v)sig[[1]][v])()
+  cat("_______________________________\n")
+  cat(pattern |> paste("in table1 but not in table2:\n"))
+  (!sig[[1]] %in% sig[[2]]) |> (\(v)sig[[1]][v])() |> print()
   
-  print(pattern |> paste("in table2 but not in table1:"))
-  (!sig[[2]] %in% sig[[1]]) |> (\(v)sig[[2]][v])()
+  cat("_______________________________\n")
+  cat(pattern |> paste("in table2 but not in table1:\n"))
+  (!sig[[2]] %in% sig[[1]]) |> (\(v)sig[[2]][v])() |> print()
 }
