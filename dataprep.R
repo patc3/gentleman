@@ -11,6 +11,9 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
   output: df with var added
   "
   
+  # original df, to which new var will be added
+  df_orig <- df
+  
   # make factor vars into chars
   for(v in vars) if(df[,v] |> is.factor()) df[,v] <- df[,v] |> as.character()
   
@@ -18,12 +21,15 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
   if(scale) df <- df |> mutate(across({{vars}}, ~as.numeric(scale(.))))
   
   # combine
-  df[,name] <- df[,vars[1]]
-  for(i in 2:length(vars)) df[,name] <- is.na(df[,name]) |> ifelse(df[,vars[i]], df[,name])
+  combined_var <- df[,vars[1]]
+  for(i in 2:length(vars)) combined_var <- is.na(combined_var) |> ifelse(df[,vars[i]], combined_var)
+  
+  # add to original df
+  df_orig[,name] <- combined_var
   
   # out
   print("Added var" |> paste(name))
-  return(df)
+  return(df_orig)
 }
 
 
