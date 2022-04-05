@@ -72,7 +72,7 @@ to_long <- function(df, repeated_vars)
 #### numeric ####
 
 # internal, generic function to get summary table for numeric vars from a df
-get_desc_num_summary_table <- function(df, vars)
+tbl_fn_num <- function(df, vars)
 {
   "
   use as tbl_fn in get_desc_table() for numeric vars
@@ -107,6 +107,8 @@ get_desc_num_summary_table <- function(df, vars)
   # out
   return(tbl)
 }
+get_desc_num_summary_table <- tbl_fn_num # for backwards compatibility
+
 
 # get sig. test for difference between groups on numeric variables
 ana_fn_aov <- function(df, vars, group) 
@@ -195,7 +197,7 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
 #### categorical ####
 
 # internal, generic function to get summary table for categorical vars from a df
-get_desc_fac_n_and_prop <- function(df, vars)
+tbl_fn_fac <- function(df, vars)
 {
   "
   use as tbl_fn in get_desc_table() for categorical vars
@@ -241,6 +243,7 @@ get_desc_fac_n_and_prop <- function(df, vars)
   # out
   return(tbl)
 }
+get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
 
 
 # get sig. test for difference between groups on factor (categorical) variables
