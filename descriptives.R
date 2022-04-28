@@ -305,7 +305,7 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
     # combine
     tbl <- tbl |> 
       left_join(tbl_grp, by="Var") |> 
-      mutate(across(all_of(tbl_grp |> names()), replace_na, ""))
+      mutate(across(all_of(tbl_grp |> names()), ~replace_na(as.character(.x), "")))
   }
   
   
