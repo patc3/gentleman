@@ -178,12 +178,12 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
       lapply(get_cohen) |> 
       setNames(vars) |> 
       make_df_from_named_list("Var", value=c("Diff", "Cohen"))
-
-    # format diff with stars
-    cohen$Diff <- cohen$Diff |> paste0(weights::starmaker(ana$p))
     
     # merge with p
     ana <- ana |> left_join(cohen, by="Var")
+    
+    # format diff with stars
+    ana$Diff <- ana$Diff |> paste0(weights::starmaker(ana$p))
   }
   
   # format p
