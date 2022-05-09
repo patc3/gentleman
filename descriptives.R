@@ -126,7 +126,7 @@ ana_fn_aov <- function(df, vars, group)
         format_p()
     }, error=\(e) return(NA))
   ) |> setNames(vars) |> 
-    make_df_from_named_list(index="Var")
+    make_df_from_named_list(index="Var", value="p")
   
   # out
   return(ana)
@@ -260,7 +260,7 @@ ana_fn_chisq <- function(df, vars, group)
         format_p()
     }, error=\(e) return(NA))
   ) |> setNames(vars) |> 
-    make_df_from_named_list(index="Var")
+    make_df_from_named_list(index="Var", value="p")
   
   # out
   return(ana)
