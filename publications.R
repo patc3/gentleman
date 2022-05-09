@@ -33,7 +33,7 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
   }
   
   # colnames
-  if(length(v_out)==1) names(out)[2:ncol(out)] <- names(ana)
+  if(length(v_out)==1 & !is.null(names(ana))) names(out)[2:ncol(out)] <- names(ana)
 
   #out
   return(out)
