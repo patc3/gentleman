@@ -12,8 +12,11 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
   pe <- lapply(pe, function(x) x[x$op=="~",])
   
   # check  that all summaries have the same format
-  same_row_orders <- lapply(pe, function(x) all(x[,"rhs"] == pe[[1]][,"rhs"]))
-  if (check_same_format & !all(unlist(same_row_orders))) stop("Not all summaries have the same format")
+  if(check_same_format)
+  {
+    same_row_orders <- lapply(pe, function(x) all(x[,"rhs"] == pe[[1]][,"rhs"]))
+    if (!all(unlist(same_row_orders))) stop("Not all summaries have the same format")
+  }
   
   # get estimates, p-value from each model
   out <- subset(pe[[1]], select=rhs)
