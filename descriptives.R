@@ -120,11 +120,13 @@ ana_fn_aov <- function(df, vars, group)
   
   ana <- vars |> lapply(
     \(v) tryCatch({
-      aov("`" |> paste0(v, "` ~ `", group, "`") |> as.formula(), data=df) |> 
+      f <- "`" |> paste0(v, "` ~ `", group, "`") |> as.formula()
+      lm(f, df) |> summary() # to throw warning if data are constant: https://bugs.r-project.org/show_bug.cgi?id=18341
+      aov(f, data=df) |> 
         summary() |> 
         {\(s)s[[1]]$`Pr(>F)`[1]}() |> 
         format_p()
-    }, error=\(e) return(NA))
+    }, error=\(e) return(NA), warning=\(w) return(NA))
   ) |> setNames(vars) |> 
     make_df_from_named_list(index="Var", value="p")
   
