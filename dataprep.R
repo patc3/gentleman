@@ -35,6 +35,25 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 
 #### factors ####
 
+# contr. fn: effect coding when k>2; dummy code when k=2
+# use with:
+# options(contrasts=c(unordered="contr.dummy_or_effect", ordered="contr.poly"))
+contr.dummy_or_effect <- function(...)
+{
+  contr <- contr.treatment(...)
+  
+  # effect code if more than 2 groups; otherwise leave as dummy
+  if(ncol(contr) > 1)
+  {  
+    i_0 <- (rowSums(contr)==0) |> which()
+    contr[i_0,] <- -1
+  }
+  
+  # out
+  contr
+}
+
+
 # effect coding
 make_factors_into_effect_codes <- function(df, 
                                            factors, 
