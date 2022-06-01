@@ -43,6 +43,42 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 }
 
 
+# make table to copy-paste in excel from broom::tidy() output
+make_pub_table_from_broom_tidy <- function(ana)
+{
+  "
+  input: ana list (list of tidy outputs)
+  out: df with IVs and estimate+pvalue for each target
+  "
+  # make dfs
+  ana <- ana |> lapply(as.data.frame)
+  
+  # get estimates, p-value from each model
+  out <- ana[[1]][c("term")]
+  for(i in 1:length(ana)) 
+  {
+    # ith analysis
+    a <- ana[[i]]
+    y <- names(ana)[i]
+    
+    # postproc p-value
+    a$sig <- weights::starmaker(a$p.value, symbols=c("***", "**", "*", "+"))
+    
+    # concat est (2 decimals) and sig
+    a[,y] <- paste0(sprintf('%.2f',a$estimate), a$sig)
+    
+    # store in table
+    a <- a[,c("term", y)]
+    out <- out |> full_join(a, by="term")
+    
+  }
+  
+  #out
+  return(out)
+}
+
+
+
 # get list of significant/trend effects from a pub table
 get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 {
