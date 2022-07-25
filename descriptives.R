@@ -249,7 +249,7 @@ get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
 
 
 # get sig. test for difference between groups on factor (categorical) variables
-ana_fn_chisq <- function(df, vars, group)
+ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 {
   "
   use as ana_fn in get_desc_table() for categorical vars
@@ -258,7 +258,10 @@ ana_fn_chisq <- function(df, vars, group)
   
   ana <- vars |> lapply(
     \(v) tryCatch({
-      chisq.test(x=df[,v] |> factor(), y=df[,group] |> factor(), correct=FALSE)$p.value |> 
+      chisq.test(x=df[,v] |> factor(), 
+                 y=df[,group] |> factor(), 
+                 correct=correct, 
+                 simulate.p.value=simulate.p.value)$p.value |> 
         format_p()
     }, error=\(e) return(NA))
   ) |> setNames(vars) |> 
