@@ -62,7 +62,7 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
   list |>
     do.call(what="rbind") |> 
     as.data.frame() |> 
-    rownames_to_column() |> 
+    tibble::rownames_to_column() |> 
     setNames(c(index, value))
 }
 

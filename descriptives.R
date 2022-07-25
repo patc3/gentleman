@@ -222,7 +222,7 @@ tbl_fn_fac <- function(df, vars)
       {\(d) 
         if(prop) d |> rename(`%`=1) |> mutate(`%`=sprintf("%.0f%%", `%`*100)) # format 
         else d |> rename(N=1)}() |> 
-      rownames_to_column("Var")
+      tibble::rownames_to_column("Var")
   }
   
   # do
