@@ -86,3 +86,17 @@ get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
   if(direction=="reverse") all_pairs <- all_pairs[,c(2,1)]
   return(all_pairs)
 }
+
+
+# helper fn to generate pairs of vars with operator from vars list
+get_all_pairs_with_op <- function(vars, op, ...)
+{
+  all_pairs <- vars |> 
+    do.call(what="rbind") |> 
+    apply(2, get_all_pairs, ..., simplify=F)
+  
+  all_pairs |> 
+    lapply(\(p) apply(p, 1, paste, collapse=op) |> paste(collapse="\n")) |> 
+    unlist() |> 
+    paste(collapse="\n")
+}
