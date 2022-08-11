@@ -1,4 +1,21 @@
 # generate lavaan model string for mediation model
+#' Generate lavaan syntax for mediation model
+#'
+#' This function generates the lavaan syntax for a mediation model. The model can
+#' take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
+#'
+#' @param x Vector of predictor (x) variable names
+#' @param med Vector of mediator (m) variable names
+#' @param y Vector of outcome (y) variable names
+#'
+#' @return Character value to be used with lavaan as model syntax
+#' @export
+#'
+#' @examples
+#' library(lavaan)
+#' get_mediation_model("x", "m", "y") |>
+#'    sem(df)
+#'    summary()
 get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y2"))
 {
   # structural model
@@ -62,6 +79,29 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 
 
 # generate lavaan model string from list of variables
+#' Generate lavaan syntax for cross-lagged model
+#'
+#' This function generates the lavaan syntax for a cross-lagged panel model (CLPM).
+#' With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
+#' model (RI-CLPM). The function takes an arbitrary number of different variables,
+#' and an arbitrary number of repeated assessments.
+#'
+#' @param vars_list List of vectors of variable names of length t (number of repeated assessments)
+#' @param random_intercepts (logical) Whether to add random-intercepts (RI-CLPM model)
+#'
+#' @return Character value to be used with lavaan as model syntax
+#' @export
+#'
+#' @examples
+#' library(lavaan)
+#' vars <- list(
+#'    c("x1", "x2", "x3"),
+#'    c("y1", "y2", "y3"),
+#'    c("z1", "z2", "z3")
+#' )
+#' get_crosslagged_model(vars) |>
+#'    sem(df) |>
+#'    summary()
 get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 {
   "
