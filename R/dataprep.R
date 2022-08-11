@@ -1,5 +1,3 @@
-message("Gentleman: Data Prep")
-
 #### scale & combine ####
 # generic fn: combine numeric vars into one on same scale (z)
 #' Combine numeric variables into one

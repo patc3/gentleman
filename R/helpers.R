@@ -1,5 +1,3 @@
-message("Gentleman: Helpers")
-
 #### alias ####
 view <- utils::View
 copy <- function(tbl) write.csv2(tbl,file="clipboard-9999", row.names=F)
@@ -11,13 +9,13 @@ copy2 <- function(tbl) write.table(tbl, file="gentleman_out.txt", sep=";", col.n
 replace_in_vector_at_position <- function(vec, position, replace)
 {
   # add (replace)
-  vec <- c(vec[1:position], 
+  vec <- c(vec[1:position],
            replace,
            if(position < length(vec)) vec[(position+1):length(vec)] else NULL)
-  
+
   # remove
   vec <- vec[-position]
-  
+
   # out
   return(vec)
 }
@@ -27,14 +25,14 @@ replace_in_vector <- function(vec, find, replace, n_max=Inf)
 {
   n <- sum(vec %in% find)
   if(n == 0) return(vec) else n <- min(n, n_max) # no match, return vec
-  
+
   # replace
-  for(it in 1:n) 
+  for(it in 1:n)
   {
     position <- which(vec %in% find)[1]
     vec <- replace_in_vector_at_position(vec, position, replace)
   }
-  
+
   # out
   return(vec)
 }
@@ -60,9 +58,9 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
   return: data.frame
   "
   list |>
-    do.call(what="rbind") |> 
-    as.data.frame() |> 
-    tibble::rownames_to_column() |> 
+    do.call(what="rbind") |>
+    as.data.frame() |>
+    tibble::rownames_to_column() |>
     setNames(c(index, value))
 }
 
@@ -77,7 +75,7 @@ get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
   direction is permutation, combination, or reverse
   out: matrix
   "
-  
+
   direction <- match.arg(direction)
   pairs <- do.call("expand.grid", list(c(F,T)) |> rep(length(vec)) |> list())
   pairs <- pairs[rowSums(pairs)==2,]
@@ -91,12 +89,12 @@ get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
 # helper fn to generate pairs of vars with operator from vars list
 get_all_pairs_with_op <- function(vars, op, ...)
 {
-  all_pairs <- vars |> 
-    do.call(what="rbind") |> 
+  all_pairs <- vars |>
+    do.call(what="rbind") |>
     apply(2, get_all_pairs, ..., simplify=F)
-  
-  all_pairs |> 
-    lapply(\(p) apply(p, 1, paste, collapse=op) |> paste(collapse="\n")) |> 
-    unlist() |> 
+
+  all_pairs |>
+    lapply(\(p) apply(p, 1, paste, collapse=op) |> paste(collapse="\n")) |>
+    unlist() |>
     paste(collapse="\n")
 }

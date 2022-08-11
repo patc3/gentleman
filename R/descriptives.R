@@ -1,5 +1,3 @@
-message("Gentleman: Descriptives")
-
 #### helper fn ####
 # helper fn: format p values
 #' Format p-values with 3 decimals, no leading 0s, and < .001

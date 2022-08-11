@@ -1,5 +1,3 @@
-message("Gentleman: Models")
-
 # generate lavaan model string for mediation model
 get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y2"))
 {
@@ -7,33 +5,33 @@ get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y
   i_m <- 1:length(med)
   i_x <- 1:length(x)
   i_y <- 1:length(y)
-  
+
   # deoendent regression
   model_dependent_regression <- "# dependent regression\n"
-  for(i_dv in i_y) model_dependent_regression <- model_dependent_regression |> 
+  for(i_dv in i_y) model_dependent_regression <- model_dependent_regression |>
     paste0(y[i_dv], " ~ ", paste0("b",i_dv, i_m, "*", med, collapse=" + "), " + ", paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
-  
+
   # effect decomposition
   model_effect_decomposition <- "# effect decomposition\n"
   for(i_dv in 1:length(y))
   {
     for(i_pred in i_x)
     {
-      model_effect_decomposition <- model_effect_decomposition |> 
+      model_effect_decomposition <- model_effect_decomposition |>
         paste0("# ", y[i_dv], " ~ ", x[i_pred], "
 ", paste0("ind_x",i_pred,"_m", i_m, "_y",i_dv," := a", i_m, i_pred, "*b",i_dv, i_m, collapse="\n"), "
 ind_x",i_pred,"_y",i_dv," := ", paste0("ind_x",i_pred,"_m", i_m, "_y",i_dv, collapse=" + "), "
 tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 ")
     }
-    
+
   }
-  
+
   # mediator regression
   model_mediator_regression <- "# mediator regression\n"
-  for(i_med in i_m) model_mediator_regression <- model_mediator_regression |> 
+  for(i_med in i_m) model_mediator_regression <- model_mediator_regression |>
     paste0(med[i_med], " ~ ", paste0("a",i_med, i_x, "*", x, collapse=" + "), "\n")
-  
+
   # residual covariances
   model_residual_covariances <- paste(
     "# predictor residual covariance",
@@ -47,7 +45,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
     "",
     sep="\n"
   )
-  
+
   # model
   model <- paste(
     model_dependent_regression,
@@ -56,8 +54,8 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
     model_effect_decomposition,
     sep="\n"
   )
-  
-  
+
+
   return(model)
 }
 
@@ -71,13 +69,13 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
       ex.: list(c('x1','x2','x3'), c('y1', 'y2', 'y3')
   random_intercepts is RI-CLPM
   "
-  
+
   # init model
   model <- ""
-  
+
   # set number of times
   n_times <- length(vars_list[[1]])
-  
+
   # with random intercepts?
   if(random_intercepts)
   {
@@ -89,20 +87,20 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
       name <- vars[1]# |> substr(start=1, stop=3)
       ri <- "RI_" |> paste0(name) # set name of latent var
       vars_ri <- vars_ri |> c(ri) # add to list of random intercepts
-      ri_loadings <- ri |> 
-        paste("=~ ") |> 
+      ri_loadings <- ri |>
+        paste("=~ ") |>
         paste0("1*" |> paste0(vars, collapse=" + "))
       between <- between |> paste(ri_loadings, sep="\n")
     }
-    
+
     # covariances (L2)
-    l2_cov <- get_all_pairs(vars_ri) |> 
-      apply(1, paste, collapse=" ~~ ") |> 
+    l2_cov <- get_all_pairs(vars_ri) |>
+      apply(1, paste, collapse=" ~~ ") |>
       paste(collapse="\n")
     l2_var <- vars_ri |> paste(vars_ri, sep=" ~~ ", collapse="\n")
     between <- between |> paste(l2_var, l2_cov, sep="\n")
-    
-    
+
+
     # within components
     within <- "# Within"
     vars_w <- list()
@@ -117,28 +115,28 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
       {
         w_name <- w |> paste0(t)
         vars_w[[i_vars]] <- vars_w[[i_vars]] |> c(w_name)
-        w_loadings_current <- w_name |> 
-          paste("=~ ") |> 
+        w_loadings_current <- w_name |>
+          paste("=~ ") |>
           paste0("1*", vars[t])
         w_loadings <- w_loadings |> paste(w_loadings_current, sep="\n")
       }
       within <- within |> paste(w_loadings, sep="\n")
     }
-    
-    
-    
+
+
+
     # add to model
     model <- model |> paste(between, within, sep="\n\n")
-    
-    
+
+
     # change vars_list to use new within vars
     vars_list <- vars_w
-    
+
   }
-  
+
   # correlations
   correlations <- get_all_pairs_with_op(vars_list, "~~")
-  
+
   # direct paths
   direct_paths <- NULL
   for(t in 2:n_times)
@@ -149,12 +147,12 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
       direct_paths <- direct_paths |> paste(paths, sep="\n")
     }
   }
-  
+
   # (residual) variances (explicitly)
   vars <- vars_list |> unlist()
   variances <- vars |> paste(vars, sep=" ~~ ", collapse="\n")
-  
-  
+
+
   model <- paste(model,
                  "
   #correlations
@@ -172,7 +170,7 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
   #covariates !list your covariates here using WITH
   ",
                  sep="\n")
-  
+
   return(model)
-  
+
 }
