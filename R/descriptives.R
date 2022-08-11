@@ -37,8 +37,6 @@ format_p <- function(p)
 #' @param group_key From \code{dplyr::group_map()}
 #'
 #' @return Table with group key added
-#'
-#' @examples
 add_group_key_to_desc_tbl <- function(tbl, group_key)
 {
   "
