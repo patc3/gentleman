@@ -36,5 +36,5 @@ df |>
 
 }
 \seealso{
-\code{\link[=to_long]{to_long()}} \code{\link[=get_desc_time]{get_desc_time()}} \code{\link[stats:aov]{stats::aov()}}
+\code{\link[=to_long]{to_long()}}, \code{\link[=get_desc_time]{get_desc_time()}}, \code{\link[stats:aov]{stats::aov()}}
 }

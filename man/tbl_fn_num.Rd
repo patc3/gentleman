@@ -27,5 +27,5 @@ df |> tbl_fn_num("age")
 
 }
 \seealso{
-\code{\link[=tbl_fn_fac]{tbl_fn_fac()}} \code{\link[=get_desc_table]{get_desc_table()}}
+\code{\link[=tbl_fn_fac]{tbl_fn_fac()}}, \code{\link[=get_desc_table]{get_desc_table()}}
 }

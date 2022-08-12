@@ -2,7 +2,7 @@
 % Please edit documentation in R/descriptives.R
 \name{get_desc_table}
 \alias{get_desc_table}
-\title{Get a table of descriptive statistics for numeric of factor variables}
+\title{Get a table of descriptive statistics for numeric or factor variables}
 \usage{
 get_desc_table(df, vars, tbl_fn, group = NULL, ana_fn = NULL, ...)
 }
@@ -53,6 +53,6 @@ df |> get_desc_table(
 
 }
 \seealso{
-\code{\link[=get_desc_time]{get_desc_time()}} \code{\link[=tbl_fn_num]{tbl_fn_num()}} \code{\link[=tbl_fn_fac]{tbl_fn_fac()}}
-\code{\link[=ana_fn_aov]{ana_fn_aov()}} \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
+\code{\link[=get_desc_time]{get_desc_time()}}, \code{\link[=tbl_fn_num]{tbl_fn_num()}}, \code{\link[=tbl_fn_fac]{tbl_fn_fac()}}
+\code{\link[=ana_fn_aov]{ana_fn_aov()}}, \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
 }
