@@ -9,7 +9,7 @@ get_all_pairs(vec, direction = c("direct", "double", "reverse"))
 \arguments{
 \item{vec}{Vector}
 
-\item{direction}{\arguments{
+\item{direction}{\itemize{
 \item{\code{direct} (default)}
 {Like permutation: (a,b) and (b,a) are treated as the same pair and only one is returned}
 \item{\code{double}}

@@ -168,7 +168,7 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
 #' This function returns a matrix of all pairs of values in a vector.
 #'
 #' @param vec Vector
-#' @param direction \arguments{
+#' @param direction \itemize{
 #' \item{\code{direct} (default)}
 #' {Like permutation: (a,b) and (b,a) are treated as the same pair and only one is returned}
 #' \item{\code{double}}
