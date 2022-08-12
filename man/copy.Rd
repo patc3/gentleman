@@ -10,7 +10,7 @@ copy(tbl)
 \item{tbl}{Object to be written}
 }
 \description{
-This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999}.
+This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999"}.
 Ideal for copy-pasting a data.frame into Excel in non-English locale.
 }
 \examples{

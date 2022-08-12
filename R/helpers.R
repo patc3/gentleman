@@ -16,7 +16,7 @@ view <- function(...){ utils::View(...) }
 
 #' Wrapper for writing CSV2 to clipboard
 #'
-#' This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999}.
+#' This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999"}.
 #' Ideal for copy-pasting a data.frame into Excel in non-English locale.
 #'
 #' @param tbl Object to be written
