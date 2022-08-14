@@ -13,6 +13,13 @@ to generate tables and p-values (or other useful statistic to compare groups).
 The Models module can be used to generate lavaan model strings for mediation
 and cross-lagged models.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://github.com/patc3-phd/gentleman}
+}
+
+}
 \author{
 Patrick Coulombe \email{patrick.coulombe@d22consulting.com}
 }

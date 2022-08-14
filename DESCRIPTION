@@ -4,8 +4,13 @@ Version: 0.0.0.9000
 Authors@R: 
     person("Patrick", "Coulombe", , "patrick.coulombe@d22consulting.com", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-8679-4926"))
-Description: This package provides a suite of modules to help with data preparation, descriptive statistics, modeling, and publication formatting. The Descriptives module is extensible to accommodate custom functions to generate tables and p-values (or other useful statistic to compare groups). The Models module can be used to generate lavaan model strings for mediation and cross-lagged models.
-License: GPL (>= 3)
+Description: This package provides a suite of modules to help with data preparation, 
+    descriptive statistics, modeling, and publication formatting. The Descriptives module 
+    is extensible to accommodate custom functions to generate tables and p-values 
+    (or other useful statistic to compare groups). The Models module can be used to 
+    generate lavaan model strings for mediation and cross-lagged models.
+License: GPL (>= 3) + file LICENSE
+URL: https://github.com/patc3-phd/gentleman
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
