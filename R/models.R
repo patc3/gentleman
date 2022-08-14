@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' library(lavaan)
-#' get_mediation_model("x", "m", "y") |>
+#' get_mediation_model("x1", "x2", "x3") |>
 #'    sem(df)
 #'    summary()
 get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y2"))
@@ -96,8 +96,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 #' library(lavaan)
 #' vars <- list(
 #'    c("x1", "x2", "x3"),
-#'    c("y1", "y2", "y3"),
-#'    c("z1", "z2", "z3")
+#'    c("y1", "y2", "y3")
 #' )
 #' get_crosslagged_model(vars) |>
 #'    sem(df) |>

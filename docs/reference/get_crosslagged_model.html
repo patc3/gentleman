@@ -75,13 +75,64 @@ and an arbitrary number of repeated assessments.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z1"</span>, <span class="st">"z2"</span>, <span class="st">"z3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">get_crosslagged_model</span><span class="op">(</span><span class="va">vars</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in h(simpleError(msg, call)):</span> error in evaluating the argument 'object' in selecting a method for function 'summary': lavaan ERROR: data is a function; it should be a data.frame</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lavaan 0.6-11 ended normally after 28 iterations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Estimator                                         ML</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Optimization method                           NLMINB</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Number of model parameters                        17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Number of observations                           500</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Model Test User Model:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                                       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Test statistic                                 1.203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Degrees of freedom                                 4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   P-value (Chi-square)                           0.878</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Parameter Estimates:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Standard errors                             Standard</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Information                                 Expected</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Information saturated (h1) model          Structured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Regressions:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate  Std.Err  z-value  P(&gt;|z|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x2 ~                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x1                0.774    0.061   12.784    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y1                0.282    0.056    5.024    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y2 ~                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x1                0.730    0.063   11.530    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y1                0.298    0.059    5.075    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x3 ~                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x2                0.637    0.059   10.780    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y2                0.456    0.059    7.781    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   y3 ~                                                </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x2                0.763    0.058   13.075    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y2                0.366    0.058    6.322    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Covariances:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate  Std.Err  z-value  P(&gt;|z|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   x1 ~~                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y1                0.237    0.019   12.732    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  .x2 ~~                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .y2                0.212    0.017   12.425    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  .x3 ~~                                               </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .y3                0.228    0.018   12.714    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Variances:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                    Estimate  Std.Err  z-value  P(&gt;|z|)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     x1                0.318    0.020   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .x2                0.303    0.019   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .x3                0.335    0.021   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     y1                0.369    0.023   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .y2                0.331    0.021   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    .y3                0.327    0.021   15.811    0.000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 </code></pre></div>
     </div>
   </div>

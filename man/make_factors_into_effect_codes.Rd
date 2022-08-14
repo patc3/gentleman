@@ -39,8 +39,10 @@ then recodes the dummy codes into effect codes (except for variables whose name 
 also specified in \code{make_into_dummy_instead}).
 }
 \examples{
+\dontrun{
 df |> make_factors_into_effect_codes(
   factors=c("Gender", "Nationality"),
   make_into_dummy_instead = "Gender"
 )
+}
 }

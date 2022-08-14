@@ -35,5 +35,5 @@ be ordered by variable mean: This is recommended to simplify examination
 of the homogeneous subsets.
 }
 \examples{
-df |> compare_pair_of_vars(c("subscale1", "subscale2", "subscale3"))
+df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
 }

@@ -23,7 +23,9 @@ This should be passed as \code{tbl_fn} when calling \code{get_desc}. If you want
 \code{tbl_fn}, you should model it after this one.
 }
 \examples{
+\dontrun{
 df |> tbl_fn_num("age")
+}
 
 }
 \seealso{

@@ -25,7 +25,9 @@ This should be passed as \code{ana_fn} when calling \code{get_desc} with a \code
 to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
 }
 \examples{
+\dontrun{
 df |> ana_fn_aov("age", "TreatmentGroup")
+}
 
 }
 \seealso{

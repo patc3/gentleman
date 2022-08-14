@@ -23,6 +23,8 @@ Each element in \code{map} is a list with one or more vector(s) of factor levels
 using the first element in each vector as the value for all levels in that vector.
 }
 \examples{
+\dontrun{
 map <- list(Nationality=list(c("US", "Puerto Rico"), c("Canada", "Quebec")))
 df <- df |> group_some_factor_levels(map)
+}
 }

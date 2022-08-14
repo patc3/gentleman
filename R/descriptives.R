@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' format_p(c("0.000007", "0.15"))
+#' format_p(c(0.000007, 0.15))
 format_p <- function(p)
 {
   "
@@ -127,7 +127,9 @@ to_long <- function(df, repeated_vars)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> tbl_fn_num("age")
+#' }
 #'
 #' @seealso [gentleman::tbl_fn_fac()], [gentleman::get_desc_table()]
 tbl_fn_num <- function(df, vars)
@@ -185,7 +187,9 @@ get_desc_num_summary_table <- tbl_fn_num # for backwards compatibility
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> ana_fn_aov("age", "TreatmentGroup")
+#' }
 #'
 #' @seealso [stats::aov()]
 ana_fn_aov <- function(df, vars, group)
@@ -233,7 +237,7 @@ ana_fn_aov <- function(df, vars, group)
 #' @examples
 #' df |>
 #'    to_long(list(score=c("y1", "y2"))) |>
-#'    ana_fn_aov(vars="score", group="Time", id="id", add_cohen=TRUE)
+#'    ana_fn_rm_aov(vars="score", group="Time", id="id", add_cohen=TRUE)
 #'
 #' @seealso [gentleman::to_long()], [gentleman::get_desc_time()], [stats::aov()]
 ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
@@ -315,7 +319,9 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> tbl_fn_fac("Nationality")
+#' }
 #'
 #' @seealso [gentleman::tbl_fn_num()], [gentleman::get_desc_table()]
 tbl_fn_fac <- function(df, vars)
@@ -386,7 +392,9 @@ get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> ana_fn_chisq("Nationality", "TreatmentGroup")
+#' }
 #'
 #' @seealso [stats::chisq.test()]
 ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
@@ -441,6 +449,7 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> get_desc_table(
 #'     vars=c("age", "score"),
 #'     tbl_fn=tbl_fn_num,
@@ -454,6 +463,7 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #'     group="TreatmentGroup",
 #'     ana_fn=ana_fn_chisq
 #' )
+#' }
 #'
 #' @seealso [gentleman::get_desc_time()], [gentleman::tbl_fn_num()], [gentleman::tbl_fn_fac()]
 #' [gentleman::ana_fn_aov()], [gentleman::ana_fn_chisq()]
@@ -582,7 +592,7 @@ get_desc_time <- function(df, repeated_vars, ...)
 #' @export
 #'
 #' @examples
-#' df |> compare_pair_of_vars(c("subscale1", "subscale2", "subscale3"))
+#' df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
 compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 {
   "

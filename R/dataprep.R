@@ -14,7 +14,7 @@
 #' @export
 #'
 #' @examples
-#' df |> scale_and_combine(c("IQ_Binet", "IQ_WPSSI"), name="IQ", scale=TRUE)
+#' df <- df |> scale_and_combine(c("x1", "x2", "x3"), name="x", scale=TRUE)
 scale_and_combine <- function(df, vars, name, scale=TRUE)
 {
   "
@@ -98,10 +98,12 @@ contr.dummy_or_effect <- function(...)
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> make_factors_into_effect_codes(
 #'   factors=c("Gender", "Nationality"),
 #'   make_into_dummy_instead = "Gender"
 #' )
+#' }
 make_factors_into_effect_codes <- function(df,
                                            factors,
                                            remove_selected_columns = TRUE,
@@ -186,8 +188,10 @@ make_factors_into_effect_codes <- function(df,
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' map <- list(Nationality=list(c("US", "Puerto Rico"), c("Canada", "Quebec")))
 #' df <- df |> group_some_factor_levels(map)
+#' }
 group_some_factor_levels <- function(df, map)
 {
   '

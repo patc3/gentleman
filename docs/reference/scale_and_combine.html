@@ -76,8 +76,8 @@ possibly scaling each variable individually prior to combining</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu">scale_and_combine</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"IQ_Binet"</span>, <span class="st">"IQ_WPSSI"</span><span class="op">)</span>, name<span class="op">=</span><span class="st">"IQ"</span>, scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in df[, v]:</span> object of type 'closure' is not subsettable</span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu">scale_and_combine</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span>, name<span class="op">=</span><span class="st">"x"</span>, scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Added var x"</span>
 </code></pre></div>
     </div>
   </div>

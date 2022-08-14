@@ -32,7 +32,7 @@ arguments to obtain p-values. Alternatively, this is the \code{ana_fn} used in w
 \examples{
 df |>
    to_long(list(score=c("y1", "y2"))) |>
-   ana_fn_aov(vars="score", group="Time", id="id", add_cohen=TRUE)
+   ana_fn_rm_aov(vars="score", group="Time", id="id", add_cohen=TRUE)
 
 }
 \seealso{

@@ -17,5 +17,5 @@ This function formats a vector of p-values to match the common requirement of 3 
 no leading zeros and indicated as "< .001" rather than .000.
 }
 \examples{
-format_p(c("0.000007", "0.15"))
+format_p(c(0.000007, 0.15))
 }

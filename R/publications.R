@@ -45,7 +45,7 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
   }
 
   # get estimates, p-value from each model
-  out <- subset(pe[[1]], select=rhs)
+  out <- subset(pe[[1]], select=rhs) |> rename(Predictor=rhs)
   for(s in pe)
   {
     # postproc p-value
@@ -126,6 +126,9 @@ make_pub_table_from_broom_tidy <- function(ana)
 
   }
 
+  # rename as Predictor
+  out <- out |> rename(Predictor=term)
+
   #out
   return(out)
 }
@@ -158,6 +161,7 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 {
   # get significant predictors with outcome
   sig <- table |>
+    remove_rownames() |>
     column_to_rownames("Predictor") |>
     apply(1:2, grepl, pattern=pattern, fixed=fixed) |>
     which(arr.ind=T) |>

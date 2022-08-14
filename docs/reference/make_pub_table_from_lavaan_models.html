@@ -86,11 +86,11 @@ a different predictor.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ana</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ana</span><span class="op">$</span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="st">"y1 ~ x1+x2"</span>, <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in lavaan::lavaan(model = "y1 ~ x1+x2", data = df, model.type = "sem",     int.ov.free = TRUE, int.lv.free = FALSE, auto.fix.first = TRUE,     auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE,     auto.cov.y = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.efa = TRUE):</span> lavaan ERROR: data is a function; it should be a data.frame</span>
 <span class="r-in"><span><span class="va">ana</span><span class="op">$</span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="st">"y2 ~ x1+x2"</span>, <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in lavaan::lavaan(model = "y2 ~ x1+x2", data = df, model.type = "sem",     int.ov.free = TRUE, int.lv.free = FALSE, auto.fix.first = TRUE,     auto.fix.single = TRUE, auto.var = TRUE, auto.cov.lv.x = TRUE,     auto.cov.y = TRUE, auto.th = TRUE, auto.delta = TRUE, auto.efa = TRUE):</span> lavaan ERROR: data is a function; it should be a data.frame</span>
 <span class="r-in"><span><span class="va">ana</span> <span class="op">|&gt;</span> <span class="fu">make_pub_table_from_lavaan_models</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in pe[[1]]:</span> subscript out of bounds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   Predictor      y1      y2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        x1 0.58*** 0.25***</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2        x2 0.17*** 0.72***</span>
 </code></pre></div>
     </div>
   </div>

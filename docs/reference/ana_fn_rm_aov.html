@@ -92,8 +92,9 @@ arguments to obtain p-values. Alternatively, this is the <code>ana_fn</code> use
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">df</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="to_long.html">to_long</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>score<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>   <span class="fu"><a href="ana_fn_aov.html">ana_fn_aov</a></span><span class="op">(</span>vars<span class="op">=</span><span class="st">"score"</span>, group<span class="op">=</span><span class="st">"Time"</span>, id<span class="op">=</span><span class="st">"id"</span>, add_cohen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in ana_fn_aov(to_long(df, list(score = c("y1", "y2"))), vars = "score",     group = "Time", id = "id", add_cohen = TRUE):</span> unused arguments (id = "id", add_cohen = TRUE)</span>
+<span class="r-in"><span>   <span class="fu">ana_fn_rm_aov</span><span class="op">(</span>vars<span class="op">=</span><span class="st">"score"</span>, group<span class="op">=</span><span class="st">"Time"</span>, id<span class="op">=</span><span class="st">"id"</span>, add_cohen<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     Var    p  Diff Cohen</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 score .338 -0.03  -.04</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

@@ -37,6 +37,7 @@ computes p-values using analysis of variance. For factor variables, p-values can
 with Chi-square tests using \code{ana_fn=ana_fn_chisq}.
 }
 \examples{
+\dontrun{
 df |> get_desc_table(
     vars=c("age", "score"),
     tbl_fn=tbl_fn_num,
@@ -50,6 +51,7 @@ df |> get_desc_table(
     group="TreatmentGroup",
     ana_fn=ana_fn_chisq
 )
+}
 
 }
 \seealso{
