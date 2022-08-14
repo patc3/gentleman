@@ -23,6 +23,6 @@ take an arbitrary number of predictor (x), mediator (m), and outcome (y) variabl
 \examples{
 library(lavaan)
 get_mediation_model("x1", "x2", "x3") |>
-   sem(df)
+   sem(df) |>
    summary()
 }

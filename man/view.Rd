@@ -16,5 +16,7 @@ Invisible \code{NULL}. See \code{\link[utils:View]{utils::View()}}
 This function is mostly useful as a shortcut to avoid default viewer in RStudio.
 }
 \examples{
+\dontrun{
 view(df)
+}
 }

@@ -13,5 +13,7 @@ copy2(tbl)
 This is a wrapper for \code{write.table()} with \code{file="gentleman_out.txt"}.
 }
 \examples{
+\dontrun{
 df |> copy2()
+}
 }

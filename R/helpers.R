@@ -10,7 +10,9 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' view(df)
+#' }
 view <- function(...){ utils::View(...) }
 
 
@@ -37,7 +39,9 @@ copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' df |> copy2()
+#' }
 copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.names=T, row.names=F, append=T) }
 
 
