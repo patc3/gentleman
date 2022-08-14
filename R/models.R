@@ -23,9 +23,9 @@ get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y
   i_x <- 1:length(x)
   i_y <- 1:length(y)
 
-  # deoendent regression
-  model_dependent_regression <- "# dependent regression\n"
-  for(i_dv in i_y) model_dependent_regression <- model_dependent_regression |>
+  # outcome regression
+  model_outcome_regression <- "# outcome regression\n"
+  for(i_dv in i_y) model_outcome_regression <- model_outcome_regression |>
     paste0(y[i_dv], " ~ ", paste0("b",i_dv, i_m, "*", med, collapse=" + "), " + ", paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
 
   # effect decomposition
@@ -57,7 +57,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 # mediator residual covariance",
     if(length(med)>1) paste0(apply(t(combn(med, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
     "
-# dependent residual covariance",
+# outcome residual covariance",
     if(length(y)>1) paste0(apply(t(combn(y, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
     "",
     sep="\n"
@@ -65,7 +65,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 
   # model
   model <- paste(
-    model_dependent_regression,
+    model_outcome_regression,
     model_mediator_regression,
     model_residual_covariances,
     model_effect_decomposition,
@@ -205,10 +205,7 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
   # (residual) variances (explicitly declared)
   "
                  ,paste0(variances)
-                 ,"
-  #covariates !list your covariates here using WITH
-  ",
-                 sep="\n")
+                 ,sep="\n")
 
   return(model)
 
