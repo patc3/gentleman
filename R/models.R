@@ -226,23 +226,26 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' follows the procedure outlined by
 #' [UCLA OARC Statistical and Data Analytics](https://stats.oarc.ucla.edu/r/seminars/interactions-r/).
 #'
-#' Note that if \code{cont} is truly continuous (many different distinct values),
-#' then not all elements of the returned list will be useful (\code{$means} and
-#' \code{$contrasts} in particular may be difficult to use).
+#' Note that if \code{cont} is truly continuous (many different distinct values) and \code{at_cont_values}
+#' is not specified, then not all elements of the returned list will be useful
+#' (\code{$means} and \code{$contrasts} in particular may be difficult to use).
 #'
 #' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
 #' @param df data.frame or NULL if \code{model} has \code{model$model}
 #' @param bin Binary variable name
 #' @param cont Continuous variable name
+#' @param at_cont_values (Numeric vector) \code{cont} values at which to calculate
+#' and compare means (if \code{NULL}, all unique values)
 #' @param ci (logical) Whether to plot confidence intervals
 #'
 #' @return List with elements:
 #' \describe{
 #' \item{\code{slopes}}{Simple slopes and pairwise comparisons (from calling \code{emmeans::emtrends()})}
 #' \item{\code{means}}{(adjusted) means for every combination of \code{bin*cont}
-#' (may not be useful if \code{cont} is truly continuous)}
+#' (may need to specify \code{at_cont_values} if \code{cont} is truly continuous)}
 #' \item{\code{contrasts}}{Comparisons of (adjusted) \code{bin}
-#' means at each value of \code{cont} (may not be useful if \code{cont} is truly continuous)}
+#' means at each value of \code{cont} (may need to specify
+#' \code{at_cont_values} if \code{cont} is truly continuous)}
 #' \item{\code{plot}}{Plot (from calling \code{emmeans::emmip()})}
 #' }
 #' @export
@@ -252,11 +255,19 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' fit <- lm(SelfEsteem ~ Gender*AttitudeTowardsSchool, df)
 #' fit |> decompose_ixn_bin_cont(bin="Gender", cont="AttitudeTowardsSchool")
 #' }
-decompose_ixn_bin_cont <- function(model, df=NULL, bin, cont, ci=FALSE)
+#'
+#' @seealso [emmeans::emmeans()], [emmeans::emtrends()], [emmeans::emmip()]
+decompose_ixn_bin_cont <- function(model,
+                                   df=NULL,
+                                   bin,
+                                   cont,
+                                   at_cont_values=NULL,
+                                   ci=FALSE)
 {
   if(is.null(df)) df <- model$model
   diff <- emtrends(model, "pairwise ~" |> paste(bin) |> formula(), var=cont)
-  values <- list(unique(df[,cont]), unique(df[,bin])) |> setNames(c(cont, bin))
+  if(is.null(at_cont_values)) at_cont_values <- unique(df[,cont])
+  values <- list(at_cont_values, unique(df[,bin])) |> setNames(c(cont, bin))
   means <- emmeans(model, "~" |> paste(paste(cont,bin,sep="*")) |> formula(), at=values)
   contrasts <- contrast(means, "pairwise", by=cont)
   p <- emmip(model, bin |> paste(cont, sep="~") |> formula(), CIs=ci, at=values)

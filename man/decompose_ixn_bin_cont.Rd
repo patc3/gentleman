@@ -4,7 +4,14 @@
 \alias{decompose_ixn_bin_cont}
 \title{Decompose binary*continuous interaction}
 \usage{
-decompose_ixn_bin_cont(model, df = NULL, bin, cont, ci = FALSE)
+decompose_ixn_bin_cont(
+  model,
+  df = NULL,
+  bin,
+  cont,
+  at_cont_values = NULL,
+  ci = FALSE
+)
 }
 \arguments{
 \item{model}{A model object compatible with \code{emmeans} (e.g. \code{lm})}
@@ -15,6 +22,9 @@ decompose_ixn_bin_cont(model, df = NULL, bin, cont, ci = FALSE)
 
 \item{cont}{Continuous variable name}
 
+\item{at_cont_values}{(Numeric vector) \code{cont} values at which to calculate
+and compare means (if \code{NULL}, all unique values)}
+
 \item{ci}{(logical) Whether to plot confidence intervals}
 }
 \value{
@@ -22,9 +32,10 @@ List with elements:
 \describe{
 \item{\code{slopes}}{Simple slopes and pairwise comparisons (from calling \code{emmeans::emtrends()})}
 \item{\code{means}}{(adjusted) means for every combination of \code{bin*cont}
-(may not be useful if \code{cont} is truly continuous)}
+(may need to specify \code{at_cont_values} if \code{cont} is truly continuous)}
 \item{\code{contrasts}}{Comparisons of (adjusted) \code{bin}
-means at each value of \code{cont} (may not be useful if \code{cont} is truly continuous)}
+means at each value of \code{cont} (may need to specify
+\code{at_cont_values} if \code{cont} is truly continuous)}
 \item{\code{plot}}{Plot (from calling \code{emmeans::emmip()})}
 }
 }
@@ -37,13 +48,17 @@ This function uses the facilities provided by the library \code{emmeans}, and
 follows the procedure outlined by
 \href{https://stats.oarc.ucla.edu/r/seminars/interactions-r/}{UCLA OARC Statistical and Data Analytics}.
 
-Note that if \code{cont} is truly continuous (many different distinct values),
-then not all elements of the returned list will be useful (\code{$means} and
-\code{$contrasts} in particular may be difficult to use).
+Note that if \code{cont} is truly continuous (many different distinct values) and \code{at_cont_values}
+is not specified, then not all elements of the returned list will be useful
+(\code{$means} and \code{$contrasts} in particular may be difficult to use).
 }
 \examples{
 \dontrun{
 fit <- lm(SelfEsteem ~ Gender*AttitudeTowardsSchool, df)
 fit |> decompose_ixn_bin_cont(bin="Gender", cont="AttitudeTowardsSchool")
 }
+
+}
+\seealso{
+\code{\link[emmeans:emmeans]{emmeans::emmeans()}}, \code{\link[emmeans:emtrends]{emmeans::emtrends()}}, \code{\link[emmeans:emmip]{emmeans::emmip()}}
 }

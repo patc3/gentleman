@@ -52,7 +52,14 @@ and provides means, pairwise comparisons, and a plot.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">decompose_ixn_bin_cont</span><span class="op">(</span><span class="va">model</span>, df <span class="op">=</span> <span class="cn">NULL</span>, <span class="va">bin</span>, <span class="va">cont</span>, ci <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">decompose_ixn_bin_cont</span><span class="op">(</span></span>
+<span>  <span class="va">model</span>,</span>
+<span>  df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">bin</span>,</span>
+<span>  <span class="va">cont</span>,</span>
+<span>  at_cont_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ci <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,6 +80,11 @@ and provides means, pairwise comparisons, and a plot.</p>
 <dd><p>Continuous variable name</p></dd>
 
 
+<dt>at_cont_values</dt>
+<dd><p>(Numeric vector) <code>cont</code> values at which to calculate
+and compare means (if <code>NULL</code>, all unique values)</p></dd>
+
+
 <dt>ci</dt>
 <dd><p>(logical) Whether to plot confidence intervals</p></dd>
 
@@ -86,11 +98,12 @@ and provides means, pairwise comparisons, and a plot.</p>
 
 <dt><code>means</code></dt>
 <dd><p>(adjusted) means for every combination of <code>bin*cont</code>
-(may not be useful if <code>cont</code> is truly continuous)</p></dd>
+(may need to specify <code>at_cont_values</code> if <code>cont</code> is truly continuous)</p></dd>
 
 <dt><code>contrasts</code></dt>
 <dd><p>Comparisons of (adjusted) <code>bin</code>
-means at each value of <code>cont</code> (may not be useful if <code>cont</code> is truly continuous)</p></dd>
+means at each value of <code>cont</code> (may need to specify
+<code>at_cont_values</code> if <code>cont</code> is truly continuous)</p></dd>
 
 <dt><code>plot</code></dt>
 <dd><p>Plot (from calling <code><a href="https://rdrr.io/pkg/emmeans/man/emmip.html" class="external-link">emmeans::emmip()</a></code>)</p></dd>
@@ -102,9 +115,13 @@ means at each value of <code>cont</code> (may not be useful if <code>cont</code>
     <p>This function uses the facilities provided by the library <code>emmeans</code>, and
 follows the procedure outlined by
 <a href="https://stats.oarc.ucla.edu/r/seminars/interactions-r/" class="external-link">UCLA OARC Statistical and Data Analytics</a>.</p>
-<p>Note that if <code>cont</code> is truly continuous (many different distinct values),
-then not all elements of the returned list will be useful (<code>$means</code> and
-<code>$contrasts</code> in particular may be difficult to use).</p>
+<p>Note that if <code>cont</code> is truly continuous (many different distinct values) and <code>at_cont_values</code>
+is not specified, then not all elements of the returned list will be useful
+(<code>$means</code> and <code>$contrasts</code> in particular may be difficult to use).</p>
+    </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/emmeans/man/emmeans.html" class="external-link">emmeans::emmeans()</a></code>, <code><a href="https://rdrr.io/pkg/emmeans/man/emtrends.html" class="external-link">emmeans::emtrends()</a></code>, <code><a href="https://rdrr.io/pkg/emmeans/man/emmip.html" class="external-link">emmeans::emmip()</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -113,6 +130,7 @@ then not all elements of the returned list will be useful (<code>$means</code> a
 <span class="r-in"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">SelfEsteem</span> <span class="op">~</span> <span class="va">Gender</span><span class="op">*</span><span class="va">AttitudeTowardsSchool</span>, <span class="va">df</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">fit</span> <span class="op">|&gt;</span> <span class="fu">decompose_ixn_bin_cont</span><span class="op">(</span>bin<span class="op">=</span><span class="st">"Gender"</span>, cont<span class="op">=</span><span class="st">"AttitudeTowardsSchool"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>
