@@ -644,10 +644,10 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 
 #' Plot density by groups
 #'
-#' This function plots densities using bar graphs for categorical variables (and actual
-#' densities for numerical variables), for several variables (panels) separately
-#' by groups (fill color). This is ideal for a combination of categorical,
-#' ordinal, and numerical variables, but can also be used with a single type.
+#' This function plots densities using bar graphs for categorical variables and actual
+#' densities for numeric variables, for several variables (panels) separately
+#' by groups (optional; fill color). This is ideal for a combination of categorical,
+#' ordinal, and numeric variables, but can also be used with a single type.
 #'
 #' @details
 #' Non-numeric variables are always treated as such and get a bar graph. Numeric variables
@@ -659,25 +659,31 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 #'
 #' @param df data.frame
 #' @param vars variables to plot (if \code{NULL}, all variables except \code{group})
-#' @param group grouping variable
+#' @param group grouping variable (if \code{NULL}, all rows are assumed to belong to the same group)
 #' @param fix_scales (logical) whether to keep same scales for all variables (default \code{FALSE})
-#' @param min_values_to_treat_as_numeric (numeric) number of disctinct values for a
-#' numerical variable to be treated as continuous
+#' @param min_values_to_treat_as_numeric (numeric) number of distinct values for a
+#' numeric variable to be treated as continuous
 #'
 #' @return \code{ggplot2} plot
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' df |> plot_density_by_groups()
 #' df |> plot_density_by_groups(group="Gender")
 #' }
 plot_density_by_groups <- function(df,
                                    vars=NULL,
-                                   group,
+                                   group=NULL,
                                    fix_scales=FALSE,
                                    min_values_to_treat_as_numeric=12)
 {
   if(fix_scales) free_scales <- "fixed" else free_scales <- "free"
+  if(is.null(group))
+  {
+    group <- "Full Sample"
+    df[,group] <- "All"
+  }
 
   #### select requested vars
   if(is.null(vars)) vars <- names(df)

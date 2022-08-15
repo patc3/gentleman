@@ -46,9 +46,6 @@
     <loc>/reference/decompose_interaction.html</loc>
   </url>
   <url>
-    <loc>/reference/decompose_ixn_bin_cont.html</loc>
-  </url>
-  <url>
     <loc>/reference/df.html</loc>
   </url>
   <url>
@@ -95,9 +92,6 @@
   </url>
   <url>
     <loc>/reference/make_pub_table_from_lavaan_models.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plot_density_bars_by_groups.html</loc>
   </url>
   <url>
     <loc>/reference/plot_density_by_groups.html</loc>
