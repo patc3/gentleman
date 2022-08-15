@@ -699,7 +699,7 @@ plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
     geom_bar(mapping = aes(y=after_stat(count/tapply(count,fill,sum)[fill])*n_measures),
              position = "identity",
              alpha =.5) +
-    facet_wrap(~Measure, scales = fix_scales) +
+    facet_wrap(~Measure, scales = free_scales) +
     labs(y="Density", x="Score", fill=group) +
     #scale_pattern_manual(values=c("1"="none", "2"="stripe", "3"="circle")) +
     theme_bw(base_size = 16) #+
