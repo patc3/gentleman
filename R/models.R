@@ -214,63 +214,66 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 
 
 #### process models ####
-# I think bin could simply be categorical
-# Also cont cannot be truly continuous!
-#' Decompose binary*continuous interaction
+#' Decompose 2-way (x1*x2) interaction
 #'
-#' This function decomposes a binary*continuous interaction into simple effects,
+#' This function decomposes a 2-way x1*x2 interaction into simple effects,
 #' and provides means, pairwise comparisons, and a plot.
 #'
 #' @details
 #' This function uses the facilities provided by the library \code{emmeans}, and
 #' follows the procedure outlined by
 #' [UCLA OARC Statistical and Data Analytics](https://stats.oarc.ucla.edu/r/seminars/interactions-r/).
+#' It might be helpful to execute the function with x1 and x2 inverted, and see which
+#' set of results and plot make most sense for your scenario.
 #'
-#' Note that if \code{cont} is truly continuous (many different distinct values) and \code{at_cont_values}
-#' is not specified, then not all elements of the returned list will be useful
+#' Note that if \code{x1} or \code{x2} has many different distinct values and \code{at_x1}
+#' or \code{at_x2} is not specified, then not all elements of the returned list will be useful
 #' (\code{$means} and \code{$contrasts} in particular may be difficult to use).
 #'
 #' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
 #' @param df data.frame or NULL if \code{model} has \code{model$model}
-#' @param bin Binary variable name
-#' @param cont Continuous variable name
-#' @param at_cont_values (Numeric vector) \code{cont} values at which to calculate
+#' @param x1 (character) variable name
+#' @param x2 (character) variable name
+#' @param at_x1 (numeric or character vector) \code{x1} values at which to calculate
+#' and compare means (if \code{NULL}, all unique values)
+#' @param at_x2 (numeric or character vector) \code{x2} values at which to calculate
 #' and compare means (if \code{NULL}, all unique values)
 #' @param ci (logical) Whether to plot confidence intervals
 #'
 #' @return List with elements:
 #' \describe{
-#' \item{\code{slopes}}{Simple slopes and pairwise comparisons (from calling \code{emmeans::emtrends()})}
-#' \item{\code{means}}{(adjusted) means for every combination of \code{bin*cont}
-#' (may need to specify \code{at_cont_values} if \code{cont} is truly continuous)}
-#' \item{\code{contrasts}}{Comparisons of (adjusted) \code{bin}
-#' means at each value of \code{cont} (may need to specify
-#' \code{at_cont_values} if \code{cont} is truly continuous)}
-#' \item{\code{plot}}{Plot (from calling \code{emmeans::emmip()})}
+#' \item{slopes}{Simple slopes and pairwise comparisons (from calling \code{emmeans::emtrends()})}
+#' \item{means}{(adjusted) means for every combination of \code{x1*x2}
+#' (may need to specify \code{at_x1} and/or \code{at_x2} values)}
+#' \item{contrasts}{Comparisons of (adjusted) \code{x1} means at each value of \code{x2}
+#' (may need to specify \code{at_x1} and/or \code{at_x2} values)}
+#' \item{plot}{Plot (from calling \code{emmeans::emmip()})}
 #' }
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' fit <- lm(SelfEsteem ~ Gender*AttitudeTowardsSchool, df)
-#' fit |> decompose_ixn_bin_cont(bin="Gender", cont="AttitudeTowardsSchool")
+#' fit |> decompose_interaction(x1="Gender", x2="AttitudeTowardsSchool")
 #' }
 #'
 #' @seealso [emmeans::emmeans()], [emmeans::emtrends()], [emmeans::emmip()]
-decompose_ixn_bin_cont <- function(model,
-                                   df=NULL,
-                                   bin,
-                                   cont,
-                                   at_cont_values=NULL,
-                                   ci=FALSE)
+decompose_interaction <- function(model,
+                                  df=NULL,
+                                  x1,
+                                  x2,
+                                  at_x1=NULL,
+                                  at_x2=NULL,
+                                  ci=FALSE)
 {
   if(is.null(df)) df <- model$model
-  diff <- emtrends(model, "pairwise ~" |> paste(bin) |> formula(), var=cont)
-  if(is.null(at_cont_values)) at_cont_values <- unique(df[,cont])
-  values <- list(at_cont_values, unique(df[,bin])) |> setNames(c(cont, bin))
-  means <- emmeans(model, "~" |> paste(paste(cont,bin,sep="*")) |> formula(), at=values)
-  contrasts <- contrast(means, "pairwise", by=cont)
-  p <- emmip(model, bin |> paste(cont, sep="~") |> formula(), CIs=ci, at=values)
+  if(is.null(at_x1)) at_x1 <- unique(df[,x1])
+  if(is.null(at_x2)) at_x2 <- unique(df[,x2])
+  values <- list(at_x1, at_x2) |> setNames(c(x1, x2))
+  diff <- emtrends(model, "pairwise ~" |> paste(x1) |> formula(), var=x2, at=values)
+  means <- emmeans(model, "~" |> paste(paste(x2,x1,sep="*")) |> formula(), at=values)
+  contrasts <- contrast(means, "pairwise", by=x2)
+  p <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=ci, at=values)
 
   # out
   list(slopes=diff, means=means, contrasts=contrasts, plot=p)
