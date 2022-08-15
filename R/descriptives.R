@@ -645,12 +645,16 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 #' Plot density bars by groups
 #'
 #' This function plots densities using bar graphs, for several variables (panels) separately
-#' by groups (fill color).
+#' by groups (fill color). This is ideal for categorical and ordinal variables or numerical
+#' variables with few categories.
+#'
+#' @details
+#' Density is calculated as \code{frequency/total} for each distinct value, separately by groups.
 #'
 #' @param df data.frame
 #' @param vars variables to plot (if \code{NULL}, all variables except \code{group})
 #' @param group grouping variable
-#' @param scale_x (logical) whether to scale x variables (default \code{FALSE})
+#' @param fix_scales (logical) whether to keep same scales for all variables (default \code{FALSE})
 #'
 #' @return \code{ggplot2} bar plot
 #' @export
@@ -659,9 +663,9 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 #' \dontrun{
 #' df |> plot_density_bars_by_groups(group="Gender")
 #' }
-plot_density_bars_by_groups <- function(df, vars=NULL, group, scale_x=FALSE)
+plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
 {
-  if(scale_x) free_scales <- "fixed" else free_scales <- "free"
+  if(fix_scales) free_scales <- "fixed" else free_scales <- "free"
 
   #### select requested vars
   if(is.null(vars)) vars <- names(df)
@@ -695,8 +699,8 @@ plot_density_bars_by_groups <- function(df, vars=NULL, group, scale_x=FALSE)
     geom_bar(mapping = aes(y=after_stat(count/tapply(count,fill,sum)[fill])*n_measures),
              position = "identity",
              alpha =.5) +
-    facet_wrap(~Measure, scales = free_scales) +
-    labs(y="Density", x=ifelse(scale_x, "Z-Score", "Score"), fill=group) +
+    facet_wrap(~Measure, scales = fix_scales) +
+    labs(y="Density", x="Score", fill=group) +
     #scale_pattern_manual(values=c("1"="none", "2"="stripe", "3"="circle")) +
     theme_bw(base_size = 16) #+
   #theme_minimal()

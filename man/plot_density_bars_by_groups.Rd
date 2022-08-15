@@ -4,7 +4,7 @@
 \alias{plot_density_bars_by_groups}
 \title{Plot density bars by groups}
 \usage{
-plot_density_bars_by_groups(df, vars = NULL, group, scale_x = FALSE)
+plot_density_bars_by_groups(df, vars = NULL, group, fix_scales = FALSE)
 }
 \arguments{
 \item{df}{data.frame}
@@ -13,14 +13,18 @@ plot_density_bars_by_groups(df, vars = NULL, group, scale_x = FALSE)
 
 \item{group}{grouping variable}
 
-\item{scale_x}{(logical) whether to scale x variables (default \code{FALSE})}
+\item{fix_scales}{(logical) whether to keep same scales for all variables (default \code{FALSE})}
 }
 \value{
 \code{ggplot2} bar plot
 }
 \description{
 This function plots densities using bar graphs, for several variables (panels) separately
-by groups (fill color).
+by groups (fill color). This is ideal for categorical and ordinal variables or numerical
+variables with few categories.
+}
+\details{
+Density is calculated as \code{frequency/total} for each distinct value, separately by groups.
 }
 \examples{
 \dontrun{
