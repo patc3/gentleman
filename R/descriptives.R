@@ -642,34 +642,54 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 #### plots ####
 
 
-#' Plot density bars by groups
+#' Plot density by groups
 #'
-#' This function plots densities using bar graphs, for several variables (panels) separately
-#' by groups (fill color). This is ideal for categorical and ordinal variables or numerical
-#' variables with few categories.
+#' This function plots densities using bar graphs for categorical variables (and actual
+#' densities for numerical variables), for several variables (panels) separately
+#' by groups (fill color). This is ideal for a combination of categorical,
+#' ordinal, and numerical variables, but can also be used with a single type.
 #'
 #' @details
-#' Density is calculated as \code{frequency/total} for each distinct value, separately by groups.
+#' Non-numeric variables are always treated as such and get a bar graph. Numeric variables
+#' can get either a bar graph (when the number of unique values excluding NA
+#' is < \code{min_values_to_treat_as_numeric}), or a density plot.
+#'
+#' Density for categorical variables is calculated as \code{frequency/total} for each
+#' distinct value, separately by groups.
 #'
 #' @param df data.frame
 #' @param vars variables to plot (if \code{NULL}, all variables except \code{group})
 #' @param group grouping variable
 #' @param fix_scales (logical) whether to keep same scales for all variables (default \code{FALSE})
+#' @param min_values_to_treat_as_numeric (numeric) number of disctinct values for a
+#' numerical variable to be treated as continuous
 #'
-#' @return \code{ggplot2} bar plot
+#' @return \code{ggplot2} plot
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' df |> plot_density_bars_by_groups(group="Gender")
+#' df |> plot_density_by_groups(group="Gender")
 #' }
-plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
+plot_density_by_groups <- function(df,
+                                   vars=NULL,
+                                   group,
+                                   fix_scales=FALSE,
+                                   min_values_to_treat_as_numeric=12)
 {
   if(fix_scales) free_scales <- "fixed" else free_scales <- "free"
 
   #### select requested vars
   if(is.null(vars)) vars <- names(df)
   vars <- vars[vars!=group]
+
+  #### numeric vars
+  v_num <- df |>
+    select(all_of(vars)) |>
+    select(where(is.numeric)) |>
+    sapply(\(c) c[!is.na(c)] |> unique() |> length() |> (`>=`)(min_values_to_treat_as_numeric)) |>
+    which() |>
+    names()
 
   #### one line per measure
   df_long <- df |>
@@ -686,8 +706,15 @@ plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
   # example: https://stackoverflow.com/a/62393160/2303302
   # patterns: https://coolbutuseless.github.io/package/ggpattern/articles/developing-patterns-1.html
   .df <- df_long |> filter(Measure %in% vars)
-  n_measures <- .df$Measure |> unique() |> length()
-  p <- ggplot(.df, aes(x=Score, pattern=get(group), fill=get(group))) + # fill must be factor
+  n_measures <- length(vars) - length(v_num)
+  p <- ggplot(.df, aes(x=Score, fill=get(group))) + # fill must be factor; pattern=get(group)
+    facet_wrap(~Measure, scales = free_scales) +
+    geom_bar(data = subset(.df, !Measure %in% v_num),
+             mapping = aes(y=after_stat(count/tapply(count,fill,sum)[fill])*n_measures),
+             position = "identity",
+             alpha =.5) +
+    geom_density(data = subset(.df, Measure %in% v_num) |> mutate(across(Score, as.numeric)),
+                 alpha = .5) +
     # geom_density_pattern(alpha=.5, lwd=1,
     #                      pattern_fill="black",
     #                      pattern_angle = 45,
@@ -696,10 +723,7 @@ plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
     #                      pattern_key_scale_factor = 0.6
     #                      ,pattern_size=1
     # ) +
-    geom_bar(mapping = aes(y=after_stat(count/tapply(count,fill,sum)[fill])*n_measures),
-             position = "identity",
-             alpha =.5) +
-    facet_wrap(~Measure, scales = free_scales) +
+
     labs(y="Density", x="Score", fill=group) +
     #scale_pattern_manual(values=c("1"="none", "2"="stripe", "3"="circle")) +
     theme_bw(base_size = 16) #+
@@ -710,6 +734,8 @@ plot_density_bars_by_groups <- function(df, vars=NULL, group, fix_scales=FALSE)
   p
 
 }
+
+
 
 
 
