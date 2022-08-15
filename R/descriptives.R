@@ -638,3 +638,78 @@ compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
 
 }
 
+
+#### plots ####
+
+
+#' Plot density bars by groups
+#'
+#' This function plots densities using bar graphs, for several variables (panels) separately
+#' by groups (fill color).
+#'
+#' @param df data.frame
+#' @param vars variables to plot (if \code{NULL}, all variables except \code{group})
+#' @param group grouping variable
+#' @param scale_x (logical) whether to scale x variables (default \code{FALSE})
+#'
+#' @return \code{ggplot2} bar plot
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df |> plot_density_bars_by_groups(group="Gender")
+#' }
+plot_density_bars_by_groups <- function(df, vars=NULL, group, scale_x=FALSE)
+{
+  if(scale_x) free_scales <- "fixed" else free_scales <- "free"
+
+  #### select requested vars
+  if(is.null(vars)) vars <- names(df)
+  vars <- vars[vars!=group]
+
+  #### one line per measure
+  df_long <- df |>
+    relocate(!!group, .after=last_col()) |>
+    pivot_longer(
+      cols=1:(ncol(df)-1), # not group
+      names_to="Measure",
+      values_to="Score", values_transform = list(Score = as.character)
+    ) |>
+    mutate(!!group:=factor(get(group)))
+
+
+  #### density plot
+  # example: https://stackoverflow.com/a/62393160/2303302
+  # patterns: https://coolbutuseless.github.io/package/ggpattern/articles/developing-patterns-1.html
+  .df <- df_long |> filter(Measure %in% vars)
+  n_measures <- .df$Measure |> unique() |> length()
+  p <- ggplot(.df, aes(x=Score, pattern=get(group), fill=get(group))) + # fill must be factor
+    # geom_density_pattern(alpha=.5, lwd=1,
+    #                      pattern_fill="black",
+    #                      pattern_angle = 45,
+    #                      pattern_density = 0.2,
+    #                      pattern_spacing = 0.05,#0.025,
+    #                      pattern_key_scale_factor = 0.6
+    #                      ,pattern_size=1
+    # ) +
+    geom_bar(mapping = aes(y=after_stat(count/tapply(count,fill,sum)[fill])*n_measures),
+             position = "identity",
+             alpha =.5) +
+    facet_wrap(~Measure, scales = free_scales) +
+    labs(y="Density", x=ifelse(scale_x, "Z-Score", "Score"), fill=group) +
+    #scale_pattern_manual(values=c("1"="none", "2"="stripe", "3"="circle")) +
+    theme_bw(base_size = 16) #+
+  #theme_minimal()
+
+
+  # out
+  p
+
+}
+
+
+
+
+
+
+
