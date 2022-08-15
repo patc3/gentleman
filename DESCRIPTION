@@ -17,4 +17,4 @@ RoxygenNote: 7.2.1
 Depends: 
     R (>= 2.10)
 LazyData: true
-Imports: broom, dplyr, fastDummies, lavaan, stats, tibble, tidyr, utils, weights
+Imports: broom, dplyr, emmeans, fastDummies, lavaan, stats, tibble, tidyr, utils, weights

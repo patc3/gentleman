@@ -1,3 +1,4 @@
+#### model syntax ####
 # generate lavaan model string for mediation model
 #' Generate lavaan syntax for mediation model
 #'
@@ -209,4 +210,57 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 
   return(model)
 
+}
+
+
+#### process models ####
+# I think bin could simply be categorical
+# Also cont cannot be truly continuous!
+#' Decompose binary*continuous interaction
+#'
+#' This function decomposes a binary*continuous interaction into simple effects,
+#' and provides means, pairwise comparisons, and a plot.
+#'
+#' @details
+#' This function uses the facilities provided by the library \code{emmeans}, and
+#' follows the procedure outlined by
+#' [UCLA OARC Statistical and Data Analytics](https://stats.oarc.ucla.edu/r/seminars/interactions-r/).
+#'
+#' Note that if \code{cont} is truly continuous (many different distinct values),
+#' then not all elements of the returned list will be useful (\code{$means} and
+#' \code{$contrasts} in particular may be difficult to use).
+#'
+#' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
+#' @param df data.frame or NULL if \code{model} has \code{model$model}
+#' @param bin Binary variable name
+#' @param cont Continuous variable name
+#' @param ci (logical) Whether to plot confidence intervals
+#'
+#' @return List with elements:
+#' \describe{
+#' \item{\code{slopes}}{Simple slopes and pairwise comparisons (from calling \code{emmeans::emtrends()})}
+#' \item{\code{means}}{(adjusted) means for every combination of \code{bin*cont}
+#' (may not be useful if \code{cont} is truly continuous)}
+#' \item{\code{contrasts}}{Comparisons of (adjusted) \code{bin}
+#' means at each value of \code{cont} (may not be useful if \code{cont} is truly continuous)}
+#' \item{\code{plot}}{Plot (from calling \code{emmeans::emmip()})}
+#' }
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' fit <- lm(SelfEsteem ~ Gender*AttitudeTowardsSchool, df)
+#' fit |> decompose_ixn_bin_cont(bin="Gender", cont="AttitudeTowardsSchool")
+#' }
+decompose_ixn_bin_cont <- function(model, df=NULL, bin, cont, ci=FALSE)
+{
+  if(is.null(df)) df <- model$model
+  diff <- emtrends(model, "pairwise ~" |> paste(bin) |> formula(), var=cont)
+  values <- list(unique(df[,cont]), unique(df[,bin])) |> setNames(c(cont, bin))
+  means <- emmeans(model, "~" |> paste(paste(cont,bin,sep="*")) |> formula(), at=values)
+  contrasts <- contrast(means, "pairwise", by=cont)
+  p <- emmip(model, bin |> paste(cont, sep="~") |> formula(), CIs=ci, at=values)
+
+  # out
+  list(slopes=diff, means=means, contrasts=contrasts, plot=p)
 }
