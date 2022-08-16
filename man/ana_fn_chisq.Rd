@@ -25,7 +25,7 @@ This function computes p-values using Chi-square tests
 for each variable in \code{vars} and grouping variable specified in \code{group}
 }
 \details{
-This should be passed as \code{ana_fn} when calling \code{get_desc} with a \code{group} argument
+This should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}} with a \code{group} argument
 to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
 }
 \examples{

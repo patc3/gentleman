@@ -247,7 +247,7 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' (may need to specify \code{at_x1} and/or \code{at_x2} values)}
 #' \item{contrasts}{Comparisons of (adjusted) \code{x1} means at each value of \code{x2}
 #' (may need to specify \code{at_x1} and/or \code{at_x2} values)}
-#' \item{plot}{Plot (from calling \code{emmeans::emmip()})}
+#' \item{plot}{Plot (\code{ggplot2} line graph using data from \code{emmeans::emmip()})}
 #' }
 #' @export
 #'
@@ -273,7 +273,21 @@ decompose_interaction <- function(model,
   diff <- emtrends(model, "pairwise ~" |> paste(x1) |> formula(), var=x2, at=values)
   means <- emmeans(model, "~" |> paste(paste(x2,x1,sep="*")) |> formula(), at=values)
   contrasts <- contrast(means, "pairwise", by=x2)
-  p <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=ci, at=values)
+
+  # plot
+  p_data <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=TRUE, at=values, plotit=FALSE)
+  p_data[,x1] <- p_data[,x1] |> factor()
+  p <- ggplot(p_data, aes_string(x=x2, y="yvar")) + geom_line(aes_string(linetype=x1), size=1)
+  if(ci) p <- p + geom_ribbon(aes_string(ymax="UCL", ymin="LCL", fill=x1), alpha=0.4)
+  p <- p + labs(x=x2, y="Estimated Outcome", linetype=x1, fill=x1)
+  p <- p+theme(
+    text=element_text(size=20),
+    panel.border = element_rect(colour = "black", fill=NA),
+    panel.grid=element_blank(),
+    panel.background = element_blank(),
+    legend.key = element_blank(),
+    legend.position=NULL#c(.85,.5)#legend.position
+  )
 
   # out
   list(slopes=diff, means=means, contrasts=contrasts, plot=p)

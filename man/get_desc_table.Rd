@@ -28,16 +28,17 @@ Additionally, statistics can be computed separately by groups. Groups can also b
 some \code{ana_fn} function.
 }
 \details{
-For numeric variables, a natural choice is to use \code{tbl_fn=tbl_fn_num}, while for
-categorical variables, use \code{tbl_fn=tbl_fn_fac}. Alternatively, custom functions can be specified.
+For numeric variables, a natural choice is to use \code{tbl_fn=tbl_fn_num()}, while for
+categorical variables, use \code{tbl_fn=tbl_fn_fac()}. Alternatively, custom functions can be specified.
 
 If \code{group} is specified, you have the option of requesting p-values (or some other statistic)
-comparing groups. For numeric variables, a natural choice is \code{ana_fn=ana_fn_aov}, which
+comparing groups. For numeric variables, a natural choice is \code{ana_fn=ana_fn_aov()}, which
 computes p-values using analysis of variance. For factor variables, p-values can be obtained
-with Chi-square tests using \code{ana_fn=ana_fn_chisq}.
+with Chi-square tests using \code{ana_fn=ana_fn_chisq()}.
 }
 \examples{
 \dontrun{
+# numeric variables
 df |> get_desc_table(
     vars=c("age", "score"),
     tbl_fn=tbl_fn_num,
@@ -45,6 +46,7 @@ df |> get_desc_table(
     ana_fn=ana_fn_aov
 )
 
+# factor variables
 df |> get_desc_table(
     vars=c("Nationality", "Diagnostic"),
     tbl_fn=tbl_fn_fac,
@@ -55,6 +57,9 @@ df |> get_desc_table(
 
 }
 \seealso{
-\code{\link[=get_desc_time]{get_desc_time()}}, \code{\link[=tbl_fn_num]{tbl_fn_num()}}, \code{\link[=tbl_fn_fac]{tbl_fn_fac()}}
-\code{\link[=ana_fn_aov]{ana_fn_aov()}}, \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
+\code{\link[=get_desc_time]{get_desc_time()}},
+\code{\link[=tbl_fn_num]{tbl_fn_num()}},
+\code{\link[=tbl_fn_fac]{tbl_fn_fac()}}
+\code{\link[=ana_fn_aov]{ana_fn_aov()}},
+\code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
 }

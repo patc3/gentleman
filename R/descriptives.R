@@ -115,10 +115,10 @@ to_long <- function(df, repeated_vars)
 #' Internal, generic function to get summary table for numeric variables
 #'
 #' This function is a generic \code{tbl_fn} function to use with numeric variables when calling
-#' \code{get_desc_table()}.
+#' [get_desc_table()].
 #'
-#' This should be passed as \code{tbl_fn} when calling \code{get_desc}. If you want to create a custom
-#' \code{tbl_fn}, you should model it after this one.
+#' This should be passed as \code{tbl_fn} when calling [get_desc_table()].
+#' If you want to create a custom \code{tbl_fn}, you should model it after this one.
 #'
 #' @param df data.frame
 #' @param vars Vector of variable names
@@ -167,7 +167,6 @@ tbl_fn_num <- function(df, vars)
   # out
   return(tbl)
 }
-get_desc_num_summary_table <- tbl_fn_num # for backwards compatibility
 
 
 # get sig. test for difference between groups on numeric variables
@@ -176,7 +175,7 @@ get_desc_num_summary_table <- tbl_fn_num # for backwards compatibility
 #' This function computes p-values using ANOVA for each variable in \code{vars} and grouping variable
 #' specified in \code{group}
 #'
-#' This should be passed as \code{ana_fn} when calling \code{get_desc} with a \code{group} argument
+#' This should be passed as \code{ana_fn} when calling [get_desc_table()] with a \code{group} argument
 #' to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
 #'
 #' @param df data.frame
@@ -191,8 +190,10 @@ get_desc_num_summary_table <- tbl_fn_num # for backwards compatibility
 #' df |> ana_fn_aov("age", "TreatmentGroup")
 #' }
 #'
-#' @seealso [stats::aov()]
-ana_fn_aov <- function(df, vars, group)
+#' @seealso [stats::aov()], [gentleman::get_desc_table()]
+ana_fn_aov <- function(df,
+                       vars,
+                       group)
 {
   "
   use as ana_fn in get_desc_table() for numeric vars
@@ -221,9 +222,9 @@ ana_fn_aov <- function(df, vars, group)
 #' This function computes p-values using RM-ANOVA for each variable in \code{vars} and grouping (time) variable
 #' specified in \code{group}
 #'
-#' This should be passed as \code{ana_fn} when calling \code{get_desc} with \code{group} and \code{id}
+#' This should be passed as \code{ana_fn} when calling [get_desc_table()] with \code{group} and \code{id}
 #' arguments to obtain p-values. Alternatively, this is the \code{ana_fn} used in wrapper
-#' \code{get_desc_time} when data.frame is not yet in long format.
+#' [get_desc_time()] when data.frame is not yet in long format.
 #'
 #' @param df data.frame (in long format)
 #' @param vars Vector of variable names
@@ -239,8 +240,15 @@ ana_fn_aov <- function(df, vars, group)
 #'    to_long(list(score=c("y1", "y2"))) |>
 #'    ana_fn_rm_aov(vars="score", group="Time", id="id", add_cohen=TRUE)
 #'
-#' @seealso [gentleman::to_long()], [gentleman::get_desc_time()], [stats::aov()]
-ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
+#' @seealso [gentleman::to_long()],
+#' [gentleman::get_desc_table()],
+#' [gentleman::get_desc_time()],
+#' [stats::aov()]
+ana_fn_rm_aov <- function(df,
+                          vars,
+                          group,
+                          id,
+                          add_cohen=FALSE)
 {
   "
   use as ana_fn in get_desc_table() for numeric vars
@@ -307,9 +315,9 @@ ana_fn_rm_aov <- function(df, vars, group, id, add_cohen=FALSE)
 #' Internal, generic function to get summary table for factor variables
 #'
 #' This function is a generic \code{tbl_fn} function to use with factor variables when calling
-#' \code{get_desc_table()}.
+#' [get_desc_table()].
 #'
-#' This should be passed as \code{tbl_fn} when calling \code{get_desc}. If you want to create a custom
+#' This should be passed as \code{tbl_fn} when calling [get_desc_table()]. If you want to create a custom
 #' \code{tbl_fn}, you should model it after this one.
 #'
 #' @param df data.frame
@@ -370,7 +378,7 @@ tbl_fn_fac <- function(df, vars)
   # out
   return(tbl)
 }
-get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
+
 
 
 # get sig. test for difference between groups on factor (categorical) variables
@@ -379,7 +387,7 @@ get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
 #' This function computes p-values using Chi-square tests
 #' for each variable in \code{vars} and grouping variable specified in \code{group}
 #'
-#' This should be passed as \code{ana_fn} when calling \code{get_desc} with a \code{group} argument
+#' This should be passed as \code{ana_fn} when calling [get_desc_table()] with a \code{group} argument
 #' to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
 #'
 #' @param df data.frame
@@ -397,7 +405,11 @@ get_desc_fac_n_and_prop <- tbl_fn_fac # for backwards compatibility
 #' }
 #'
 #' @seealso [stats::chisq.test()]
-ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
+ana_fn_chisq <- function(df,
+                         vars,
+                         group,
+                         correct=FALSE,
+                         simulate.p.value=FALSE)
 {
   "
   use as ana_fn in get_desc_table() for categorical vars
@@ -430,13 +442,13 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #' some \code{ana_fn} function.
 #'
 #' @details
-#' For numeric variables, a natural choice is to use \code{tbl_fn=tbl_fn_num}, while for
-#' categorical variables, use \code{tbl_fn=tbl_fn_fac}. Alternatively, custom functions can be specified.
+#' For numeric variables, a natural choice is to use \code{tbl_fn=tbl_fn_num()}, while for
+#' categorical variables, use \code{tbl_fn=tbl_fn_fac()}. Alternatively, custom functions can be specified.
 #'
 #' If \code{group} is specified, you have the option of requesting p-values (or some other statistic)
-#' comparing groups. For numeric variables, a natural choice is \code{ana_fn=ana_fn_aov}, which
+#' comparing groups. For numeric variables, a natural choice is \code{ana_fn=ana_fn_aov()}, which
 #' computes p-values using analysis of variance. For factor variables, p-values can be obtained
-#' with Chi-square tests using \code{ana_fn=ana_fn_chisq}.
+#' with Chi-square tests using \code{ana_fn=ana_fn_chisq()}.
 #'
 #' @param df data.frame
 #' @param vars Vector of variable names
@@ -450,6 +462,7 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #'
 #' @examples
 #' \dontrun{
+#' # numeric variables
 #' df |> get_desc_table(
 #'     vars=c("age", "score"),
 #'     tbl_fn=tbl_fn_num,
@@ -457,6 +470,7 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #'     ana_fn=ana_fn_aov
 #' )
 #'
+#' # factor variables
 #' df |> get_desc_table(
 #'     vars=c("Nationality", "Diagnostic"),
 #'     tbl_fn=tbl_fn_fac,
@@ -465,9 +479,17 @@ ana_fn_chisq <- function(df, vars, group, correct=FALSE, simulate.p.value=FALSE)
 #' )
 #' }
 #'
-#' @seealso [gentleman::get_desc_time()], [gentleman::tbl_fn_num()], [gentleman::tbl_fn_fac()]
-#' [gentleman::ana_fn_aov()], [gentleman::ana_fn_chisq()]
-get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
+#' @seealso [gentleman::get_desc_time()],
+#' [gentleman::tbl_fn_num()],
+#' [gentleman::tbl_fn_fac()]
+#' [gentleman::ana_fn_aov()],
+#' [gentleman::ana_fn_chisq()]
+get_desc_table <- function(df,
+                           vars,
+                           tbl_fn,
+                           group=NULL,
+                           ana_fn=NULL,
+                           ...)
 {
   "
   input:
@@ -524,16 +546,16 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
 #' through repeated-measures ANOVA. The data.frame is provided in wide format.
 #'
 #' @details
-#' This function is a wrapper, pivoting a data.frame to long format with \code{to_long()}
-#' before calling \code{get_desc_table()} with \code{tbl_fn=tbl_fn_num}, \code{group="Time"},
-#' \code{ana_fn=ana_fn_rm_aov}, and \code{id="id"}. Currently there is no way to change
+#' This function is a wrapper, pivoting a data.frame to long format with [to_long()]
+#' before calling [get_desc_table()] with \code{tbl_fn=tbl_fn_num()}, \code{group="Time"},
+#' \code{ana_fn=ana_fn_rm_aov()}, and \code{id="id"}. Currently there is no way to change
 #' the analysis function.
 #'
 #' @param df data.frame
 #' @param repeated_vars Named list of variables to be pivoted to long format
-#' @param ... Additional named arguments passed to \code{ana_fn_rm_aov()}
+#' @param ... Additional named arguments passed to [ana_fn_rm_aov()]
 #'
-#' @return Table of descriptive statistics (output from \code{get_desc_table()})
+#' @return Table of descriptive statistics (output from [get_desc_table()])
 #' @export
 #'
 #' @examples
@@ -544,7 +566,9 @@ get_desc_table <- function(df, vars, tbl_fn, group=NULL, ana_fn=NULL, ...)
 #' df |> get_desc_time(v_repeated)
 #'
 #' @seealso [gentleman::get_desc_table()], [gentleman::to_long()], [gentleman::ana_fn_rm_aov()]
-get_desc_time <- function(df, repeated_vars, ...)
+get_desc_time <- function(df,
+                          repeated_vars,
+                          ...)
 {
   # pivot
   dflong <- df |> to_long(repeated_vars)
@@ -593,7 +617,9 @@ get_desc_time <- function(df, repeated_vars, ...)
 #'
 #' @examples
 #' df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
-compare_pairs_of_vars <- function(df, vars, order_output=TRUE)
+compare_pairs_of_vars <- function(df,
+                                  vars,
+                                  order_output=TRUE)
 {
   "
   input: df (filtered or not)

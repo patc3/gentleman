@@ -25,9 +25,9 @@ This function computes p-values using RM-ANOVA for each variable in \code{vars} 
 specified in \code{group}
 }
 \details{
-This should be passed as \code{ana_fn} when calling \code{get_desc} with \code{group} and \code{id}
+This should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}} with \code{group} and \code{id}
 arguments to obtain p-values. Alternatively, this is the \code{ana_fn} used in wrapper
-\code{get_desc_time} when data.frame is not yet in long format.
+\code{\link[=get_desc_time]{get_desc_time()}} when data.frame is not yet in long format.
 }
 \examples{
 df |>
@@ -36,5 +36,8 @@ df |>
 
 }
 \seealso{
-\code{\link[=to_long]{to_long()}}, \code{\link[=get_desc_time]{get_desc_time()}}, \code{\link[stats:aov]{stats::aov()}}
+\code{\link[=to_long]{to_long()}},
+\code{\link[=get_desc_table]{get_desc_table()}},
+\code{\link[=get_desc_time]{get_desc_time()}},
+\code{\link[stats:aov]{stats::aov()}}
 }

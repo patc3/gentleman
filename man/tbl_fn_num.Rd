@@ -16,11 +16,11 @@ Table of descriptive statistics
 }
 \description{
 This function is a generic \code{tbl_fn} function to use with numeric variables when calling
-\code{get_desc_table()}.
+\code{\link[=get_desc_table]{get_desc_table()}}.
 }
 \details{
-This should be passed as \code{tbl_fn} when calling \code{get_desc}. If you want to create a custom
-\code{tbl_fn}, you should model it after this one.
+This should be passed as \code{tbl_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}}.
+If you want to create a custom \code{tbl_fn}, you should model it after this one.
 }
 \examples{
 \dontrun{

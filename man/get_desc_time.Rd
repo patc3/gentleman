@@ -11,10 +11,10 @@ get_desc_time(df, repeated_vars, ...)
 
 \item{repeated_vars}{Named list of variables to be pivoted to long format}
 
-\item{...}{Additional named arguments passed to \code{ana_fn_rm_aov()}}
+\item{...}{Additional named arguments passed to \code{\link[=ana_fn_rm_aov]{ana_fn_rm_aov()}}}
 }
 \value{
-Table of descriptive statistics (output from \code{get_desc_table()})
+Table of descriptive statistics (output from \code{\link[=get_desc_table]{get_desc_table()}})
 }
 \description{
 This function returns a table of descriptive statistics for numeric variables
@@ -22,9 +22,9 @@ repeated over time (or otherwise repeated within subjects), with p-values calcul
 through repeated-measures ANOVA. The data.frame is provided in wide format.
 }
 \details{
-This function is a wrapper, pivoting a data.frame to long format with \code{to_long()}
-before calling \code{get_desc_table()} with \code{tbl_fn=tbl_fn_num}, \code{group="Time"},
-\code{ana_fn=ana_fn_rm_aov}, and \code{id="id"}. Currently there is no way to change
+This function is a wrapper, pivoting a data.frame to long format with \code{\link[=to_long]{to_long()}}
+before calling \code{\link[=get_desc_table]{get_desc_table()}} with \code{tbl_fn=tbl_fn_num()}, \code{group="Time"},
+\code{ana_fn=ana_fn_rm_aov()}, and \code{id="id"}. Currently there is no way to change
 the analysis function.
 }
 \examples{

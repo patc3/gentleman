@@ -39,7 +39,7 @@ List with elements:
 (may need to specify \code{at_x1} and/or \code{at_x2} values)}
 \item{contrasts}{Comparisons of (adjusted) \code{x1} means at each value of \code{x2}
 (may need to specify \code{at_x1} and/or \code{at_x2} values)}
-\item{plot}{Plot (from calling \code{emmeans::emmip()})}
+\item{plot}{Plot (\code{ggplot2} line graph using data from \code{emmeans::emmip()})}
 }
 }
 \description{
