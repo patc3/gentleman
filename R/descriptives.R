@@ -715,13 +715,14 @@ plot_density_by_groups <- function(df,
   if(is.null(vars)) vars <- names(df)
   vars <- vars[vars!=group]
 
+
   #### numeric vars
   v_num <- df |>
     select(all_of(vars)) |>
     select(where(is.numeric)) |>
-    sapply(\(c) c[!is.na(c)] |> unique() |> length() |> (`>=`)(min_values_to_treat_as_numeric)) |>
-    which() |>
-    names()
+    sapply(\(c) c[!is.na(c)] |> unique() |> length() |> (`>=`)(min_values_to_treat_as_numeric))
+  if(length(v_num)>0) v_num <- v_num |> which() |> names()
+
 
   #### one line per measure
   df_long <- df |>
