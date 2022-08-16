@@ -229,3 +229,73 @@ group_some_factor_levels <- function(df, map)
   return(df)
 
 }
+
+
+#### recoding & mapping ####
+#' Recode values using Excel map
+#'
+#' This function recodes values using a map located in an Excel sheet.
+#'
+#' @details
+#' The map should have two columns, one with original (find) values,
+#' one with replacement values. By default the function uses the first
+#' sheet in the Excel file specified in \code{path}, and uses the first
+#' column as the find column, and the second column as the replacement column.
+#' Named arguments can be passed to [readxl::read_excel()] via \code{...}
+#' for more complicated maps (e.g. custom cell range).
+#'
+#' If there is at least one value that does not have a match
+#' and \code{keep_original_when_no_match} has been requested,
+#' a warning will be thrown with the list of values that could not be matched.
+#'
+#' @param values values to be recoded
+#' @param path (character) path to the excel file
+#' @param sheet (numeric or character) sheet number or name where the map is
+#' @param col_find (numeric or character) column number or name
+#' where original values are
+#' @param col_replace (numeric or character) column number or name
+#' where replacement values are
+#' @param keep_original_when_no_match (logical) whether to retain original
+#' (instead of missing) when no match is found (default is \code{FALSE})
+#' @param ... additional named arguments passed to [readxl::read_excel()]
+#' (like \code{range} or \code{na})
+#'
+#' @return \code{values} recoded
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df$Nationality <- df$Nationality |>
+#'    recode_using_excel_map("map.xlsx", sheet="Nationality")
+#' }
+recode_using_excel_map <- function(values,
+                                   path,
+                                   sheet=1,
+                                   col_find=1,
+                                   col_replace=2,
+                                   keep_original_when_no_match=FALSE,
+                                   ...)
+{
+  # map
+  map <- readxl::read_excel(path=path,
+                            sheet=sheet,
+                            ...) |> as.data.frame()
+  i <- values |> match(map[,col_find])
+  new_values <- map[i,col_replace]
+
+  # in case of NA: retain original name
+  if(keep_original_when_no_match)
+  {
+    i_NA <- new_values |> is.na() |> which()
+    if(length(i_NA)>0)
+    {
+      new_values[i_NA] <- values[i_NA]
+      warning("Unchanged values (not found in map):\n" |>
+                paste(values[i_NA] |> paste(collapse="\n")), sep="\n")
+    }
+  }
+
+  # out
+  new_values
+
+}

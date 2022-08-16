@@ -21,4 +21,5 @@
 #' @importFrom stats aov formula as.formula chisq.test contr.treatment lm na.pass sd setNames t.test
 #' @importFrom utils combn write.csv2 write.table
 #' @importFrom emmeans emmeans emtrends contrast emmip
+#' @importFrom readxl read_excel
 "_PACKAGE"
