@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataprep.R
 \name{recode_using_excel_map}
 \alias{recode_using_excel_map}
-\title{Recode values using Excel map}
+\title{Recode values using Excel map (lookup table)}
 \usage{
 recode_using_excel_map(
   values,
@@ -10,6 +10,7 @@ recode_using_excel_map(
   sheet = 1,
   col_find = 1,
   col_replace = 2,
+  first_row_is_header = TRUE,
   keep_original_when_no_match = FALSE,
   ...
 )
@@ -27,8 +28,11 @@ where original values are}
 \item{col_replace}{(numeric or character) column number or name
 where replacement values are}
 
+\item{first_row_is_header}{(logical) whether the first row
+is column names (default \code{TRUE})}
+
 \item{keep_original_when_no_match}{(logical) whether to retain original
-(instead of missing) when no match is found (default is \code{FALSE})}
+value when no match is found (otherwise will be \code{NA}; default \code{FALSE})}
 
 \item{...}{additional named arguments passed to \code{\link[readxl:read_excel]{readxl::read_excel()}}
 (like \code{range} or \code{na})}
@@ -37,14 +41,15 @@ where replacement values are}
 \code{values} recoded
 }
 \description{
-This function recodes values using a map located in an Excel sheet.
+This function recodes values using a map (lookup table) located in an Excel sheet.
 }
 \details{
-The map should have two columns, one with original (find) values,
+The map should have at least two columns, one with original (find) values,
 one with replacement values. By default the function uses the first
-sheet in the Excel file specified in \code{path}, and uses the first
-column as the find column, and the second column as the replacement column.
-Named arguments can be passed to \code{\link[readxl:read_excel]{readxl::read_excel()}} via \code{...}
+sheet in the Excel file specified in \code{path}; it uses the first
+column as the find column, and the second column as the replacement column;
+and it assumes the first row is a header (column names).
+Additional named arguments can be passed to \code{\link[readxl:read_excel]{readxl::read_excel()}} via \code{...}
 for more complicated maps (e.g. custom cell range).
 
 If there is at least one value that does not have a match
