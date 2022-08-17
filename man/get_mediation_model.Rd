@@ -4,7 +4,7 @@
 \alias{get_mediation_model}
 \title{Generate lavaan syntax for mediation model}
 \usage{
-get_mediation_model(x = c("x1", "x2"), med = c("m1", "m2"), y = c("y1", "y2"))
+get_mediation_model(x, med, y)
 }
 \arguments{
 \item{x}{Vector of predictor (x) variable names}

@@ -17,7 +17,7 @@
 #' get_mediation_model("x1", "x2", "x3") |>
 #'    sem(df) |>
 #'    summary()
-get_mediation_model <- function(x=c("x1", "x2"), med=c("m1", "m2"), y=c("y1", "y2"))
+get_mediation_model <- function(x, med, y)
 {
   # structural model
   i_m <- 1:length(med)
