@@ -327,7 +327,7 @@ decompose_interaction <- function(model,
 #' @param v_cluster variables used to compute Gower distances between rows (if \code{NULL}, use all)
 #' @param k number of clusters (if \code{NULL}, determined optimally; see Details)
 #'
-#' @return (numeric) vector of cluster assignment (0 to k-1)
+#' @return (factor) vector of cluster assignments (0 to k-1)
 #' @export
 #'
 #' @examples
@@ -357,7 +357,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
   pr$clustering |> table() |> print()
 
   # cluster assignment
-  pr$clustering - 1 # - 1 so that 0/1 when 2 clusters
+  (pr$clustering - 1) |> factor() # - 1 so that 0/1 when 2 clusters
 
 }
 

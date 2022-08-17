@@ -14,7 +14,7 @@ get_cluster(df, v_cluster = NULL, k = NULL)
 \item{k}{number of clusters (if \code{NULL}, determined optimally; see Details)}
 }
 \value{
-(numeric) vector of cluster assignment (0 to k-1)
+(factor) vector of cluster assignments (0 to k-1)
 }
 \description{
 This function assigns each row of a data.frame to a cluster based on the Gower distance matrix,
