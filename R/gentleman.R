@@ -22,4 +22,6 @@
 #' @importFrom utils combn write.csv2 write.table
 #' @importFrom emmeans emmeans emtrends contrast emmip
 #' @importFrom readxl read_excel
+#' @importFrom cluster daisy pam
+#' @importFrom NbClust NbClust
 "_PACKAGE"

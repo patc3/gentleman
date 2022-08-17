@@ -666,6 +666,71 @@ compare_pairs_of_vars <- function(df,
 }
 
 
+#### group differences ####
+#' Get variables for which a group difference exists
+#'
+#' This function returns a vector of variable names for which
+#' there is a significant difference between a certain group variable.
+#'
+#' @details
+#' Group differences are tested using ANOVA (for numeric test variables) or
+#' Chi-square (for categorical test variables) using [get_desc_table()].
+#' Significant differences are determined using the threshold \code{p < .05}.
+#'
+#' @param df data.frame
+#' @param test_vars (character) vector of variable names to test for differences
+#' (if \code{NULL}, all vars)
+#' @param group (character) name of grouping variable
+#'
+#' @return (character) vector of test variables for which there is a significant difference
+#' between groups
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df |> get_sig_differences_between_groups(c("Age", "Nationality"), group="Gender")
+#' }
+get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
+{
+  # test vars
+  if(is.null(test_vars)) test_vars <- (.n <- df |> names())[.n!=group]
+
+  # reverse: pred ~ cluster
+  v_cluster_num <- df |>
+    select(all_of(test_vars)) |>
+    select_if(~is.numeric(.x) & ((.x[!is.na(.x)]) |> unique() |> length())>2) |>
+    names()
+  v_cluster_fac <- test_vars |> setdiff(v_cluster_num)
+
+  ana <- list()
+  if(length(v_cluster_num)>0) ana$num <- get_desc_table(
+    df=df,
+    vars=v_cluster_num,
+    tbl_fn=tbl_fn_num,
+    group=group,
+    ana_fn=ana_fn_aov
+  )
+
+  if(length(v_cluster_fac)>0) ana$fac <- get_desc_table(
+    df=df,
+    vars=v_cluster_fac,
+    tbl_fn=tbl_fn_fac,
+    group=group,
+    ana_fn=ana_fn_chisq
+  )
+
+  # which are sig
+  sig <- ana |> lapply(\(l)l$p |> substrRight(4) |> as.numeric() |> na.omit() |> sapply(\(p)p<.05))
+
+  v_cluster <- v_cluster_num[sig$num] |> c(v_cluster_fac[sig$fac])
+
+  # out
+  v_cluster
+}
+
+
+
+
 #### plots ####
 
 

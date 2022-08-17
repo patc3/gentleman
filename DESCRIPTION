@@ -20,10 +20,12 @@ LazyData: true
 Imports: 
     broom, 
     dplyr, 
+    cluster, 
     emmeans, 
     fastDummies, 
     ggplot2, 
     lavaan, 
+    NbClust, 
     readxl,
     stats, 
     tibble, 

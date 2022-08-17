@@ -134,6 +134,24 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 }
 
 
+#' Substring character from the right side
+#'
+#' This function returns the nth last characters of a string
+#'
+#' @param x character
+#' @param n number of digits to extract starting from the right
+#'
+#' @return last \code{n}th character of \code{x}
+#' @export
+#'
+#' @examples
+#' vars <- c("Gender.x", "Gender.y")
+#' vars |> substrRight(1)
+substrRight <- function(x, n){
+  substr(x, nchar(x)-n+1, nchar(x))
+}
+
+
 
 #### lists ####
 # helper fn: make named list into dataframe

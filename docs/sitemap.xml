@@ -16,7 +16,7 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/reference/add_group_key_to_desc_tbl.html</loc>
+    <loc>/reference/add_cluster_assignment.html</loc>
   </url>
   <url>
     <loc>/reference/ana_fn_aov.html</loc>
@@ -61,6 +61,9 @@
     <loc>/reference/get_all_pairs_with_op.html</loc>
   </url>
   <url>
+    <loc>/reference/get_cluster.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_crosslagged_model.html</loc>
   </url>
   <url>
@@ -71,6 +74,9 @@
   </url>
   <url>
     <loc>/reference/get_mediation_model.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_sig_differences_between_groups.html</loc>
   </url>
   <url>
     <loc>/reference/get_sig_effects_from_pub_table.html</loc>
@@ -110,6 +116,9 @@
   </url>
   <url>
     <loc>/reference/scale_and_combine.html</loc>
+  </url>
+  <url>
+    <loc>/reference/substrRight.html</loc>
   </url>
   <url>
     <loc>/reference/tbl_fn_fac.html</loc>
