@@ -16,9 +16,9 @@ compare_pairs_of_vars(df, vars, order_output = TRUE)
 \value{
 List with two matrices:
 \describe{
-\item{\code{p_uncorrected}}{Matrix of (unadjusted) p-values}
-\item{\code{subsets}}{Matrix indicating whether each pair of variables are
-part of the same subset (indicated by "SAMESET") or are otherwise not significantly
+\item{p_uncorrected}{Matrix of (unadjusted) p-values}
+\item{subsets}{Matrix indicating whether each pair of variables are
+part of the same subset (indicated by "SAMESET") or are instead significantly
 different (blank entry) following a Bonferroni correction}
 }
 }
