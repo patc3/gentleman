@@ -49,7 +49,7 @@ and an arbitrary number of repeated assessments."><!-- mathjax --><script src="h
     </div>
 
     <div class="ref-description">
-    <p>This function generates the lavaan syntax for a cross-lagged panel model (CLPM).
+    <p>This function generates the <span class="pkg">lavaan</span> syntax for a cross-lagged panel model (CLPM).
 With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
 model (RI-CLPM). The function takes an arbitrary number of different variables,
 and an arbitrary number of repeated assessments.</p>
@@ -66,14 +66,30 @@ and an arbitrary number of repeated assessments.</p>
 
 
 <dt>random_intercepts</dt>
-<dd><p>(logical) Whether to add random-intercepts (RI-CLPM model)</p></dd>
+<dd><p>(logical) Whether to add random intercepts (RI-CLPM model)</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
     
 
-<p>Character value to be used with lavaan as model syntax</p>
+<p>Character value to be used with <span class="pkg">lavaan</span> as model syntax</p>
+    </div>
+    <div id="details">
+    <h2>Details</h2>
+    <p>The RI-CLPM model requires a minimum of 3 assessments, and is described in
+Hamaker et al (2015).
+The corresponding model syntax is based on Mulder &amp; Hamaker (2021).</p>
+    </div>
+    <div id="references">
+    <h2>References</h2>
+    <p>Hamaker, E. L., Kuiper, R. M., &amp; Grasman, R. P. P. P. (2015).
+A critique of the cross-lagged panel model. <em>Psychological Methods</em>,
+<em>20</em>, 102-116.</p>
+<p>Mulder, J. D., &amp; Hamaker, E. L. (2021).
+Three extensions of the random intercept cross-lagged panel model.
+<em>Structural Equation Modeling: A Multidisciplinary Journal</em>.
+<a href="https://doi.org/10.1080/10705511.2020.1784738" class="external-link">https://doi.org/10.1080/10705511.2020.1784738</a>.</p>
     </div>
 
     <div id="ref-examples">
@@ -139,6 +155,7 @@ and an arbitrary number of repeated assessments.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .y2                0.331    0.021   15.811    0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    .y3                0.327    0.021   15.811    0.000</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </div>

@@ -14,10 +14,10 @@ get_mediation_model(x, med, y)
 \item{y}{Vector of outcome (y) variable names}
 }
 \value{
-Character value to be used with lavaan as model syntax
+Character value to be used with \pkg{lavaan} as model syntax
 }
 \description{
-This function generates the lavaan syntax for a mediation model. The model can
+This function generates the \pkg{lavaan} syntax for a mediation model. The model can
 take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 }
 \examples{

@@ -73,21 +73,12 @@ and provides means, pairwise comparisons, and a plot.</p>
 <dd><p>data.frame or NULL if <code>model</code> has <code>model$model</code></p></dd>
 
 
-<dt>x1</dt>
+<dt>x1, x2</dt>
 <dd><p>(character) variable name</p></dd>
 
 
-<dt>x2</dt>
-<dd><p>(character) variable name</p></dd>
-
-
-<dt>at_x1</dt>
-<dd><p>(numeric or character vector) <code>x1</code> values at which to calculate
-and compare means (if <code>NULL</code>, all unique values)</p></dd>
-
-
-<dt>at_x2</dt>
-<dd><p>(numeric or character vector) <code>x2</code> values at which to calculate
+<dt>at_x1, at_x2</dt>
+<dd><p>(numeric or character vector) <code>x1</code> and <code>x2</code> values at which to calculate
 and compare means (if <code>NULL</code>, all unique values)</p></dd>
 
 
@@ -117,7 +108,7 @@ and compare means (if <code>NULL</code>, all unique values)</p></dd>
 </dl></div>
     <div id="details">
     <h2>Details</h2>
-    <p>This function uses the facilities provided by the library <code>emmeans</code>, and
+    <p>This function uses the facilities provided by the library <span class="pkg">emmeans</span>, and
 follows the procedure outlined by
 <a href="https://stats.oarc.ucla.edu/r/seminars/interactions-r/" class="external-link">UCLA OARC Statistical and Data Analytics</a>.
 It might be helpful to execute the function with x1 and x2 inverted, and see which

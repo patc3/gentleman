@@ -19,14 +19,9 @@ decompose_interaction(
 
 \item{df}{data.frame or NULL if \code{model} has \code{model$model}}
 
-\item{x1}{(character) variable name}
+\item{x1, x2}{(character) variable name}
 
-\item{x2}{(character) variable name}
-
-\item{at_x1}{(numeric or character vector) \code{x1} values at which to calculate
-and compare means (if \code{NULL}, all unique values)}
-
-\item{at_x2}{(numeric or character vector) \code{x2} values at which to calculate
+\item{at_x1, at_x2}{(numeric or character vector) \code{x1} and \code{x2} values at which to calculate
 and compare means (if \code{NULL}, all unique values)}
 
 \item{ci}{(logical) Whether to plot confidence intervals}
@@ -47,7 +42,7 @@ This function decomposes a 2-way x1*x2 interaction into simple effects,
 and provides means, pairwise comparisons, and a plot.
 }
 \details{
-This function uses the facilities provided by the library \code{emmeans}, and
+This function uses the facilities provided by the library \pkg{emmeans}, and
 follows the procedure outlined by
 \href{https://stats.oarc.ucla.edu/r/seminars/interactions-r/}{UCLA OARC Statistical and Data Analytics}.
 It might be helpful to execute the function with x1 and x2 inverted, and see which

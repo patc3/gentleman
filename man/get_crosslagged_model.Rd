@@ -9,16 +9,21 @@ get_crosslagged_model(vars_list, random_intercepts = FALSE)
 \arguments{
 \item{vars_list}{List of vectors of variable names of length t (number of repeated assessments)}
 
-\item{random_intercepts}{(logical) Whether to add random-intercepts (RI-CLPM model)}
+\item{random_intercepts}{(logical) Whether to add random intercepts (RI-CLPM model)}
 }
 \value{
-Character value to be used with lavaan as model syntax
+Character value to be used with \pkg{lavaan} as model syntax
 }
 \description{
-This function generates the lavaan syntax for a cross-lagged panel model (CLPM).
+This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
 With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
 model (RI-CLPM). The function takes an arbitrary number of different variables,
 and an arbitrary number of repeated assessments.
+}
+\details{
+The RI-CLPM model requires a minimum of 3 assessments, and is described in
+Hamaker et al (2015).
+The corresponding model syntax is based on Mulder & Hamaker (2021).
 }
 \examples{
 library(lavaan)
@@ -29,4 +34,15 @@ vars <- list(
 get_crosslagged_model(vars) |>
    sem(df) |>
    summary()
+
+}
+\references{
+Hamaker, E. L., Kuiper, R. M., & Grasman, R. P. P. P. (2015).
+A critique of the cross-lagged panel model. \emph{Psychological Methods},
+\emph{20}, 102-116.
+
+Mulder, J. D., & Hamaker, E. L. (2021).
+Three extensions of the random intercept cross-lagged panel model.
+\emph{Structural Equation Modeling: A Multidisciplinary Journal}.
+\url{https://doi.org/10.1080/10705511.2020.1784738}.
 }

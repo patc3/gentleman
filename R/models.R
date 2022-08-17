@@ -2,14 +2,14 @@
 # generate lavaan model string for mediation model
 #' Generate lavaan syntax for mediation model
 #'
-#' This function generates the lavaan syntax for a mediation model. The model can
+#' This function generates the \pkg{lavaan} syntax for a mediation model. The model can
 #' take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 #'
 #' @param x Vector of predictor (x) variable names
 #' @param med Vector of mediator (m) variable names
 #' @param y Vector of outcome (y) variable names
 #'
-#' @return Character value to be used with lavaan as model syntax
+#' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
 #'
 #' @examples
@@ -82,15 +82,20 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 # generate lavaan model string from list of variables
 #' Generate lavaan syntax for cross-lagged model
 #'
-#' This function generates the lavaan syntax for a cross-lagged panel model (CLPM).
+#' This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
 #' With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
 #' model (RI-CLPM). The function takes an arbitrary number of different variables,
 #' and an arbitrary number of repeated assessments.
 #'
-#' @param vars_list List of vectors of variable names of length t (number of repeated assessments)
-#' @param random_intercepts (logical) Whether to add random-intercepts (RI-CLPM model)
+#' @details
+#' The RI-CLPM model requires a minimum of 3 assessments, and is described in
+#' Hamaker et al (2015).
+#' The corresponding model syntax is based on Mulder & Hamaker (2021).
 #'
-#' @return Character value to be used with lavaan as model syntax
+#' @param vars_list List of vectors of variable names of length t (number of repeated assessments)
+#' @param random_intercepts (logical) Whether to add random intercepts (RI-CLPM model)
+#'
+#' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
 #'
 #' @examples
@@ -102,6 +107,16 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 #' get_crosslagged_model(vars) |>
 #'    sem(df) |>
 #'    summary()
+#'
+#' @references
+#' Hamaker, E. L., Kuiper, R. M., & Grasman, R. P. P. P. (2015).
+#' A critique of the cross-lagged panel model. \emph{Psychological Methods},
+#' \emph{20}, 102-116.
+#'
+#' Mulder, J. D., & Hamaker, E. L. (2021).
+#' Three extensions of the random intercept cross-lagged panel model.
+#' \emph{Structural Equation Modeling: A Multidisciplinary Journal}.
+#' \url{https://doi.org/10.1080/10705511.2020.1784738}.
 get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 {
   "
@@ -220,7 +235,7 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' and provides means, pairwise comparisons, and a plot.
 #'
 #' @details
-#' This function uses the facilities provided by the library \code{emmeans}, and
+#' This function uses the facilities provided by the library \pkg{emmeans}, and
 #' follows the procedure outlined by
 #' [UCLA OARC Statistical and Data Analytics](https://stats.oarc.ucla.edu/r/seminars/interactions-r/).
 #' It might be helpful to execute the function with x1 and x2 inverted, and see which
@@ -232,11 +247,8 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #'
 #' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
 #' @param df data.frame or NULL if \code{model} has \code{model$model}
-#' @param x1 (character) variable name
-#' @param x2 (character) variable name
-#' @param at_x1 (numeric or character vector) \code{x1} values at which to calculate
-#' and compare means (if \code{NULL}, all unique values)
-#' @param at_x2 (numeric or character vector) \code{x2} values at which to calculate
+#' @param x1,x2 (character) variable name
+#' @param at_x1,at_x2 (numeric or character vector) \code{x1} and \code{x2} values at which to calculate
 #' and compare means (if \code{NULL}, all unique values)
 #' @param ci (logical) Whether to plot confidence intervals
 #'
