@@ -1,3 +1,35 @@
+#### types & classes ####
+#' Cast variables of one type to another
+#'
+#' @param df data.frame
+#' @param type_from original type (a class from [base::inherits()])
+#' @param type_to new type (from calling \code{as.*})
+#' @param vars (character) vector of variable names to change
+#' if they are of type \code{type_from} (if \code{NULL}, use all)
+#'
+#' @return data.frame with types changed
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df |>
+#'    cast("numeric", "factor") |>
+#'    get_desc_table(c("Age", "Nationality"), tbl_fn=tbl_fn_fac)
+#' }
+cast <- function(df, type_from, type_to, vars=NULL)
+{
+  if(is.null(vars)) vars <- names(df)
+  v <- df[vars] |> sapply(\(x) inherits(x, type_from))
+  v <- names(v)[which(v)]
+  for(c in v) df[,c] <- do.call(paste0("as.", type_to), list(df[,c]))
+
+  # out
+  print(paste0("Made these variables from ", type_from, " to ", type_to, ":"))
+  print(v)
+  return(df)
+}
+
+
 #### scale & combine ####
 # generic fn: combine numeric vars into one on same scale (z)
 #' Combine numeric variables into one
