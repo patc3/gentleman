@@ -146,26 +146,38 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 #'
 #' @examples
 #' vars <- c("Gender.x", "Gender.y")
-#' vars |> substrRight(1)
-substrRight <- function(x, n){
-  substr(x, nchar(x)-n+1, nchar(x))
+#' vars |> substr_right(1)
+substr_right <- function(x, n){
+  n_char <- nchar(x)
+  substr(x, n_char-n+1, n_char)
 }
 
 
 
 #### lists ####
 # helper fn: make named list into dataframe
-#' Combine rows of named list of 2-column data.frames
+#' Combine rows of named list of data.frames
 #'
 #' This function is an internal, helper function used by \code{ana_fn} functions
-#' to combine p-values across several variables.
+#' to combine p-values (and other group statistics) across several variables.
+#'
+#' @details
+#' This function uses [base::rbind()] to combine the data.frames in \code{list},
+#' which requires the data.frames to have the same number of columns.
 #'
 #' @param list Named list of data.frames
 #' @param index Variable name to store data.frame names
-#' @param value Variable name for value stored in each data.frame (in ana_fn functions, typically a p-value)
+#' @param value Variable name(s) for value(s) stored in each data.frame (in ana_fn functions, typically a p-value)
 #'
-#' @return data.frame with combined rows and 2 columns
+#' @return data.frame
 #' @export
+#'
+#' @examples
+#' l <- list(
+#'    Gender=data.frame(p=.964),
+#'    Nationality=data.frame(p=.009)
+#' )
+#' l |> make_df_from_named_list()
 #'
 #' @seealso [gentleman::ana_fn_aov()], [gentleman::ana_fn_rm_aov()], [gentleman::ana_fn_chisq()]
 make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1:length(list[[1]])))

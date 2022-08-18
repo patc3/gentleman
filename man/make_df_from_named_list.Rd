@@ -2,7 +2,7 @@
 % Please edit documentation in R/helpers.R
 \name{make_df_from_named_list}
 \alias{make_df_from_named_list}
-\title{Combine rows of named list of 2-column data.frames}
+\title{Combine rows of named list of data.frames}
 \usage{
 make_df_from_named_list(
   list,
@@ -15,14 +15,26 @@ make_df_from_named_list(
 
 \item{index}{Variable name to store data.frame names}
 
-\item{value}{Variable name for value stored in each data.frame (in ana_fn functions, typically a p-value)}
+\item{value}{Variable name(s) for value(s) stored in each data.frame (in ana_fn functions, typically a p-value)}
 }
 \value{
-data.frame with combined rows and 2 columns
+data.frame
 }
 \description{
 This function is an internal, helper function used by \code{ana_fn} functions
-to combine p-values across several variables.
+to combine p-values (and other group statistics) across several variables.
+}
+\details{
+This function uses \code{\link[base:cbind]{base::rbind()}} to combine the data.frames in \code{list},
+which requires the data.frames to have the same number of columns.
+}
+\examples{
+l <- list(
+   Gender=data.frame(p=.964),
+   Nationality=data.frame(p=.009)
+)
+l |> make_df_from_named_list()
+
 }
 \seealso{
 \code{\link[=ana_fn_aov]{ana_fn_aov()}}, \code{\link[=ana_fn_rm_aov]{ana_fn_rm_aov()}}, \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}

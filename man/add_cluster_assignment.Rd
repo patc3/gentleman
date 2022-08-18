@@ -18,7 +18,7 @@ add_cluster_assignment(
 
 \item{v_cluster}{(character) vector of variable names to use in clustering (if \code{NULL}, use all)}
 
-\item{k}{(numeric) number of clusters}
+\item{k}{(numeric) number of clusters (if \code{NULL}, determined optimally; see \code{\link[=get_cluster]{get_cluster()}})}
 
 \item{maxit}{(numeric) maximum number of iterations to select significant outcomes of clusters}
 

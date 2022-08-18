@@ -382,7 +382,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #'
 #' @param df data.frame
 #' @param v_cluster (character) vector of variable names to use in clustering (if \code{NULL}, use all)
-#' @param k (numeric) number of clusters
+#' @param k (numeric) number of clusters (if \code{NULL}, determined optimally; see [get_cluster()])
 #' @param maxit (numeric) maximum number of iterations to select significant outcomes of clusters
 #' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
 #' variables and cluster assignment (default \code{FALSE})
