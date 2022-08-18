@@ -1,16 +1,8 @@
 logtext <- function(expr,
-                    logger=NULL,
-                    dir=getwd(),
-                    fname=NULL,
-                    silent=FALSE)
+                    logger=get_logger(add_git_info = FALSE, init_log_file = FALSE),
+                    silent=FALSE,
+                    return_logger=FALSE)
 {
-  if(is.null(logger))
-  {
-    logger <- list()
-    if(!file.exists(dir)) stop("dir doesn't exist")
-    if (is.null(fname)) fname <- gsub(".*?([0-9]+).*?", "\\1", Sys.time())
-    logger <- logger |> c(fname=fname, dir=dir)
-  }
   fpath <- paste0(logger$dir,"/",logger$fname,".txt")
   sink(file=fpath, append=TRUE)
   cat("________________________ beginning output ________________________\n\n")
@@ -18,7 +10,13 @@ logtext <- function(expr,
   cat("________________________ end output ________________________\n\n\n\n")
   sink()
   if(!silent) print(paste0("Log file at ", fpath))
+  if(return_logger) return(logger)
 }
+
+
+
+
+
 
 get_git_commit <- function(dir=getwd())
 {
@@ -45,18 +43,39 @@ get_git_commit <- function(dir=getwd())
   files_content
 }
 
-get_logger <- function(dir=getwd(), init_log_file=TRUE)
-{
-  if(!file.exists(dir)) stop("dir doesn't exist")
-  gitcommit <- get_git_commit(dir)
-  logger <- list(
-    fname=paste(gitcommit$SHA, gsub(".*?([0-9]+).*?", "\\1", Sys.time()), sep="_"),
-    dir=dir,
-    gitcommit=gitcommit
-  )
 
+
+
+
+get_logger <- function(dir=getwd(),
+                       fname=NULL,
+                       add_git_info=TRUE,
+                       init_log_file=TRUE)
+{
+  # set up logger
+  logger <- list()
+  if(!file.exists(dir)) stop("dir doesn't exist")
+  if(is.null(fname)) fname <- gsub(".*?([0-9]+).*?", "\\1", Sys.time())
+  logger <- logger |> c(fname=fname, dir=dir)
+
+  # add git?
+  if(add_git_info)
+  {
+    logger$gitcommit <- get_git_commit(dir)
+    logger$fname <- logger$gitcommit$SHA |> paste(logger$fname, sep="_")
+  }
+
+  # init log?
   if(init_log_file) logger |> logtext(expr=print(logger))
+
+  # class
+  class(logger) <- "gentleman.logger" |> c(class(logger))
 
   # out
   logger
 }
+
+
+
+
+
