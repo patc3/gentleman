@@ -44,4 +44,8 @@ write console output to a log file on disk.
 logger <- get_logger()
 logger |> logtext(expr=print("hello world!"))
 }
+
+}
+\seealso{
+\code{\link[=logtext]{logtext()}}, \code{\link[=get_git_commit]{get_git_commit()}}
 }

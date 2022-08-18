@@ -3,6 +3,15 @@
 #' This function outputs (sinks) the console to
 #' a text file on disk.
 #'
+#' @details
+#' This function uses [base::sink()] to output the console
+#' to a text file. The directory \emph{gentleman_logs/} will
+#' be created in the logger's directory if it doesn't already exist.
+#'
+#' \strong{If the expressions in \code{expr} fail,} console output will
+#' continue to be written to the log until \code{sink()} is manually
+#' executed.
+#'
 #' @param expr R expression(s) to output to text file
 #' @param logger logger object from [get_logger()]
 #' (default will create a new logger)
@@ -26,17 +35,21 @@
 #'   lm(y1 ~ x1 + x2 + x3, df) |> summary() |> print()
 #' })
 #' }
+#'
+#' @seealso [get_logger()], [base::sink()]
 logtext <- function(expr,
                     logger=get_logger(add_git_info = FALSE,
                                       init_log_file = FALSE),
                     silent=FALSE,
                     return_logger=FALSE)
 {
-  fpath <- paste0(logger$dir,"/",logger$fname,".txt")
+  dir <- logger$dir |> paste0("/gentleman_logs/")
+  if(!dir.exists(dir)) dir.create(dir)
+  fpath <- paste0(dir,logger$fname,".txt")
   sink(file=fpath, append=TRUE)
-  cat("________________________ beginning output ________________________\n\n")
+  cat("________________________" |> paste(Sys.time(), "beginning output ________________________\n\n"))
   expr
-  cat("________________________ end output ________________________\n\n\n\n")
+  cat("________________________" |> paste(Sys.time(), "end output ________________________\n\n\n\n"))
   sink()
   if(!silent) print(paste0("Log file at ", fpath))
   if(return_logger) return(logger)
@@ -66,6 +79,8 @@ logtext <- function(expr,
 #' \dontrun{
 #' get_git_commit()
 #' }
+#'
+#' @seealso [get_logger()], [logtext()]
 get_git_commit <- function(dir=getwd())
 {
   dir <- paste0(dir, "/.git/")
@@ -123,6 +138,8 @@ get_git_commit <- function(dir=getwd())
 #' logger <- get_logger()
 #' logger |> logtext(expr=print("hello world!"))
 #' }
+#'
+#' @seealso [logtext()], [get_git_commit()]
 get_logger <- function(dir=getwd(),
                        fname=NULL,
                        add_git_info=TRUE,

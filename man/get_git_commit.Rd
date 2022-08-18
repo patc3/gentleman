@@ -25,4 +25,8 @@ git commit information in a specified repository directory.
 \dontrun{
 get_git_commit()
 }
+
+}
+\seealso{
+\code{\link[=get_logger]{get_logger()}}, \code{\link[=logtext]{logtext()}}
 }

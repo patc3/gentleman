@@ -30,6 +30,15 @@ Sinks output to text file, and returns logger object if requested
 This function outputs (sinks) the console to
 a text file on disk.
 }
+\details{
+This function uses \code{\link[base:sink]{base::sink()}} to output the console
+to a text file. The directory \emph{gentleman_logs/} will
+be created in the logger's directory if it doesn't exist.
+
+\strong{If the expressions in \code{expr} fail,} console output will
+continue to be written to the log until \code{sink()} is manually
+executed.
+}
 \examples{
 \dontrun{
 logtext(print("Hello world!"))
@@ -42,4 +51,8 @@ logger |> logtext(expr={
   lm(y1 ~ x1 + x2 + x3, df) |> summary() |> print()
 })
 }
+
+}
+\seealso{
+\code{\link[=get_logger]{get_logger()}}, \code{\link[base:sink]{base::sink()}}
 }
