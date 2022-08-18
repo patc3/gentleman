@@ -719,7 +719,7 @@ get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
   sig <- ana |> lapply(\(l)l$p |>
                          substr_right(4) |>
                          as.numeric() |>
-                         sapply(\(p)p<.05) |>
+                         (`<`)(.05) |>
                          replace_na(FALSE))
 
   v_cluster <- v_cluster_num[sig$num] |> c(v_cluster_fac[sig$fac])
