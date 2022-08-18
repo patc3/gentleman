@@ -694,6 +694,7 @@ get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
 {
   # test vars
   if(is.null(test_vars)) test_vars <- (.n <- df |> names())[.n!=group]
+  if(!all(c(test_vars, group) %in% names(df))) stop("Some variable(s) not in df")
 
   # reverse: pred ~ cluster
   v_cluster_num <- df |>
