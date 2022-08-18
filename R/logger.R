@@ -1,5 +1,34 @@
+#' Log text output to text file
+#'
+#' This function outputs (sinks) the console to
+#' a text file on disk.
+#'
+#' @param expr R expression(s) to output to text file
+#' @param logger logger object from [get_logger()]
+#' (default will create a new logger)
+#' @param silent (logical) whether to print file path to
+#' console after logging (default \code{TRUE})
+#' @param return_logger (logical) whether to return the
+#' logger object (useful if no initial logger object was passed)
+#'
+#' @return Sinks output to text file, and returns logger object if requested
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' logtext(print("Hello world!"))
+#'
+#' logger <- get_logger()
+#' logger |> logtext(expr={
+#'   print("model without covariates:")
+#'   lm(y1 ~ x1, df) |> summary() |> print()
+#'   print("model with covariates")
+#'   lm(y1 ~ x1 + x2 + x3, df) |> summary() |> print()
+#' })
+#' }
 logtext <- function(expr,
-                    logger=get_logger(add_git_info = FALSE, init_log_file = FALSE),
+                    logger=get_logger(add_git_info = FALSE,
+                                      init_log_file = FALSE),
                     silent=FALSE,
                     return_logger=FALSE)
 {
@@ -18,6 +47,25 @@ logtext <- function(expr,
 
 
 
+#' Retrieve current git commit information
+#'
+#' This function retrieves the information about the current (latest)
+#' git commit information in a specified repository directory.
+#'
+#' @param dir path to repository directory (default current directory)
+#'
+#' @return list with elements:
+#' \describe{
+#' \item{HEAD}{Contents of HEAD}
+#' \item{SHA}{Unique commit identifier}
+#' \item{COMMIT_MSG}{Commit message}
+#' }
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' get_git_commit()
+#' }
 get_git_commit <- function(dir=getwd())
 {
   dir <- paste0(dir, "/.git/")
@@ -47,6 +95,33 @@ get_git_commit <- function(dir=getwd())
 
 
 
+#' Create a logger
+#'
+#' This function creates a logger object that can be used with [logtext()] to
+#' write console output to a log file on disk.
+#'
+#' @param dir path to directory where to log output (default is current directory)
+#' @param fname log file name (default is current system date and time)
+#' @param add_git_info (logical) whether to add current git commit info
+#' to logger and file name (default \code{TRUE})
+#' @param init_log_file (logical) whether to log an initial message
+#' (by printing the logger to the text file; default is \code{TRUE})
+#'
+#' @return logger object (list) with elements:
+#' \describe{
+#' \item{fname}{log file name}
+#' \item{dir}{log directory}
+#' \item{gitcommit}{(optional) list with elements \code{HEAD}, \code{SHA}, and \code{COMMIT_MSG};
+#' see [get_git_commit()]}
+#'
+#' }
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' logger <- get_logger()
+#' logger |> logtext(expr=print("hello world!"))
+#' }
 get_logger <- function(dir=getwd(),
                        fname=NULL,
                        add_git_info=TRUE,

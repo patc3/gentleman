@@ -76,6 +76,12 @@
     <loc>/reference/get_desc_time.html</loc>
   </url>
   <url>
+    <loc>/reference/get_git_commit.html</loc>
+  </url>
+  <url>
+    <loc>/reference/get_logger.html</loc>
+  </url>
+  <url>
     <loc>/reference/get_mediation_model.html</loc>
   </url>
   <url>
@@ -89,6 +95,9 @@
   </url>
   <url>
     <loc>/reference/index.html</loc>
+  </url>
+  <url>
+    <loc>/reference/logtext.html</loc>
   </url>
   <url>
     <loc>/reference/make_df_from_named_list.html</loc>
