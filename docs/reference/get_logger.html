@@ -56,6 +56,7 @@ write console output to a log file on disk.</p>
 <span>  dir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/getwd.html" class="external-link">getwd</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  fname <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  add_git_info <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  git_dir <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  init_log_file <span class="op">=</span> <span class="cn">TRUE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -73,6 +74,10 @@ write console output to a log file on disk.</p>
 <dt>add_git_info</dt>
 <dd><p>(logical) whether to add current git commit info
 to logger and file name (default <code>TRUE</code>)</p></dd>
+
+
+<dt>git_dir</dt>
+<dd><p>path to git repository (if different from <code>dir</code>)</p></dd>
 
 
 <dt>init_log_file</dt>

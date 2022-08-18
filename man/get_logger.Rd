@@ -8,6 +8,7 @@ get_logger(
   dir = getwd(),
   fname = NULL,
   add_git_info = TRUE,
+  git_dir = NULL,
   init_log_file = TRUE
 )
 }
@@ -18,6 +19,8 @@ get_logger(
 
 \item{add_git_info}{(logical) whether to add current git commit info
 to logger and file name (default \code{TRUE})}
+
+\item{git_dir}{path to git repository (if different from \code{dir})}
 
 \item{init_log_file}{(logical) whether to log an initial message
 (by printing the logger to the text file; default is \code{TRUE})}

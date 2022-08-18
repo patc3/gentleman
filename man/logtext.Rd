@@ -2,7 +2,7 @@
 % Please edit documentation in R/logger.R
 \name{logtext}
 \alias{logtext}
-\title{Log text output to text file}
+\title{Log output to text file}
 \usage{
 logtext(
   expr,

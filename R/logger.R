@@ -1,4 +1,4 @@
-#' Log text output to text file
+#' Log output to text file
 #'
 #' This function outputs (sinks) the console to
 #' a text file on disk.
@@ -104,6 +104,7 @@ get_git_commit <- function(dir=getwd())
 #' @param fname log file name (default is current system date and time)
 #' @param add_git_info (logical) whether to add current git commit info
 #' to logger and file name (default \code{TRUE})
+#' @param git_dir path to git repository (if different from \code{dir})
 #' @param init_log_file (logical) whether to log an initial message
 #' (by printing the logger to the text file; default is \code{TRUE})
 #'
@@ -125,6 +126,7 @@ get_git_commit <- function(dir=getwd())
 get_logger <- function(dir=getwd(),
                        fname=NULL,
                        add_git_info=TRUE,
+                       git_dir=NULL,
                        init_log_file=TRUE)
 {
   # set up logger
@@ -136,7 +138,8 @@ get_logger <- function(dir=getwd(),
   # add git?
   if(add_git_info)
   {
-    logger$gitcommit <- get_git_commit(dir)
+    if(is.null(git_dir) || git_dir == logger$dir) git_dir <- logger$dir else logger$git_dir <- git_dir
+    logger$gitcommit <- get_git_commit(git_dir)
     logger$fname <- logger$gitcommit$SHA |> paste(logger$fname, sep="_")
   }
 
