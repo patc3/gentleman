@@ -670,16 +670,16 @@ compare_pairs_of_vars <- function(df,
 #' Get variables for which a group difference exists
 #'
 #' This function returns a vector of variable names for which
-#' there is a significant difference between a certain group variable.
+#' there is a significant difference between specified groups.
 #'
 #' @details
 #' Group differences are tested using ANOVA (for numeric test variables) or
-#' Chi-square (for categorical test variables) using [get_desc_table()].
+#' Chi-square (for categorical test variables) with [ana_fn_aov()] and [ana_fn_chisq()].
 #' Significant differences are determined using the threshold \code{p < .05}.
 #'
 #' @param df data.frame
 #' @param test_vars (character) vector of variable names to test for differences
-#' (if \code{NULL}, all vars)
+#' (if \code{NULL}, all vars except \code{group})
 #' @param group (character) name of grouping variable
 #'
 #' @return (character) vector of test variables for which there is a significant difference

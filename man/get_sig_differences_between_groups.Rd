@@ -10,7 +10,7 @@ get_sig_differences_between_groups(df, test_vars = NULL, group)
 \item{df}{data.frame}
 
 \item{test_vars}{(character) vector of variable names to test for differences
-(if \code{NULL}, all vars)}
+(if \code{NULL}, all vars except \code{group})}
 
 \item{group}{(character) name of grouping variable}
 }
@@ -20,11 +20,11 @@ between groups
 }
 \description{
 This function returns a vector of variable names for which
-there is a significant difference between a certain group variable.
+there is a significant difference between specified groups.
 }
 \details{
 Group differences are tested using ANOVA (for numeric test variables) or
-Chi-square (for categorical test variables) using \code{\link[=get_desc_table]{get_desc_table()}}.
+Chi-square (for categorical test variables) with \code{\link[=ana_fn_aov]{ana_fn_aov()}} and \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}.
 Significant differences are determined using the threshold \code{p < .05}.
 }
 \examples{
