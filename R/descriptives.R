@@ -703,24 +703,24 @@ get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
   v_cluster_fac <- test_vars |> setdiff(v_cluster_num)
 
   ana <- list()
-  if(length(v_cluster_num)>0) ana$num <- get_desc_table(
+  if(length(v_cluster_num)>0) ana$num <- ana_fn_aov(
     df=df,
     vars=v_cluster_num,
-    tbl_fn=tbl_fn_num,
-    group=group,
-    ana_fn=ana_fn_aov
+    group=group
   )
 
-  if(length(v_cluster_fac)>0) ana$fac <- get_desc_table(
+  if(length(v_cluster_fac)>0) ana$fac <- ana_fn_chisq(
     df=df,
     vars=v_cluster_fac,
-    tbl_fn=tbl_fn_fac,
-    group=group,
-    ana_fn=ana_fn_chisq
+    group=group
   )
 
   # which are sig
-  sig <- ana |> lapply(\(l)l$p |> substr_right(4) |> as.numeric() |> na.omit() |> sapply(\(p)p<.05))
+  sig <- ana |> lapply(\(l)l$p |>
+                         substr_right(4) |>
+                         as.numeric() |>
+                         sapply(\(p)p<.05) |>
+                         replace_na(FALSE))
 
   v_cluster <- v_cluster_num[sig$num] |> c(v_cluster_fac[sig$fac])
 
