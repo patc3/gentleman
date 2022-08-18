@@ -1,28 +1,17 @@
-"
-logger
-use:
-logtext({
-  warning('Hello World!')
-  print('Hello World!')
-})
-
-
-logger <- get_logger(config)
-logtext(fname=logger$fname, expr={
-  print(logger)
-  ...
-})
-
-"
-
 logtext <- function(expr,
+                    logger=NULL,
                     dir=getwd(),
                     fname=NULL,
                     silent=FALSE)
 {
-  if(!file.exists(dir)) stop("dir doesn't exist")
-  if (is.null(fname)) fname <- gsub(".*?([0-9]+).*?", "\\1", Sys.time())
-  fpath <- paste0(dir,"/",fname,".txt")
+  if(is.null(logger))
+  {
+    logger <- list()
+    if(!file.exists(dir)) stop("dir doesn't exist")
+    if (is.null(fname)) fname <- gsub(".*?([0-9]+).*?", "\\1", Sys.time())
+    logger <- logger |> c(fname=fname, dir=dir)
+  }
+  fpath <- paste0(logger$dir,"/",logger$fname,".txt")
   sink(file=fpath, append=TRUE)
   cat("________________________ beginning output ________________________\n\n")
   expr
@@ -56,7 +45,7 @@ get_git_commit <- function(dir=getwd())
   files_content
 }
 
-get_logger <- function(dir=getwd())
+get_logger <- function(dir=getwd(), init_log_file=TRUE)
 {
   if(!file.exists(dir)) stop("dir doesn't exist")
   gitcommit <- get_git_commit(dir)
@@ -65,6 +54,8 @@ get_logger <- function(dir=getwd())
     dir=dir,
     gitcommit=gitcommit
   )
+
+  if(init_log_file) logger |> logtext(expr=print(logger))
 
   # out
   logger
