@@ -1,4 +1,20 @@
 #### helpers ####
+#' Remove non-ASCII characters from data.frame
+#'
+#' This function removes all non-ASCII characters from a data.frame.
+#' This is particularly useful in non-English locales when special characters
+#' pose problems (e.g. in using the machine learning H2O library).
+#'
+#' @param df data.frame
+#'
+#' @return \code{df} with non-ASCII characters removed
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_non_ascii_from_df()
+#'
+#' @seealso
+#' [base::iconv()]
 remove_non_ascii_from_df <- function(df) # helper function
 {
   df_ascii <- df
@@ -17,6 +33,19 @@ remove_non_ascii_from_df <- function(df) # helper function
 }
 
 
+
+#' Remove blank factor levels
+#'
+#' This function removes blank factor levels across a data.frame by
+#' replacing blank levels by \code{NA} (missing).
+#'
+#' @param df data.frame
+#'
+#' @return \code{df} with factors with blank levels replaced with \code{NA} (missing)
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_blank_factor_levels()
 remove_blank_factor_levels <- function(df)
 {
   for (c in colnames(df))
@@ -34,6 +63,31 @@ remove_blank_factor_levels <- function(df)
 
 
 #### config ####
+#' Create configuration object for running autoML
+#'
+#' This function creates the configuration object
+#' required to execute [get_automl_model()] and
+#' [run_automl_pipeline()].
+#'
+#' @param target (character) name of the target variable
+#' @param nthreads number of processors for use by H2O
+#' @param algos (character) vector of included algorithms (see [h2o::h2o.automl()])
+#' @param max_runtime_secs maximum time in seconds for H2O's AutoML to run (see [h2o::h2o.automl()])
+#' @param max_models maximum number of models
+#' @param max_runtime_secs_per_model maximum time in seconds for each model
+#' @param balance_classes (logical) whether to balance classes for a categorical target (see [h2o::h2o.automl()])
+#'
+#' @return Configuration object (list) to pass to [get_automl_model()] or [run_automl_pipeline()]
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' config <- get_automl_config(target="y1")
+#' pip <- df |> run_automl_pipeline(config)
+#' }
+#'
+#' @seealso
+#' [get_automl_model()], [run_automl_pipeline()], [h2o::h2o.automl()]
 get_automl_config <- function(target,
                            nthreads=c("half", "minus1", "all"),
                            algos="DRF",
@@ -71,6 +125,29 @@ get_automl_config <- function(target,
 
 
 #### train test ####
+#' Split data.frame into training and test sets
+#'
+#' This function splits a data.frame into training and test sets.
+#'
+#' @param df data.frame
+#' @param prop_train proportion of rows to be allocated to training
+#'
+#' @return list with elements:
+#' \describe{
+#' \item{train}{\code{df} with \code{prop_train*100}% rows sampled at random}
+#' \item{test}{\code{df} with remaining rows}
+#' }
+#'
+#' @export
+#'
+#' @examples
+#' tt <- df |> ttsplit()
+#'
+#' @seealso
+#' [scale_numeric_features_in_train_and_test()],
+#' [keep_only_vars_in_both_train_and_test()],
+#' [replace_target_in_test_set_with_missing_and_add_ref_table_to_environment()],
+#' [add_target_back_to_test_set_from_ref_table()]
 ttsplit <- function(df, prop_train=.7)
 {
   df_split <- list()
@@ -82,6 +159,31 @@ ttsplit <- function(df, prop_train=.7)
 }
 
 
+#' Scale numeric features in train and test sets
+#'
+#' This function scales numeric features in the training set,
+#' and uses the scaling information from the training set
+#' (mean and variance) to scale the corresponding variables
+#' in the test set.
+#'
+#' @details
+#' Scaling the test set using variable information in the training set
+#' is performed to avoid target leakage, and to avoid evaluating model
+#' performance on a test set that uses information that might not be available
+#' at test time (i.e. mean and variance of variables for other test observations).
+#'
+#' @param tt train-test list (see [ttsplit()])
+#'
+#' @return \code{tt} with numeric features scaled
+#' @export
+#'
+#' @examples
+#' tt <- df |>
+#'    ttsplit() |>
+#'    scale_numeric_features_in_train_and_test()
+#'
+#' @seealso
+#' [dataPreparation::build_scales()], [ttsplit()]
 scale_numeric_features_in_train_and_test <- function(tt)
 {
   # scale numeric features train & test
@@ -98,13 +200,29 @@ scale_numeric_features_in_train_and_test <- function(tt)
 }
 
 
+#' Remove variables from train and test sets when they are unique
+#'
+#' This function removes variables from train and test sets when they
+#' are unique to either the training or test set. Removing variables from the
+#' training set if they cannot be found in the test set is particularly
+#' useful to avoid training a model on information that will not be
+#' available at testing time.
+#'
+#' @param tt train-test list (see [ttsplit()])
+#' @param remove_from_train_only (logical) whether to leave the test set untouched
+#'
+#' @return \code{tt} with unique variables removed from the train (and potentially test) set(s)
+#' @export
+#'
+#' @examples
+#' tt <- df |>
+#'    ttsplit() |>
+#'    keep_only_vars_in_both_train_and_test()
+#'
+#' @seealso
+#' [ttsplit()]
 keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FALSE)
 {
-  "
-  input: tt is list with train and test
-  output: tt list with only same vars in both train and test
-  "
-
   v_in_common <- Reduce(intersect, lapply(tt, names))#set(names(tt$train, tt$test))
   if(!remove_from_train_only) tt <- lapply(tt, function(df) df[,v_in_common]) else tt$train <- tt$train[,v_in_common]
   print(paste0("Selected only variables in common ", ifelse(remove_from_train_only, "in train set (test set unchanged)", "in both train and test sets")))
@@ -117,12 +235,31 @@ keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FAL
 
 
 # prevent target leakage
+#' Remove target from test set and back up values in reference table
+#'
+#' This function removes the target values from the test set (replacing with \code{NA})
+#' and backs up the values in a new variable in the global environment. This is particularly
+#' useful to avoid target leakage (i.e. accidentally using the target value during testing).
+#'
+#' @param tt train-test list (see [ttsplit()])
+#' @param target (character) name of target variable
+#' @param unique_id (character) name of unique ID variable
+#' @param ref_name (character) name of new variable that stores mapping between ID and target
+#'
+#' @return \code{tt} with target replaced with \code{NA} in \code{$test},
+#' and \code{ref_name} added to global environment
+#' @export
+#'
+#' @examples
+#' tt <- df |>
+#'    mutate(id=1:nrow(df)) |>
+#'    ttsplit() |>
+#'    replace_target_in_test_set_with_missing_and_add_ref_table_to_environment("y1", "id", "target_values")
+#'
+#' @seealso
+#' [add_target_back_to_test_set_from_ref_table()]
 replace_target_in_test_set_with_missing_and_add_ref_table_to_environment <- function(tt, target, unique_id, ref_name)
 {
-  "
-  input: tt is train-test list; target and unique_id are names of target and unique ID vars; ref_name is name of new object that stores mapping ID and target
-  output: tt list with target replaced with NA in test, and new object ref_name in environment
-  "
   ref_table <- data.frame(id=tt$test[,unique_id], target=tt$test[,target])
   colnames(ref_table)[1] <- unique_id # same as test set
   colnames(ref_table)[2] <- target # same as test set
@@ -136,6 +273,18 @@ replace_target_in_test_set_with_missing_and_add_ref_table_to_environment <- func
 
 
 # add actual target back to test set
+#' Title
+#'
+#' @param tt
+#' @param ref_table
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
+#' [replace_target_in_test_set_with_missing_and_add_ref_table_to_environment()]
 add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 {
   "
@@ -154,6 +303,16 @@ add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 
 
 #### h2o ####
+#' Title
+#'
+#' @param nthreads
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 init_h2o <- function(nthreads=c("minus1", "half", "all"))
 {
   "
@@ -182,6 +341,16 @@ init_h2o <- function(nthreads=c("minus1", "half", "all"))
 
 
 
+#' Title
+#'
+#' @param tt
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 ship_train_and_test_to_h2o <- function(tt)
 {
   "
@@ -208,6 +377,17 @@ ship_train_and_test_to_h2o <- function(tt)
 
 
 # automl
+#' Title
+#'
+#' @param config
+#' @param tt_h2o
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 get_automl_model <- function(config, tt_h2o)
 {
   "
@@ -236,6 +416,19 @@ get_automl_model <- function(config, tt_h2o)
 
 
 # add predictions
+#' Title
+#'
+#' @param automl
+#' @param tt
+#' @param tt_h2o
+#' @param add_confidence_level
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level=TRUE)
 {
   "
@@ -269,6 +462,16 @@ add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level
 
 
 #var imp plot
+#' Title
+#'
+#' @param automl
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 plot_and_print_variable_importances <- function(automl)
 {
   try({
@@ -280,10 +483,26 @@ plot_and_print_variable_importances <- function(automl)
 
 
 #### pipeline ####
+#' Title
+#'
+#' @param df
+#' @param config
+#' @param prop_train
+#' @param scale_numeric_features
+#' @param add_confidence_level
+#' @param plot_and_print_variable_importances
+#' @param shutdown_h2o
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#'
+#' @seealso
 run_automl_pipeline <- function(df,
+                                config,
                                 prop_train=.7,
                                 scale_numeric_features=FALSE,
-                                config,
                                 add_confidence_level=FALSE,
                                 plot_and_print_variable_importances=TRUE,
                                 shutdown_h2o=FALSE)
