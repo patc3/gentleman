@@ -1,3 +1,37 @@
+#### helpers ####
+remove_non_ascii_from_df <- function(df) # helper function
+{
+  df_ascii <- df
+  for (c in names(df))
+  {
+    df_ascii[,c] <- iconv(df[,c], "latin1", "ASCII", sub="")
+    if(is.numeric(df[,c])) df_ascii[,c] <- as.numeric(df_ascii[,c]) else if (is.factor(df[,c])) df_ascii[,c] <- as.factor(df_ascii[,c])
+  }
+  names(df_ascii) <- iconv(names(df_ascii), "latin1", "ASCII", sub="")
+
+  # out
+  print("Removed non-ascii characters from column names and entire df")
+
+  # return
+  return(df_ascii)
+}
+
+
+remove_blank_factor_levels <- function(df)
+{
+  for (c in colnames(df))
+  {
+    if (class(df[,c]) == "factor")
+    {
+      levels(df[,c])[which(levels(df[,c]) %in% c("", " ", "  "))] <- NA
+    }
+  }
+  print("Replaced factor levels '', ' ', and '  ' to NA")
+  return(df)
+}
+
+
+
 
 #### config ####
 get_automl_config <- function(target,
@@ -46,6 +80,75 @@ ttsplit <- function(df, prop_train=.7)
   print(paste0("Split df into list with: train, test (proportion train = ", prop_train, ")"))
   return(df_split)
 }
+
+
+scale_numeric_features_in_train_and_test <- function(tt)
+{
+  # scale numeric features train & test
+  v_num <- colnames(tt$train)[which(sapply(tt$train, class) %in% c("numeric", "integer"))]
+  scales <- dataPreparation::build_scales(data_set = tt$train, cols=v_num, verbose=TRUE)
+  tt$train <- dataPreparation::fast_scale(data_set = tt$train, scales = scales, verbose = TRUE) |> as.data.frame()
+
+  # test
+  tt$test <- dataPreparation::fast_scale(data_set = tt$test, scales=scales, verbose=TRUE) |> as.data.frame
+
+  # out
+  print("Created numerical scales using train set and rescaled numerical features in train and test")
+  return(tt)
+}
+
+
+keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FALSE)
+{
+  "
+  input: tt is list with train and test
+  output: tt list with only same vars in both train and test
+  "
+
+  v_in_common <- Reduce(intersect, lapply(tt, names))#set(names(tt$train, tt$test))
+  if(!remove_from_train_only) tt <- lapply(tt, function(df) df[,v_in_common]) else tt$train <- tt$train[,v_in_common]
+  print(paste0("Selected only variables in common ", ifelse(remove_from_train_only, "in train set (test set unchanged)", "in both train and test sets")))
+  return(tt)
+
+}
+
+
+
+
+
+# prevent target leakage
+replace_target_in_test_set_with_missing_and_add_ref_table_to_environment <- function(tt, target, unique_id, ref_name)
+{
+  "
+  input: tt is train-test list; target and unique_id are names of target and unique ID vars; ref_name is name of new object that stores mapping ID and target
+  output: tt list with target replaced with NA in test, and new object ref_name in environment
+  "
+  ref_table <- data.frame(id=tt$test[,unique_id], target=tt$test[,target])
+  colnames(ref_table)[1] <- unique_id # same as test set
+  colnames(ref_table)[2] <- target # same as test set
+  tt$test[,target] <- NA
+  print(paste0("Target column ", target, " replaced with NA in test set"))
+  assign(ref_name, value=ref_table, envir = .GlobalEnv)
+  print(paste0("Added reference table '", ref_name, "' to global environment"))
+  return(tt)
+}
+
+
+
+# add actual target back to test set
+add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
+{
+  "
+  input: tt is train-test list; ref_table is reference table with id and target column created with replace_target_in_test...()
+  output: tt list with target in train replaced with actual values
+  "
+  id_var <- names(ref_table)[1]
+  target_var <- names(ref_table)[2]
+  tt$test[,target_var] <- ref_table[,target_var][match(x=tt$test[,id_var], table=ref_table[,id_var])]
+  print(paste0("Replaced values in target '", target_var, "' with values from reference table"))
+  return(tt)
+}
+
 
 
 
@@ -179,12 +282,21 @@ plot_and_print_variable_importances <- function(automl)
 #### pipeline ####
 run_automl_pipeline <- function(df,
                                 prop_train=.7,
+                                scale_numeric_features=FALSE,
                                 config,
                                 add_confidence_level=FALSE,
                                 plot_and_print_variable_importances=TRUE,
                                 shutdown_h2o=FALSE)
 {
+  # data prep for h2o
+  df <- df |>
+    remove_non_ascii_from_df() |>
+    cast("character", "factor") |>
+    remove_blank_factor_levels()
+
+  # tt and h2o
   tt <- df |> ttsplit(prop_train)
+  if(scale_numeric_features) tt <- tt |> scale_numeric_features_in_train_and_test()
   init_h2o(nthreads = config$automl$nthreads)
   tt_h2o <- ship_train_and_test_to_h2o(tt)
   automl <- get_automl_model(config, tt_h2o)
