@@ -316,7 +316,7 @@ init_h2o <- function(nthreads=c("half", "minus1", "all"))
 #' available to the local H2O cluster, and should be accessible
 #' via the graphical interface for the cluster (normally
 #' available through a browser at \code{localhost:54321}) or using
-#' the R API as documented in the\pkg{h2o} package.
+#' the R API as documented in the \pkg{h2o} package.
 #'
 #' @param tt train-test list (see [ttsplit()])
 #'
@@ -341,10 +341,14 @@ ship_train_and_test_to_h2o <- function(tt)
   print("Destination frames added: 'train' and 'test'")
 
   # check
-  print("Row check:")
-  print(paste0("H2O dfs: train = ", nrow(as.data.frame(train)), ", test = ", nrow(as.data.frame(test))))
-  print(paste0("R dfs: "))
-  print(lapply(tt, nrow))
+  nrow_r <- tt |> lapply(nrow)
+  nrow_h2o <-list(train=as.data.frame(train), test=as.data.frame(test)) |> lapply(nrow)
+  if(!identical(nrow_r, nrow_h2o))
+  {
+    warning("H2O frames don't have the same number of rows!")
+    print("H2O frames:"); print(nrow_h2o)
+    print("R dfs:"); print(nrow_r)
+  }
 
   # out
   return(list(train=train, test=test))

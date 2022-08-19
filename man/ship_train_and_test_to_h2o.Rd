@@ -22,7 +22,7 @@ Upon running this function, the two data.frames should be
 available to the local H2O cluster, and should be accessible
 via the graphical interface for the cluster (normally
 available through a browser at \code{localhost:54321}) or using
-the R API as documented in the\pkg{h2o} package.
+the R API as documented in the \pkg{h2o} package.
 }
 \examples{
 \dontrun{
