@@ -35,7 +35,7 @@ run_automl_pipeline(
 alongside predictions in the test set (default \code{FALSE})}
 
 \item{plot_and_print_variable_importances}{(logical) whether to plot and print
-variable importances if they are available}
+variable importances if they are available (default \code{TRUE})}
 
 \item{nthreads}{(character) how many threads (cores) to dedicate to the
 H2O cluster ("half", "minus1", or "all"; see \code{\link[=init_h2o]{init_h2o()}})}
@@ -49,6 +49,7 @@ list with elements:
 \item{tt}{train-test split constructed from \code{df}, with predictions and
 possibly confidence levels added to the test set}
 \item{automl}{H2O AutoML model}
+\item{importances}{Variable importances (if requested)}
 }
 }
 \description{

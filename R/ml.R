@@ -516,7 +516,7 @@ plot_and_print_variable_importances <- function(automl)
 #' @param add_confidence_level (logical) whether to add confidence levels
 #' alongside predictions in the test set (default \code{FALSE})
 #' @param plot_and_print_variable_importances (logical) whether to plot and print
-#' variable importances if they are available
+#' variable importances if they are available (default \code{TRUE})
 #' @param nthreads (character) how many threads (cores) to dedicate to the
 #' H2O cluster ("half", "minus1", or "all"; see [init_h2o()])
 #' @param shutdown_h2o (logical) whether to shut down cluster at the end of the pipeline
@@ -527,6 +527,7 @@ plot_and_print_variable_importances <- function(automl)
 #' \item{tt}{train-test split constructed from \code{df}, with predictions and
 #' possibly confidence levels added to the test set}
 #' \item{automl}{H2O AutoML model}
+#' \item{importances}{Variable importances (if requested)}
 #' }
 #' @export
 #'
@@ -567,10 +568,11 @@ run_automl_pipeline <- function(df,
                                     tt,
                                     tt_h2o,
                                     add_confidence_level = add_confidence_level)
-  if(plot_and_print_variable_importances) automl |> plot_and_print_variable_importances()
+  pip <- list(tt=tt, automl=automl)
+  if(plot_and_print_variable_importances) pip$importances <- automl |> plot_and_print_variable_importances()
   if(shutdown_h2o) h2o.shutdown(F)
 
   # out
-  list(tt=tt, automl=automl)
+  pip
 
 }
