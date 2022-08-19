@@ -345,9 +345,9 @@ ship_train_and_test_to_h2o <- function(tt)
   nrow_h2o <-list(train=as.data.frame(train), test=as.data.frame(test)) |> lapply(nrow)
   if(!identical(nrow_r, nrow_h2o))
   {
-    warning("H2O frames don't have the same number of rows!")
     print("H2O frames:"); print(nrow_h2o)
     print("R dfs:"); print(nrow_r)
+    stop("H2O frames don't have the same number of rows!")
   }
 
   # out
