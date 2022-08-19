@@ -562,7 +562,7 @@ run_automl_pipeline <- function(df,
   if(scale_numeric_features) tt <- tt |> scale_numeric_features_in_train_and_test()
   init_h2o(nthreads = nthreads)
   tt_h2o <- ship_train_and_test_to_h2o(tt)
-  automl <- get_automl_model(config, tt_h2o, ...)
+  automl <- get_automl_model(tt_h2o=tt_h2o, target=target, config=config, ...)
   tt <- add_predictions_from_automl(automl,
                                     tt,
                                     tt_h2o,
