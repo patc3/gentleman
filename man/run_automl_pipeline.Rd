@@ -6,17 +6,21 @@
 \usage{
 run_automl_pipeline(
   df,
+  target,
   config,
   ...,
   prop_train = 0.7,
   scale_numeric_features = FALSE,
   add_confidence_level = FALSE,
   plot_and_print_variable_importances = TRUE,
+  nthreads = "half",
   shutdown_h2o = FALSE
 )
 }
 \arguments{
 \item{df}{data.frame}
+
+\item{target}{(character) name of target variable}
 
 \item{config}{Configuration object (from calling \code{\link[=get_automl_config]{get_automl_config()}})}
 
@@ -27,11 +31,14 @@ run_automl_pipeline(
 \item{scale_numeric_features}{(logical) whether to scale numeric features
 (see \code{\link[=scale_numeric_features_in_train_and_test]{scale_numeric_features_in_train_and_test()}})}
 
-\item{add_confidence_level}{(logical) whether to add confidence levels alongside predictions
-in the test set (default \code{FALSE})}
+\item{add_confidence_level}{(logical) whether to add confidence levels
+alongside predictions in the test set (default \code{FALSE})}
 
-\item{plot_and_print_variable_importances}{(logical) whether to plot and print variable importances
-if they are available}
+\item{plot_and_print_variable_importances}{(logical) whether to plot and print
+variable importances if they are available}
+
+\item{nthreads}{(character) how many threads (cores) to dedicate to the
+H2O cluster ("half", "minus1", or "all"; see \code{\link[=init_h2o]{init_h2o()}})}
 
 \item{shutdown_h2o}{(logical) whether to shut down cluster at the end of the pipeline
 (default \code{FALSE})}
@@ -62,8 +69,8 @@ the H2O cluster is shut down.
 }
 \examples{
 \dontrun{
-config <- get_automl_config(target="y1")
-pip <- df |> run_automl_pipeline(config)
+config <- get_automl_config()
+pip <- df |> run_automl_pipeline(target="y1", config)
 }
 
 }

@@ -21,8 +21,8 @@ model (if available), and returns variable importances (\code{data.frame}).
 init_h2o()
 tt <- df |> ttsplit()
 tt_h2o <- tt |> ship_train_and_test_to_h2o()
-config <- get_automl_config(target="y1")
-automl <- config |> get_automl_model(tt_h2o)
+config <- get_automl_config()
+automl <- config |> get_automl_model(tt_h2o, target="y1")
 var_imp <- automl |> plot_and_print_variable_importances()
 }
 

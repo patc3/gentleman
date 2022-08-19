@@ -29,8 +29,8 @@ Confidence levels can also optionally be added alongside predictions.
 init_h2o()
 tt <- df |> ttsplit()
 tt_h2o <- tt |> ship_train_and_test_to_h2o()
-config <- get_automl_config(target="y1")
-automl <- config |> get_automl_model(tt_h2o)
+config <- get_automl_config()
+automl <- config |> get_automl_model(tt_h2o, target="y1")
 tt <- add_predictions_from_automl(automl)
 }
 

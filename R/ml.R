@@ -5,9 +5,7 @@
 #' required to execute [get_automl_model()] and
 #' [run_automl_pipeline()].
 #'
-#' @param target (character) name of the target variable
-#' @param nthreads number of processors for use by H2O
-#' @param algos (character) vector of included algorithms (see [h2o::h2o.automl()])
+#' @param include_algos (character) vector of included algorithms (see [h2o::h2o.automl()])
 #' @param max_runtime_secs maximum time in seconds for H2O's AutoML to run (see [h2o::h2o.automl()])
 #' @param max_models maximum number of models
 #' @param max_runtime_secs_per_model maximum time in seconds for each model
@@ -18,34 +16,25 @@
 #'
 #' @examples
 #' \dontrun{
-#' config <- get_automl_config(target="y1")
-#' pip <- df |> run_automl_pipeline(config)
+#' config <- get_automl_config()
+#' pip <- df |> run_automl_pipeline(target="y1", config)
 #' }
 #'
 #' @seealso
 #' [get_automl_model()], [run_automl_pipeline()], [h2o::h2o.automl()]
-get_automl_config <- function(target,
-                           nthreads=c("half", "minus1", "all"),
-                           algos="DRF",
-                           max_runtime_secs=NULL,
-                           max_models=1,
-                           max_runtime_secs_per_model=60*5,
-                           balance_classes=FALSE)
+get_automl_config <- function(include_algos="DRF",
+                              max_runtime_secs=NULL,
+                              max_models=1,
+                              max_runtime_secs_per_model=60*5,
+                              balance_classes=FALSE)
 {
-  # args
-  nthreads <- match.arg(nthreads)
-
   # create config
   config <- list(
-    target=target,
-    automl=list(
-      nthreads=nthreads
-      ,algos=algos
-      ,max_runtime_secs = max_runtime_secs
-      ,max_models=max_models
-      ,max_runtime_secs_per_model=max_runtime_secs_per_model
-      ,balance_classes=balance_classes
-    )
+    algos=algos
+    ,max_runtime_secs = max_runtime_secs
+    ,max_models=max_models
+    ,max_runtime_secs_per_model=max_runtime_secs_per_model
+    ,balance_classes=balance_classes
   )
 
   # class
@@ -368,6 +357,7 @@ ship_train_and_test_to_h2o <- function(tt)
 #'
 #' @param config configuration object (see [get_automl_config()])
 #' @param tt_h2o list of H2O pointers to H2O frames (see [ship_train_and_test_to_h2o()])
+#' @param target (character) name of the target variable
 #' @param ... additional arguments passed to [h2o::h2o.automl()]
 #'
 #' @return AutoML object from H2O
@@ -378,23 +368,23 @@ ship_train_and_test_to_h2o <- function(tt)
 #' init_h2o()
 #' tt <- df |> ttsplit()
 #' tt_h2o <- tt |> ship_train_and_test_to_h2o()
-#' config <- get_automl_config(target="y1")
-#' automl <- config |> get_automl_model(tt_h2o)
+#' config <- get_automl_config()
+#' automl <- config |> get_automl_model(tt_h2o, target="y1")
 #' }
 #'
 #' @seealso
 #' [get_automl_config()], [h2o::h2o.automl()]
-get_automl_model <- function(config, tt_h2o, ...)
+get_automl_model <- function(config, tt_h2o, target, ...)
 {
   # model
   automl <- h2o.automl(
-    y=config$target,
+    y=target,
     training_frame = tt_h2o$train,
-    include_algos = config$automl$algos,
-    max_runtime_secs = config$automl$max_runtime_secs
-    ,max_models = config$automl$max_models
-    ,max_runtime_secs_per_model = config$automl$max_runtime_secs_per_model
-    ,balance_classes=config$automl$balance_classes
+    include_algos = config$include_algos,
+    max_runtime_secs = config$max_runtime_secs
+    ,max_models = config$max_models
+    ,max_runtime_secs_per_model = config$max_runtime_secs_per_model
+    ,balance_classes=config$balance_classes
     ,...
   )
 
@@ -425,8 +415,8 @@ get_automl_model <- function(config, tt_h2o, ...)
 #' init_h2o()
 #' tt <- df |> ttsplit()
 #' tt_h2o <- tt |> ship_train_and_test_to_h2o()
-#' config <- get_automl_config(target="y1")
-#' automl <- config |> get_automl_model(tt_h2o)
+#' config <- get_automl_config()
+#' automl <- config |> get_automl_model(tt_h2o, target="y1")
 #' tt <- add_predictions_from_automl(automl)
 #' }
 #'
@@ -475,8 +465,8 @@ add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level
 #' init_h2o()
 #' tt <- df |> ttsplit()
 #' tt_h2o <- tt |> ship_train_and_test_to_h2o()
-#' config <- get_automl_config(target="y1")
-#' automl <- config |> get_automl_model(tt_h2o)
+#' config <- get_automl_config()
+#' automl <- config |> get_automl_model(tt_h2o, target="y1")
 #' var_imp <- automl |> plot_and_print_variable_importances()
 #' }
 #'
@@ -511,15 +501,18 @@ plot_and_print_variable_importances <- function(automl)
 #' the H2O cluster is shut down.
 #'
 #' @param df data.frame
+#' @param target (character) name of target variable
 #' @param config Configuration object (from calling [get_automl_config()])
 #' @param ... additional arguments passed to [get_automl_model()]
 #' @param prop_train proportion of rows to be allocated to training
 #' @param scale_numeric_features (logical) whether to scale numeric features
 #' (see [scale_numeric_features_in_train_and_test()])
-#' @param add_confidence_level (logical) whether to add confidence levels alongside predictions
-#' in the test set (default \code{FALSE})
-#' @param plot_and_print_variable_importances (logical) whether to plot and print variable importances
-#' if they are available
+#' @param add_confidence_level (logical) whether to add confidence levels
+#' alongside predictions in the test set (default \code{FALSE})
+#' @param plot_and_print_variable_importances (logical) whether to plot and print
+#' variable importances if they are available
+#' @param nthreads (character) how many threads (cores) to dedicate to the
+#' H2O cluster ("half", "minus1", or "all"; see [init_h2o()])
 #' @param shutdown_h2o (logical) whether to shut down cluster at the end of the pipeline
 #' (default \code{FALSE})
 #'
@@ -533,8 +526,8 @@ plot_and_print_variable_importances <- function(automl)
 #'
 #' @examples
 #' \dontrun{
-#' config <- get_automl_config(target="y1")
-#' pip <- df |> run_automl_pipeline(config)
+#' config <- get_automl_config()
+#' pip <- df |> run_automl_pipeline(target="y1", config)
 #' }
 #'
 #' @seealso
@@ -543,12 +536,14 @@ plot_and_print_variable_importances <- function(automl)
 #' [get_automl_model()],
 #' [add_predictions_from_automl()]
 run_automl_pipeline <- function(df,
+                                target,
                                 config,
                                 ...,
                                 prop_train=.7,
                                 scale_numeric_features=FALSE,
                                 add_confidence_level=FALSE,
                                 plot_and_print_variable_importances=TRUE,
+                                nthreads="half",
                                 shutdown_h2o=FALSE)
 {
   # data prep for h2o
@@ -560,7 +555,7 @@ run_automl_pipeline <- function(df,
   # tt and h2o
   tt <- df |> ttsplit(prop_train)
   if(scale_numeric_features) tt <- tt |> scale_numeric_features_in_train_and_test()
-  init_h2o(nthreads = config$automl$nthreads)
+  init_h2o(nthreads = nthreads)
   tt_h2o <- ship_train_and_test_to_h2o(tt)
   automl <- get_automl_model(config, tt_h2o, ...)
   tt <- add_predictions_from_automl(automl,

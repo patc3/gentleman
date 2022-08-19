@@ -4,12 +4,14 @@
 \alias{get_automl_model}
 \title{Run an H2O AutoML model}
 \usage{
-get_automl_model(config, tt_h2o, ...)
+get_automl_model(config, tt_h2o, target, ...)
 }
 \arguments{
 \item{config}{configuration object (see \code{\link[=get_automl_config]{get_automl_config()}})}
 
 \item{tt_h2o}{list of H2O pointers to H2O frames (see \code{\link[=ship_train_and_test_to_h2o]{ship_train_and_test_to_h2o()}})}
+
+\item{target}{(character) name of the target variable}
 
 \item{...}{additional arguments passed to \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}}
 }
@@ -29,8 +31,8 @@ Only \code{$train} is currently used in \code{tt_h2o}.
 init_h2o()
 tt <- df |> ttsplit()
 tt_h2o <- tt |> ship_train_and_test_to_h2o()
-config <- get_automl_config(target="y1")
-automl <- config |> get_automl_model(tt_h2o)
+config <- get_automl_config()
+automl <- config |> get_automl_model(tt_h2o, target="y1")
 }
 
 }

@@ -5,9 +5,7 @@
 \title{Create configuration object for running autoML}
 \usage{
 get_automl_config(
-  target,
-  nthreads = c("half", "minus1", "all"),
-  algos = "DRF",
+  include_algos = "DRF",
   max_runtime_secs = NULL,
   max_models = 1,
   max_runtime_secs_per_model = 60 * 5,
@@ -15,11 +13,7 @@ get_automl_config(
 )
 }
 \arguments{
-\item{target}{(character) name of the target variable}
-
-\item{nthreads}{number of processors for use by H2O}
-
-\item{algos}{(character) vector of included algorithms (see \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}})}
+\item{include_algos}{(character) vector of included algorithms (see \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}})}
 
 \item{max_runtime_secs}{maximum time in seconds for H2O's AutoML to run (see \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}})}
 
@@ -39,8 +33,8 @@ required to execute \code{\link[=get_automl_model]{get_automl_model()}} and
 }
 \examples{
 \dontrun{
-config <- get_automl_config(target="y1")
-pip <- df |> run_automl_pipeline(config)
+config <- get_automl_config()
+pip <- df |> run_automl_pipeline(target="y1", config)
 }
 
 }

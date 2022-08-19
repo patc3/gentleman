@@ -56,12 +56,14 @@ to the test set and possibly reporting variable importances.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_automl_pipeline</span><span class="op">(</span></span>
 <span>  <span class="va">df</span>,</span>
+<span>  <span class="va">target</span>,</span>
 <span>  <span class="va">config</span>,</span>
 <span>  <span class="va">...</span>,</span>
 <span>  prop_train <span class="op">=</span> <span class="fl">0.7</span>,</span>
 <span>  scale_numeric_features <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  add_confidence_level <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  plot_and_print_variable_importances <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  nthreads <span class="op">=</span> <span class="st">"half"</span>,</span>
 <span>  shutdown_h2o <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -70,6 +72,10 @@ to the test set and possibly reporting variable importances.</p>
     <h2>Arguments</h2>
     <dl><dt>df</dt>
 <dd><p>data.frame</p></dd>
+
+
+<dt>target</dt>
+<dd><p>(character) name of target variable</p></dd>
 
 
 <dt>config</dt>
@@ -90,13 +96,18 @@ to the test set and possibly reporting variable importances.</p>
 
 
 <dt>add_confidence_level</dt>
-<dd><p>(logical) whether to add confidence levels alongside predictions
-in the test set (default <code>FALSE</code>)</p></dd>
+<dd><p>(logical) whether to add confidence levels
+alongside predictions in the test set (default <code>FALSE</code>)</p></dd>
 
 
 <dt>plot_and_print_variable_importances</dt>
-<dd><p>(logical) whether to plot and print variable importances
-if they are available</p></dd>
+<dd><p>(logical) whether to plot and print
+variable importances if they are available</p></dd>
+
+
+<dt>nthreads</dt>
+<dd><p>(character) how many threads (cores) to dedicate to the
+H2O cluster ("half", "minus1", or "all"; see <code><a href="init_h2o.html">init_h2o()</a></code>)</p></dd>
 
 
 <dt>shutdown_h2o</dt>
@@ -140,8 +151,8 @@ the H2O cluster is shut down.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_automl_config.html">get_automl_config</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu">run_automl_pipeline</span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu"><a href="get_automl_config.html">get_automl_config</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu">run_automl_pipeline</span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>, <span class="va">config</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

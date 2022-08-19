@@ -55,9 +55,7 @@ required to execute <code><a href="get_automl_model.html">get_automl_model()</a>
 
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_automl_config</span><span class="op">(</span></span>
-<span>  <span class="va">target</span>,</span>
-<span>  nthreads <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"half"</span>, <span class="st">"minus1"</span>, <span class="st">"all"</span><span class="op">)</span>,</span>
-<span>  algos <span class="op">=</span> <span class="st">"DRF"</span>,</span>
+<span>  include_algos <span class="op">=</span> <span class="st">"DRF"</span>,</span>
 <span>  max_runtime_secs <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_models <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  max_runtime_secs_per_model <span class="op">=</span> <span class="fl">60</span> <span class="op">*</span> <span class="fl">5</span>,</span>
@@ -67,15 +65,7 @@ required to execute <code><a href="get_automl_model.html">get_automl_model()</a>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>target</dt>
-<dd><p>(character) name of the target variable</p></dd>
-
-
-<dt>nthreads</dt>
-<dd><p>number of processors for use by H2O</p></dd>
-
-
-<dt>algos</dt>
+    <dl><dt>include_algos</dt>
 <dd><p>(character) vector of included algorithms (see <code><a href="https://rdrr.io/pkg/h2o/man/h2o.automl.html" class="external-link">h2o::h2o.automl()</a></code>)</p></dd>
 
 
@@ -111,8 +101,8 @@ required to execute <code><a href="get_automl_model.html">get_automl_model()</a>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu">get_automl_config</span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="run_automl_pipeline.html">run_automl_pipeline</a></span><span class="op">(</span><span class="va">config</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">config</span> <span class="op">&lt;-</span> <span class="fu">get_automl_config</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="run_automl_pipeline.html">run_automl_pipeline</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>, <span class="va">config</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
