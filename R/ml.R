@@ -366,15 +366,9 @@ ship_train_and_test_to_h2o <- function(tt)
 #' @details
 #' Only \code{$train} is currently used in \code{tt_h2o}.
 #'
-#' Additional arguments passed to H2O via \code{...} may not include the following,
-#' which have fixed values here:
-#' * \code{stopping_tolerance}: .01
-#' * \code{keep_cross_validation_predictions}: \code{FALSE}
-#' * \code{keep_cross_validation_models}: \code{FALSE}
-#'
 #' @param config configuration object (see [get_automl_config()])
 #' @param tt_h2o list of H2O pointers to H2O frames (see [ship_train_and_test_to_h2o()])
-#' @param ... additional arguments passed to [h2o::h2o.automl()] (see Details)
+#' @param ... additional arguments passed to [h2o::h2o.automl()]
 #'
 #' @return AutoML object from H2O
 #' @export
@@ -396,10 +390,7 @@ get_automl_model <- function(config, tt_h2o, ...)
   automl <- h2o.automl(
     y=config$target,
     training_frame = tt_h2o$train,
-    stopping_tolerance = .01,
     include_algos = config$automl$algos,
-    keep_cross_validation_predictions = FALSE,
-    keep_cross_validation_models = FALSE,
     max_runtime_secs = config$automl$max_runtime_secs
     ,max_models = config$automl$max_models
     ,max_runtime_secs_per_model = config$automl$max_runtime_secs_per_model
