@@ -30,7 +30,7 @@ get_automl_config <- function(include_algos="DRF",
 {
   # create config
   config <- list(
-    algos=algos
+    include_algos=include_algos
     ,max_runtime_secs = max_runtime_secs
     ,max_models=max_models
     ,max_runtime_secs_per_model=max_runtime_secs_per_model
