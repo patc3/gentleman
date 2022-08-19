@@ -33,7 +33,7 @@ a text file on disk.
 \details{
 This function uses \code{\link[base:sink]{base::sink()}} to output the console
 to a text file. The directory \emph{gentleman_logs/} will
-be created in the logger's directory if it doesn't exist.
+be created in the logger's directory if it doesn't already exist.
 
 \strong{If the expressions in \code{expr} fail,} console output will
 continue to be written to the log until \code{sink()} is manually

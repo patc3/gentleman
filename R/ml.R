@@ -1,67 +1,3 @@
-#### helpers ####
-#' Remove non-ASCII characters from data.frame
-#'
-#' This function removes all non-ASCII characters from a data.frame.
-#' This is particularly useful in non-English locales when special characters
-#' pose problems (e.g. in using the machine learning H2O library).
-#'
-#' @param df data.frame
-#'
-#' @return \code{df} with non-ASCII characters removed
-#' @export
-#'
-#' @examples
-#' df <- df |> remove_non_ascii_from_df()
-#'
-#' @seealso
-#' [base::iconv()]
-remove_non_ascii_from_df <- function(df) # helper function
-{
-  df_ascii <- df
-  for (c in names(df))
-  {
-    df_ascii[,c] <- iconv(df[,c], "latin1", "ASCII", sub="")
-    if(is.numeric(df[,c])) df_ascii[,c] <- as.numeric(df_ascii[,c]) else if (is.factor(df[,c])) df_ascii[,c] <- as.factor(df_ascii[,c])
-  }
-  names(df_ascii) <- iconv(names(df_ascii), "latin1", "ASCII", sub="")
-
-  # out
-  print("Removed non-ascii characters from column names and entire df")
-
-  # return
-  return(df_ascii)
-}
-
-
-
-#' Remove blank factor levels
-#'
-#' This function removes blank factor levels across a data.frame by
-#' replacing blank levels by \code{NA} (missing).
-#'
-#' @param df data.frame
-#'
-#' @return \code{df} with factors with blank levels replaced with \code{NA} (missing)
-#' @export
-#'
-#' @examples
-#' df <- df |> remove_blank_factor_levels()
-remove_blank_factor_levels <- function(df)
-{
-  for (c in colnames(df))
-  {
-    if (class(df[,c]) == "factor")
-    {
-      levels(df[,c])[which(levels(df[,c]) %in% c("", " ", "  "))] <- NA
-    }
-  }
-  print("Replaced factor levels '', ' ', and '  ' to NA")
-  return(df)
-}
-
-
-
-
 #### config ####
 #' Create configuration object for running autoML
 #'
@@ -146,7 +82,7 @@ get_automl_config <- function(target,
 #' @seealso
 #' [scale_numeric_features_in_train_and_test()],
 #' [keep_only_vars_in_both_train_and_test()],
-#' [replace_target_in_test_set_with_missing_and_add_ref_table_to_environment()],
+#' [remove_target_from_test_and_add_ref_to_env()],
 #' [add_target_back_to_test_set_from_ref_table()]
 ttsplit <- function(df, prop_train=.7)
 {
@@ -192,7 +128,7 @@ scale_numeric_features_in_train_and_test <- function(tt)
   tt$train <- dataPreparation::fast_scale(data_set = tt$train, scales = scales, verbose = TRUE) |> as.data.frame()
 
   # test
-  tt$test <- dataPreparation::fast_scale(data_set = tt$test, scales=scales, verbose=TRUE) |> as.data.frame
+  tt$test <- dataPreparation::fast_scale(data_set = tt$test, scales=scales, verbose=TRUE) |> as.data.frame()
 
   # out
   print("Created numerical scales using train set and rescaled numerical features in train and test")
@@ -252,13 +188,16 @@ keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FAL
 #'
 #' @examples
 #' tt <- df |>
-#'    mutate(id=1:nrow(df)) |>
+#'    dplyr::mutate(id=1:nrow(df)) |>
 #'    ttsplit() |>
-#'    replace_target_in_test_set_with_missing_and_add_ref_table_to_environment("y1", "id", "target_values")
+#'    remove_target_from_test_and_add_ref_to_env("y1", "id", "target_values")
 #'
 #' @seealso
 #' [add_target_back_to_test_set_from_ref_table()]
-replace_target_in_test_set_with_missing_and_add_ref_table_to_environment <- function(tt, target, unique_id, ref_name)
+#'
+#' @note This function implements the method described in
+#' [Preventing Target Leakage](https://en.d22consulting.com/quantcafe/preventing-target-leakage) (D22 QuantCafé, 2021).
+remove_target_from_test_and_add_ref_to_env <- function(tt, target, unique_id, ref_name)
 {
   ref_table <- data.frame(id=tt$test[,unique_id], target=tt$test[,target])
   colnames(ref_table)[1] <- unique_id # same as test set
@@ -273,24 +212,33 @@ replace_target_in_test_set_with_missing_and_add_ref_table_to_environment <- func
 
 
 # add actual target back to test set
-#' Title
+#' Add target values back in the test set
 #'
-#' @param tt
-#' @param ref_table
+#' This function adds back the target values in the test set using
+#' a reference table.
 #'
-#' @return
+#' @details
+#' The reference table is a data.frame initially created by
+#' [remove_target_from_test_and_add_ref_to_env()].
+#'
+#' @param tt train-test list (see [ttsplit()])
+#' @param ref_table reference table (see Details)
+#'
+#' @return \code{tt} with target replaced with original values in \code{$test}
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' tt <- tt |> add_target_back_to_test_set_from_ref_table(target_values)
+#' }
 #'
 #' @seealso
-#' [replace_target_in_test_set_with_missing_and_add_ref_table_to_environment()]
+#' [remove_target_from_test_and_add_ref_to_env()]
+#'
+#' @note This function implements the method described in
+#' [Preventing Target Leakage](https://en.d22consulting.com/quantcafe/preventing-target-leakage) (D22 QuantCafé, 2021).
 add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 {
-  "
-  input: tt is train-test list; ref_table is reference table with id and target column created with replace_target_in_test...()
-  output: tt list with target in train replaced with actual values
-  "
   id_var <- names(ref_table)[1]
   target_var <- names(ref_table)[2]
   tt$test[,target_var] <- ref_table[,target_var][match(x=tt$test[,id_var], table=ref_table[,id_var])]
@@ -303,22 +251,39 @@ add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 
 
 #### h2o ####
-#' Title
+#' Initialize a local H2O cluster
 #'
-#' @param nthreads
+#' This function initializes a local H2O cluster for use with the \pkg{h2o}
+#' machine learning library.
 #'
-#' @return
+#' @details
+#' The number of available threads is determined using \code{parallel::detectCores()}. The
+#' \code{nthreads} option needs to be one of:
+#' * \code{half}: Half of all available cores (the default)
+#' * \code{minus1}: All available threads minus 1 (to avoid freezing)
+#' * \code{all}: All available cores (\emph{not recommended}; this can freeze your machine)
+#'
+#' The H2O cluster requires Java to be installed on your machine.
+#' Normally the graphical interface to interact with the cluster is available by
+#' browser at \code{localhost:54321}. Refer to the
+#' [\pkg{h2o} documentation](https://docs.h2o.ai/h2o/latest-stable/h2o-docs/faq/r.html)
+#' for more information.
+#'
+#' @param nthreads (character) how many threads (cores) to dedicate to the H2O cluster (see Details)
+#'
+#' @return New local cluster initialized (return value is given by [h2o::h2o.init()])
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' init_h2o() # half cores
+#' init_h2o("minus1") # all but one cores
+#' }
 #'
 #' @seealso
-init_h2o <- function(nthreads=c("minus1", "half", "all"))
+#' [h2o::h2o.init()], [parallel::detectCores()]
+init_h2o <- function(nthreads=c("half", "minus1", "all"))
 {
-  "
-  input: nthreads
-  init h2o cluster (no output)
-  "
   # get input
   nthreads <- match.arg(nthreads)
 
@@ -341,23 +306,35 @@ init_h2o <- function(nthreads=c("minus1", "half", "all"))
 
 
 
-#' Title
+#' Send train-test data.frames to H2O cluster
 #'
-#' @param tt
+#' This function sends the train and test data.frames to the current
+#' H2O cluster.
 #'
-#' @return
+#' @details
+#' Upon running this function, the two data.frames should be
+#' available to the local H2O cluster, and should be accessible
+#' via the graphical interface for the cluster (normally
+#' available through a browser at \code{localhost:54321}) or using
+#' the R API as documented in the\pkg{h2o} package.
+#'
+#' @param tt train-test list (see [ttsplit()])
+#'
+#' @return H2O pointers to the H2O frames (needed to interact with the cluster
+#' using the R API through the \pkg{h2o} package)
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' init_h2o()
+#' tt <- df |> ttsplit()
+#' tt_h2o <- tt |> ship_train_and_test_to_h2o()
+#' }
 #'
 #' @seealso
+#' [run_automl_pipeline()], [h2o::as.h2o()]
 ship_train_and_test_to_h2o <- function(tt)
 {
-  "
-  input: tt list (train and  test)
-  output: h2o pointers
-  "
-
   # train-test
   train <- as.h2o(tt$train, "train")
   test <- as.h2o(tt$test, "test")
@@ -376,25 +353,41 @@ ship_train_and_test_to_h2o <- function(tt)
 
 
 
-# automl
-#' Title
+#' Run an H2O AutoML model
 #'
-#' @param config
-#' @param tt_h2o
+#' This function is a wrapper for [h2o::h2o.automl()],
+#' with relevant options specified through the configuration
+#' object generated by [get_automl_config()].
 #'
-#' @return
+#' @details
+#' Only \code{$train} is currently used in \code{tt_h2o}.
+#'
+#' Additional arguments passed to H2O via \code{...} may not include the following,
+#' which have fixed values here:
+#' * \code{stopping_tolerance}: .01
+#' * \code{keep_cross_validation_predictions}: \code{FALSE}
+#' * \code{keep_cross_validation_models}: \code{FALSE}
+#'
+#' @param config configuration object (see [get_automl_config()])
+#' @param tt_h2o list of H2O pointers to H2O frames (see [ship_train_and_test_to_h2o()])
+#' @param ... additional arguments passed to [h2o::h2o.automl()] (see Details)
+#'
+#' @return AutoML object from H2O
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' init_h2o()
+#' tt <- df |> ttsplit()
+#' tt_h2o <- tt |> ship_train_and_test_to_h2o()
+#' config <- get_automl_config(target="y1")
+#' automl <- config |> get_automl_model(tt_h2o)
+#' }
 #'
 #' @seealso
-get_automl_model <- function(config, tt_h2o)
+#' [get_automl_config()], [h2o::h2o.automl()]
+get_automl_model <- function(config, tt_h2o, ...)
 {
-  "
-  input: tt_h2o is list of h2o pointers, but only $train is used
-  return automl object
-  "
-
   # model
   automl <- h2o.automl(
     y=config$target,
@@ -407,6 +400,7 @@ get_automl_model <- function(config, tt_h2o)
     ,max_models = config$automl$max_models
     ,max_runtime_secs_per_model = config$automl$max_runtime_secs_per_model
     ,balance_classes=config$automl$balance_classes
+    ,...
   )
 
   # out
@@ -416,26 +410,35 @@ get_automl_model <- function(config, tt_h2o)
 
 
 # add predictions
-#' Title
+#' Add predictions from an AutoML object to a test set
 #'
-#' @param automl
-#' @param tt
-#' @param tt_h2o
-#' @param add_confidence_level
+#' This function generates predictions from an AutoML object for the test
+#' set in a train-test split, and adds the predictions to the test set.
+#' Confidence levels can also optionally be added alongside predictions.
 #'
-#' @return
+#' @param automl H2O AutoML object (from [h2o::h2o.automl()] or [get_automl_model()])
+#' @param tt train-test list (see [ttsplit()])
+#' @param tt_h2o H2O pointers to train and test frames (see [ship_train_and_test_to_h2o()])
+#' @param add_confidence_level (logical) whether to add confidence levels
+#' alongside predictions in test set (default \code{TRUE})
+#'
+#' @return train-test list with predictions (and optionally confidence levels) added to \code{$test}
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' init_h2o()
+#' tt <- df |> ttsplit()
+#' tt_h2o <- tt |> ship_train_and_test_to_h2o()
+#' config <- get_automl_config(target="y1")
+#' automl <- config |> get_automl_model(tt_h2o)
+#' tt <- add_predictions_from_automl(automl)
+#' }
 #'
 #' @seealso
+#' [h2o::h2o.predict()], [h2o::h2o.automl()], [get_automl_model()]
 add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level=TRUE)
 {
-  "
-  input: tt and tt_h2o only $test is used
-  return tt with added column to test and confidence level (if requested)
-  "
-
   leader_pred <- h2o.predict(automl, newdata = tt_h2o$test)
   leader_pred_df <- as.data.frame(leader_pred)
   colnames(leader_pred_df) <- colnames(leader_pred)
@@ -462,16 +465,28 @@ add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level
 
 
 #var imp plot
-#' Title
+#' Plot and print variable importances from an AutoML model
 #'
-#' @param automl
+#' This function plots and prints variable importances from an AutoML
+#' model (if available), and returns variable importances (\code{data.frame}).
 #'
-#' @return
+#' @param automl H2O AutoML model (from calling [h2o::h2o.automl()] or [get_automl_model()])
+#'
+#' @return \code{data.frame} of variable importances
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' init_h2o()
+#' tt <- df |> ttsplit()
+#' tt_h2o <- tt |> ship_train_and_test_to_h2o()
+#' config <- get_automl_config(target="y1")
+#' automl <- config |> get_automl_model(tt_h2o)
+#' var_imp <- automl |> plot_and_print_variable_importances()
+#' }
 #'
 #' @seealso
+#'[h2o::h2o.varimp()], [h2o::h2o.varimp_plot()], [h2o::h2o.automl()], [get_automl_model()]
 plot_and_print_variable_importances <- function(automl)
 {
   try({
@@ -483,24 +498,58 @@ plot_and_print_variable_importances <- function(automl)
 
 
 #### pipeline ####
-#' Title
+#' Run a full AutoML pipeline
 #'
-#' @param df
-#' @param config
-#' @param prop_train
-#' @param scale_numeric_features
-#' @param add_confidence_level
-#' @param plot_and_print_variable_importances
-#' @param shutdown_h2o
+#' This function runs a full AutoML pipeline, starting from a \code{data.frame}
+#' split into training and test sets to adding predictions from an AutoML model
+#' to the test set and possibly reporting variable importances.
 #'
-#' @return
+#' @details
+#' The \code{df} data.frame is first prepared by removing non-ASCII characters,
+#' casting all character variables to factors (if any), and removing blank factor
+#' levels from factors. Then it is split into training and test sets, and if requested,
+#' numeric features are scaled based on sample statistics in the training set. Next,
+#' a local H2O cluster is launched, the train and test sets are uploaded to the cluster,
+#' and an AutoML model is requested using parameters specified in the configuration
+#' object. Predictions are added to the test set (with or without confidence levels),
+#' and variable importances may be plotted and reported. Finally, if requested,
+#' the H2O cluster is shut down.
+#'
+#' @param df data.frame
+#' @param config Configuration object (from calling [get_automl_config()])
+#' @param ... additional arguments passed to [get_automl_model()]
+#' @param prop_train proportion of rows to be allocated to training
+#' @param scale_numeric_features (logical) whether to scale numeric features
+#' (see [scale_numeric_features_in_train_and_test()])
+#' @param add_confidence_level (logical) whether to add confidence levels alongside predictions
+#' in the test set (default \code{FALSE})
+#' @param plot_and_print_variable_importances (logical) whether to plot and print variable importances
+#' if they are available
+#' @param shutdown_h2o (logical) whether to shut down cluster at the end of the pipeline
+#' (default \code{FALSE})
+#'
+#' @return list with elements:
+#' \describe{
+#' \item{tt}{train-test split constructed from \code{df}, with predictions and
+#' possibly confidence levels added to the test set}
+#' \item{automl}{H2O AutoML model}
+#' }
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' config <- get_automl_config(target="y1")
+#' pip <- df |> run_automl_pipeline(config)
+#' }
 #'
 #' @seealso
+#' [ttsplit()],
+#' [scale_numeric_features_in_train_and_test()],
+#' [get_automl_model()],
+#' [add_predictions_from_automl()]
 run_automl_pipeline <- function(df,
                                 config,
+                                ...,
                                 prop_train=.7,
                                 scale_numeric_features=FALSE,
                                 add_confidence_level=FALSE,
@@ -518,7 +567,7 @@ run_automl_pipeline <- function(df,
   if(scale_numeric_features) tt <- tt |> scale_numeric_features_in_train_and_test()
   init_h2o(nthreads = config$automl$nthreads)
   tt_h2o <- ship_train_and_test_to_h2o(tt)
-  automl <- get_automl_model(config, tt_h2o)
+  automl <- get_automl_model(config, tt_h2o, ...)
   tt <- add_predictions_from_automl(automl,
                                     tt,
                                     tt_h2o,

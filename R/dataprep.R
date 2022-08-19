@@ -1,3 +1,40 @@
+#### cleaning ####
+#' Remove non-ASCII characters from data.frame
+#'
+#' This function removes all non-ASCII characters from a data.frame.
+#' This is particularly useful in non-English locales when special characters
+#' pose problems (e.g. when using the machine learning library \pkg{h2o}).
+#'
+#' @param df data.frame
+#'
+#' @return \code{df} with non-ASCII characters removed
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_non_ascii_from_df()
+#'
+#' @seealso
+#' [base::iconv()]
+remove_non_ascii_from_df <- function(df) # helper function
+{
+  df_ascii <- df
+  for (c in names(df))
+  {
+    df_ascii[,c] <- iconv(df[,c], "latin1", "ASCII", sub="")
+    if(is.numeric(df[,c])) df_ascii[,c] <- as.numeric(df_ascii[,c]) else if (is.factor(df[,c])) df_ascii[,c] <- as.factor(df_ascii[,c])
+  }
+  names(df_ascii) <- iconv(names(df_ascii), "latin1", "ASCII", sub="")
+
+  # out
+  print("Removed non-ascii characters from column names and entire df")
+
+  # return
+  return(df_ascii)
+}
+
+
+
+
 #### types & classes ####
 #' Cast variables of one type to another
 #'
@@ -261,6 +298,37 @@ group_some_factor_levels <- function(df, map)
   return(df)
 
 }
+
+
+
+#' Remove blank factor levels
+#'
+#' This function removes blank factor levels across a data.frame by
+#' replacing blank levels by \code{NA} (missing).
+#'
+#' @param df data.frame
+#'
+#' @return \code{df} with factors with blank levels replaced with \code{NA} (missing)
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_blank_factor_levels()
+remove_blank_factor_levels <- function(df)
+{
+  for (c in colnames(df))
+  {
+    if (is.factor(df[,c]))
+    {
+      levels(df[,c])[which(levels(df[,c]) %in% c("", " ", "  "))] <- NA
+    }
+  }
+  print("Replaced factor levels '', ' ', and '  ' with NA")
+  return(df)
+}
+
+
+
+
 
 
 #### recoding & mapping ####
