@@ -59,60 +59,6 @@ add_group_key_to_desc_tbl <- function(tbl, group_key)
 }
 
 
-# helper fn: pivot
-#' Pivot data.frame from wide to long
-#'
-#' This function pivots a data.frame from wide to long.
-#'
-#' This is mostly a helper function. For more horsepower, see \code{tidyr::pivot_longer()}.
-#'
-#' @param df data.frame
-#' @param repeated_vars Named list of variables to be pivoted to long format
-#'
-#' @return \code{df} in long format
-#' @export
-#'
-#' @examples
-#' v_repeated <- list(
-#'    x=c("x1","x2","x3"),
-#'    y=c("y1", "y2", "y3")
-#'    )
-#' df_long <- df |> to_long(v_repeated)
-#'
-#' @seealso [tidyr::pivot_longer()]
-#'
-#' @concept descriptives
-to_long <- function(df, repeated_vars)
-{
-  "
-  input: repeated_vars is named list of var pairs
-  output: dflong
-  "
-  # add id row
-  df$id <- 1:nrow(df) |> factor()
-
-  #
-  dflong <- repeated_vars |> lapply(
-    \(repeated_var)
-    {
-      # pivot
-      dflong <- df["id" |> c(repeated_var)] |>
-        pivot_longer(cols=all_of(repeated_var), names_to="Time") |>
-        as.data.frame()
-      for(t in 1:length(repeated_var)) dflong$Time <- dflong$Time |> replace_in_vector(find=repeated_var[t], replace=t)
-      return(dflong)
-    }
-  )
-
-  # col name
-  for(i in 1:length(dflong)) colnames(dflong[[i]])[which(colnames(dflong[[i]])=="value")] <- names(repeated_vars)[i]
-
-  # merge
-  dflong <- dflong |> Reduce(f = \(df1, df2)merge(df1, df2, by=c("id", "Time"), sort=FALSE))
-
-  # out
-  return(dflong)
-}
 
 
 
