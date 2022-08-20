@@ -37,6 +37,8 @@
 #' }
 #'
 #' @seealso [get_logger()], [base::sink()]
+#'
+#' @concept logger
 logtext <- function(expr,
                     logger=get_logger(add_git_info = FALSE,
                                       init_log_file = FALSE),
@@ -81,6 +83,8 @@ logtext <- function(expr,
 #' }
 #'
 #' @seealso [get_logger()], [logtext()]
+#'
+#' @concept logger
 get_git_commit <- function(dir=getwd())
 {
   dir <- paste0(dir, "/.git/")
@@ -140,6 +144,8 @@ get_git_commit <- function(dir=getwd())
 #' }
 #'
 #' @seealso [logtext()], [get_git_commit()]
+#'
+#' @concept logger
 get_logger <- function(dir=getwd(),
                        fname=NULL,
                        add_git_info=TRUE,

@@ -29,3 +29,4 @@ var_imp <- automl |> plot_and_print_variable_importances()
 \seealso{
 \code{\link[h2o:h2o.varimp]{h2o::h2o.varimp()}}, \code{\link[h2o:h2o.varimp_plot]{h2o::h2o.varimp_plot()}}, \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}, \code{\link[=get_automl_model]{get_automl_model()}}
 }
+\concept{machine_learning}

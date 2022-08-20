@@ -54,4 +54,6 @@ df |>
    add_cluster_assignment(return_df_cluster_instead=TRUE) |>
    plot_density_by_groups(group="Cluster")
 }
+
 }
+\concept{models}

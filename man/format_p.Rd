@@ -18,4 +18,6 @@ no leading zeros and indicated as "< .001" rather than .000.
 }
 \examples{
 format_p(c(0.000007, 0.15))
+
 }
+\concept{descriptives}

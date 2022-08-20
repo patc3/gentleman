@@ -18,4 +18,6 @@ Contrasts for factors using effect coding (when k > 2) or dummy coding (when k =
 \examples{
 contr.dummy_or_effect(3)
 options(contrasts=c(unordered="contr.dummy_or_effect", ordered="contr.poly"))
+
 }
+\concept{data_prep}

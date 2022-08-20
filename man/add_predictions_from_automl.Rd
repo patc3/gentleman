@@ -37,3 +37,4 @@ tt <- add_predictions_from_automl(automl)
 \seealso{
 \code{\link[h2o:h2o.predict]{h2o::h2o.predict()}}, \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}, \code{\link[=get_automl_model]{get_automl_model()}}
 }
+\concept{machine_learning}

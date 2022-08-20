@@ -39,3 +39,4 @@ l |> make_df_from_named_list()
 \seealso{
 \code{\link[=ana_fn_aov]{ana_fn_aov()}}, \code{\link[=ana_fn_rm_aov]{ana_fn_rm_aov()}}, \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
 }
+\concept{helpers}

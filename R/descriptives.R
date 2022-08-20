@@ -12,6 +12,8 @@
 #'
 #' @examples
 #' format_p(c(0.000007, 0.15))
+#'
+#' @concept descriptives
 format_p <- function(p)
 {
   "
@@ -38,6 +40,8 @@ format_p <- function(p)
 #'
 #' @return Table with group key added
 #' @noRd
+#'
+#' @concept descriptives
 add_group_key_to_desc_tbl <- function(tbl, group_key)
 {
   "
@@ -76,6 +80,8 @@ add_group_key_to_desc_tbl <- function(tbl, group_key)
 #' df_long <- df |> to_long(v_repeated)
 #'
 #' @seealso [tidyr::pivot_longer()]
+#'
+#' @concept descriptives
 to_long <- function(df, repeated_vars)
 {
   "
@@ -133,6 +139,8 @@ to_long <- function(df, repeated_vars)
 #' }
 #'
 #' @seealso [gentleman::tbl_fn_fac()], [gentleman::get_desc_table()]
+#'
+#' @concept descriptives
 tbl_fn_num <- function(df, vars)
 {
   "
@@ -192,6 +200,8 @@ tbl_fn_num <- function(df, vars)
 #' }
 #'
 #' @seealso [stats::aov()], [gentleman::get_desc_table()]
+#'
+#' @concept descriptives
 ana_fn_aov <- function(df,
                        vars,
                        group)
@@ -245,6 +255,8 @@ ana_fn_aov <- function(df,
 #' [gentleman::get_desc_table()],
 #' [gentleman::get_desc_time()],
 #' [stats::aov()]
+#'
+#' @concept descriptives
 ana_fn_rm_aov <- function(df,
                           vars,
                           group,
@@ -333,6 +345,8 @@ ana_fn_rm_aov <- function(df,
 #' }
 #'
 #' @seealso [gentleman::tbl_fn_num()], [gentleman::get_desc_table()]
+#'
+#' @concept descriptives
 tbl_fn_fac <- function(df, vars)
 {
   "
@@ -406,6 +420,8 @@ tbl_fn_fac <- function(df, vars)
 #' }
 #'
 #' @seealso [stats::chisq.test()]
+#'
+#' @concept descriptives
 ana_fn_chisq <- function(df,
                          vars,
                          group,
@@ -485,6 +501,8 @@ ana_fn_chisq <- function(df,
 #' [gentleman::tbl_fn_fac()]
 #' [gentleman::ana_fn_aov()],
 #' [gentleman::ana_fn_chisq()]
+#'
+#' @concept descriptives
 get_desc_table <- function(df,
                            vars,
                            tbl_fn,
@@ -567,6 +585,8 @@ get_desc_table <- function(df,
 #' df |> get_desc_time(v_repeated)
 #'
 #' @seealso [gentleman::get_desc_table()], [gentleman::to_long()], [gentleman::ana_fn_rm_aov()]
+#'
+#' @concept descriptives
 get_desc_time <- function(df,
                           repeated_vars,
                           ...)
@@ -618,6 +638,8 @@ get_desc_time <- function(df,
 #'
 #' @examples
 #' df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
+#'
+#' @concept descriptives
 compare_pairs_of_vars <- function(df,
                                   vars,
                                   order_output=TRUE)
@@ -690,6 +712,8 @@ compare_pairs_of_vars <- function(df,
 #' \dontrun{
 #' df |> get_sig_differences_between_groups(c("Age", "Nationality"), group="Gender")
 #' }
+#'
+#' @concept descriptives
 get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
 {
   # test vars
@@ -769,6 +793,8 @@ get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
 #' df |> plot_density_by_groups()
 #' df |> plot_density_by_groups(group="Gender")
 #' }
+#'
+#' @concept descriptives
 plot_density_by_groups <- function(df,
                                    vars=NULL,
                                    group=NULL,

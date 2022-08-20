@@ -41,3 +41,4 @@ pip <- df |> run_automl_pipeline(target="y1", config)
 \seealso{
 \code{\link[=get_automl_model]{get_automl_model()}}, \code{\link[=run_automl_pipeline]{run_automl_pipeline()}}, \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}
 }
+\concept{machine_learning}

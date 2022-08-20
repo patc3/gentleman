@@ -62,3 +62,4 @@ fit |> decompose_interaction(x1="Gender", x2="AttitudeTowardsSchool")
 \seealso{
 \code{\link[emmeans:emmeans]{emmeans::emmeans()}}, \code{\link[emmeans:emtrends]{emmeans::emtrends()}}, \code{\link[emmeans:emmip]{emmeans::emmip()}}
 }
+\concept{models}

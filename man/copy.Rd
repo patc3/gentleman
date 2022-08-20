@@ -15,4 +15,6 @@ Ideal for copy-pasting a data.frame into Excel in non-English locale.
 }
 \examples{
 df |> copy()
+
 }
+\concept{helpers}

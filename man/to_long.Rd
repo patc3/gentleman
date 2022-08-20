@@ -31,3 +31,4 @@ df_long <- df |> to_long(v_repeated)
 \seealso{
 \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}}
 }
+\concept{descriptives}

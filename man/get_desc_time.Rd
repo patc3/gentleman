@@ -38,3 +38,4 @@ df |> get_desc_time(v_repeated)
 \seealso{
 \code{\link[=get_desc_table]{get_desc_table()}}, \code{\link[=to_long]{to_long()}}, \code{\link[=ana_fn_rm_aov]{ana_fn_rm_aov()}}
 }
+\concept{descriptives}

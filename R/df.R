@@ -23,4 +23,6 @@
 #'   \item{y3}{Numeric variable}
 #' }
 #' @source Simulated data using the \code{simsem} package
+#'
+#' @concept package
 "df"

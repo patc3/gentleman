@@ -19,4 +19,6 @@ This function is mostly useful as a shortcut to avoid default viewer in RStudio.
 \dontrun{
 view(df)
 }
+
 }
+\concept{helpers}

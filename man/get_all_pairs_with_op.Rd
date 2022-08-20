@@ -19,3 +19,4 @@ Character vector with all pairs with operator separator
 \description{
 Used for generating formulas in lavaan models.
 }
+\concept{helpers}

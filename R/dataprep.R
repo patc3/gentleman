@@ -15,6 +15,8 @@
 #'
 #' @seealso
 #' [base::iconv()]
+#'
+#' @concept data_prep
 remove_non_ascii_from_df <- function(df) # helper function
 {
   df_ascii <- df
@@ -48,6 +50,8 @@ remove_non_ascii_from_df <- function(df) # helper function
 #'
 #' @examples
 #' df <- df |> remove_vars_with_too_many_missing(pmissing=.80)
+#'
+#' @concept data_prep
 remove_vars_with_too_many_missing <- function(df, pmissing=.90)
 {
   orig <- names(df)
@@ -80,6 +84,8 @@ remove_vars_with_too_many_missing <- function(df, pmissing=.90)
 #'    cast("numeric", "factor") |>
 #'    get_desc_table(c("Age", "Nationality"), tbl_fn=tbl_fn_fac)
 #' }
+#'
+#' @concept data_prep
 cast <- function(df, type_from, type_to, vars=NULL)
 {
   if(is.null(vars)) vars <- names(df)
@@ -111,6 +117,8 @@ cast <- function(df, type_from, type_to, vars=NULL)
 #'
 #' @examples
 #' df <- df |> scale_and_combine(c("x1", "x2", "x3"), name="x", scale=TRUE)
+#'
+#' @concept data_prep
 scale_and_combine <- function(df, vars, name, scale=TRUE)
 {
   "
@@ -157,6 +165,8 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 #' @examples
 #' contr.dummy_or_effect(3)
 #' options(contrasts=c(unordered="contr.dummy_or_effect", ordered="contr.poly"))
+#'
+#' @concept data_prep
 contr.dummy_or_effect <- function(...)
 {
   contr <- contr.treatment(...)
@@ -200,6 +210,8 @@ contr.dummy_or_effect <- function(...)
 #'   make_into_dummy_instead = "Gender"
 #' )
 #' }
+#'
+#' @concept data_prep
 make_factors_into_effect_codes <- function(df,
                                            factors,
                                            remove_selected_columns = TRUE,
@@ -288,6 +300,8 @@ make_factors_into_effect_codes <- function(df,
 #' map <- list(Nationality=list(c("US", "Puerto Rico"), c("Canada", "Quebec")))
 #' df <- df |> group_some_factor_levels(map)
 #' }
+#'
+#' @concept data_prep
 group_some_factor_levels <- function(df, map)
 {
   '
@@ -340,6 +354,8 @@ group_some_factor_levels <- function(df, map)
 #'
 #' @examples
 #' df <- df |> remove_blank_factor_levels()
+#'
+#' @concept data_prep
 remove_blank_factor_levels <- function(df)
 {
   for (c in colnames(df))
@@ -369,6 +385,8 @@ remove_blank_factor_levels <- function(df)
 #'
 #' @examples
 #' df <- df |> remove_factors_with_too_many_levels()
+#'
+#' @concept data_prep
 remove_factors_with_too_many_levels <- function(df, maxlevels=20)
 {
   orig <- names(df)
@@ -424,6 +442,8 @@ remove_factors_with_too_many_levels <- function(df, maxlevels=20)
 #' df$Nationality <- df$Nationality |>
 #'    recode_using_excel_map("map.xlsx", sheet="Nationality")
 #' }
+#'
+#' @concept data_prep
 recode_using_excel_map <- function(values,
                                    path,
                                    sheet=1,
@@ -488,6 +508,8 @@ recode_using_excel_map <- function(values,
 #' }
 #'
 #' @seealso [base::merge()]
+#'
+#' @concept data_prep
 add_vars_from_one_df_to_another <- function(df_to,
                                             df_from,
                                             by_to,

@@ -25,4 +25,6 @@ library(lavaan)
 get_mediation_model("x1", "x2", "x3") |>
    sem(df) |>
    summary()
+
 }
+\concept{models}

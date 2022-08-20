@@ -33,3 +33,4 @@ df |> ana_fn_aov("age", "TreatmentGroup")
 \seealso{
 \code{\link[stats:aov]{stats::aov()}}, \code{\link[=get_desc_table]{get_desc_table()}}
 }
+\concept{descriptives}

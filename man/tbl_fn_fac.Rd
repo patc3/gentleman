@@ -31,3 +31,4 @@ df |> tbl_fn_fac("Nationality")
 \seealso{
 \code{\link[=tbl_fn_num]{tbl_fn_num()}}, \code{\link[=get_desc_table]{get_desc_table()}}
 }
+\concept{descriptives}

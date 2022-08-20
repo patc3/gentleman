@@ -24,4 +24,6 @@ possibly scaling each variable individually prior to combining
 }
 \examples{
 df <- df |> scale_and_combine(c("x1", "x2", "x3"), name="x", scale=TRUE)
+
 }
+\concept{data_prep}

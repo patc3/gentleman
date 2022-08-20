@@ -18,4 +18,6 @@ replacing blank levels by \code{NA} (missing).
 }
 \examples{
 df <- df |> remove_blank_factor_levels()
+
 }
+\concept{data_prep}

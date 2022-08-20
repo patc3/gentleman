@@ -27,6 +27,8 @@
 #' ana$y1 <- sem("y1 ~ x1+x2", df)
 #' ana$y2 <- sem("y2 ~ x1+x2", df)
 #' ana |> make_pub_table_from_lavaan_models()
+#'
+#' @concept publications
 make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 {
   "
@@ -97,6 +99,8 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 #' ana$y1 <- lm(y1 ~ x1+x2, df) |> tidy()
 #' ana$y2 <- lm(y2 ~ x1+x2, df) |> tidy()
 #' ana |> make_pub_table_from_broom_tidy()
+#'
+#' @concept publications
 make_pub_table_from_broom_tidy <- function(ana)
 {
   "
@@ -157,6 +161,8 @@ make_pub_table_from_broom_tidy <- function(ana)
 #' ana$y2 <- sem("y2 ~ x1+x2", df)
 #' pub <- ana |> make_pub_table_from_lavaan_models()
 #' pub |> get_sig_effects_from_pub_table()
+#'
+#' @concept publications
 get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 {
   # get significant predictors with outcome
@@ -214,6 +220,8 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 #'
 #' # sensitivity analysis: effect of missing data
 #' pub_lm |> compare_sig_effects_in_two_pub_tables(pub_sem)
+#'
+#' @concept publications
 compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", fixed=T)
 {
   # get significant effects in both tables

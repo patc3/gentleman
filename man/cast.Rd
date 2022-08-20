@@ -28,4 +28,6 @@ df |>
    cast("numeric", "factor") |>
    get_desc_table(c("Age", "Nationality"), tbl_fn=tbl_fn_fac)
 }
+
 }
+\concept{data_prep}

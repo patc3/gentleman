@@ -20,4 +20,6 @@ too many levels.
 }
 \examples{
 df <- df |> remove_factors_with_too_many_levels()
+
 }
+\concept{data_prep}

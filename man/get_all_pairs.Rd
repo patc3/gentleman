@@ -27,4 +27,6 @@ This function returns a matrix of all pairs of values in a vector.
 }
 \examples{
 get_all_pairs(c("x1", "x2", "y1", "y2"))
+
 }
+\concept{helpers}

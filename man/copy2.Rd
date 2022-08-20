@@ -16,4 +16,6 @@ This is a wrapper for \code{write.table()} with \code{file="gentleman_out.txt"}.
 \dontrun{
 df |> copy2()
 }
+
 }
+\concept{helpers}

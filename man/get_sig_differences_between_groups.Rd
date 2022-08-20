@@ -31,4 +31,6 @@ Significant differences are determined using the threshold \code{p < .05}.
 \dontrun{
 df |> get_sig_differences_between_groups(c("Age", "Nationality"), group="Gender")
 }
+
 }
+\concept{descriptives}

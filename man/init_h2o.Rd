@@ -41,3 +41,4 @@ init_h2o("minus1") # all but one cores
 \seealso{
 \code{\link[h2o:h2o.init]{h2o::h2o.init()}}, \code{\link[parallel:detectCores]{parallel::detectCores()}}
 }
+\concept{machine_learning}

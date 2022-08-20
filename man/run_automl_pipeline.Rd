@@ -83,3 +83,4 @@ pip <- df |> run_automl_pipeline(target="y1")
 \code{\link[=get_automl_model]{get_automl_model()}},
 \code{\link[=add_predictions_from_automl]{add_predictions_from_automl()}}
 }
+\concept{machine_learning}

@@ -30,3 +30,4 @@ get_git_commit()
 \seealso{
 \code{\link[=get_logger]{get_logger()}}, \code{\link[=logtext]{logtext()}}
 }
+\concept{logger}

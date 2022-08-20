@@ -22,6 +22,8 @@
 #'
 #' @seealso
 #' [get_automl_model()], [run_automl_pipeline()], [h2o::h2o.automl()]
+#'
+#' @concept machine_learning
 get_automl_config <- function(include_algos="DRF",
                               max_runtime_secs=NULL,
                               max_models=1,
@@ -73,6 +75,8 @@ get_automl_config <- function(include_algos="DRF",
 #' [keep_only_vars_in_both_train_and_test()],
 #' [remove_target_from_test_and_add_ref_to_env()],
 #' [add_target_back_to_test_set_from_ref_table()]
+#'
+#' @concept machine_learning
 ttsplit <- function(df, prop_train=.7)
 {
   df_split <- list()
@@ -109,6 +113,8 @@ ttsplit <- function(df, prop_train=.7)
 #'
 #' @seealso
 #' [dataPreparation::build_scales()], [ttsplit()]
+#'
+#' @concept machine_learning
 scale_numeric_features_in_train_and_test <- function(tt)
 {
   # scale numeric features train & test
@@ -146,6 +152,8 @@ scale_numeric_features_in_train_and_test <- function(tt)
 #'
 #' @seealso
 #' [ttsplit()]
+#'
+#' @concept machine_learning
 keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FALSE)
 {
   v_in_common <- Reduce(intersect, lapply(tt, names))#set(names(tt$train, tt$test))
@@ -186,6 +194,8 @@ keep_only_vars_in_both_train_and_test <- function(tt, remove_from_train_only=FAL
 #'
 #' @note This function implements the method described in
 #' [Preventing Target Leakage](https://en.d22consulting.com/quantcafe/preventing-target-leakage) (D22 QuantCafé, 2021).
+#'
+#' @concept machine_learning
 remove_target_from_test_and_add_ref_to_env <- function(tt, target, unique_id, ref_name)
 {
   ref_table <- data.frame(id=tt$test[,unique_id], target=tt$test[,target])
@@ -226,6 +236,8 @@ remove_target_from_test_and_add_ref_to_env <- function(tt, target, unique_id, re
 #'
 #' @note This function implements the method described in
 #' [Preventing Target Leakage](https://en.d22consulting.com/quantcafe/preventing-target-leakage) (D22 QuantCafé, 2021).
+#'
+#' @concept machine_learning
 add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 {
   id_var <- names(ref_table)[1]
@@ -271,6 +283,8 @@ add_target_back_to_test_set_from_ref_table <- function(tt, ref_table)
 #'
 #' @seealso
 #' [h2o::h2o.init()], [parallel::detectCores()]
+#'
+#' @concept machine_learning
 init_h2o <- function(nthreads=c("half", "minus1", "all"))
 {
   # get input
@@ -322,6 +336,8 @@ init_h2o <- function(nthreads=c("half", "minus1", "all"))
 #'
 #' @seealso
 #' [run_automl_pipeline()], [h2o::as.h2o()]
+#'
+#' @concept machine_learning
 ship_train_and_test_to_h2o <- function(tt)
 {
   # train-test
@@ -376,6 +392,8 @@ ship_train_and_test_to_h2o <- function(tt)
 #'
 #' @seealso
 #' [get_automl_config()], [h2o::h2o.automl()]
+#'
+#' @concept machine_learning
 get_automl_model <- function(tt_h2o,
                              target,
                              config=get_automl_config(),
@@ -426,6 +444,8 @@ get_automl_model <- function(tt_h2o,
 #'
 #' @seealso
 #' [h2o::h2o.predict()], [h2o::h2o.automl()], [get_automl_model()]
+#'
+#' @concept machine_learning
 add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level=TRUE)
 {
   leader_pred <- h2o.predict(automl, newdata = tt_h2o$test)
@@ -475,6 +495,8 @@ add_predictions_from_automl <- function(automl, tt, tt_h2o, add_confidence_level
 #'
 #' @seealso
 #'[h2o::h2o.varimp()], [h2o::h2o.varimp_plot()], [h2o::h2o.automl()], [get_automl_model()]
+#'
+#' @concept machine_learning
 plot_and_print_variable_importances <- function(automl)
 {
   try({
@@ -541,6 +563,8 @@ plot_and_print_variable_importances <- function(automl)
 #' [scale_numeric_features_in_train_and_test()],
 #' [get_automl_model()],
 #' [add_predictions_from_automl()]
+#'
+#' @concept machine_learning
 run_automl_pipeline <- function(df,
                                 target,
                                 config=get_automl_config(),

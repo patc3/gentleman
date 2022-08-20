@@ -35,3 +35,4 @@ tt_h2o <- tt |> ship_train_and_test_to_h2o()
 \seealso{
 \code{\link[=run_automl_pipeline]{run_automl_pipeline()}}, \code{\link[h2o:as.h2o]{h2o::as.h2o()}}
 }
+\concept{machine_learning}

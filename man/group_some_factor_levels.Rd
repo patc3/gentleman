@@ -27,4 +27,6 @@ using the first element in each vector as the value for all levels in that vecto
 map <- list(Nationality=list(c("US", "Puerto Rico"), c("Canada", "Quebec")))
 df <- df |> group_some_factor_levels(map)
 }
+
 }
+\concept{data_prep}

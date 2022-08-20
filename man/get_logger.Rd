@@ -49,3 +49,4 @@ logger |> logtext(expr=print("hello world!"))
 \seealso{
 \code{\link[=logtext]{logtext()}}, \code{\link[=get_git_commit]{get_git_commit()}}
 }
+\concept{logger}

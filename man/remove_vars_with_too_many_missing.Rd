@@ -21,4 +21,6 @@ of missing values is too high.
 }
 \examples{
 df <- df |> remove_vars_with_too_many_missing(pmissing=.80)
+
 }
+\concept{data_prep}

@@ -36,4 +36,6 @@ pub_lm <- ana |> make_pub_table_from_broom_tidy()
 
 # sensitivity analysis: effect of missing data
 pub_lm |> compare_sig_effects_in_two_pub_tables(pub_sem)
+
 }
+\concept{publications}

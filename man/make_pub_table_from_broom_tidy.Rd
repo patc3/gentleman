@@ -32,4 +32,6 @@ ana <- list()
 ana$y1 <- lm(y1 ~ x1+x2, df) |> tidy()
 ana$y2 <- lm(y2 ~ x1+x2, df) |> tidy()
 ana |> make_pub_table_from_broom_tidy()
+
 }
+\concept{publications}

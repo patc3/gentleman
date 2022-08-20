@@ -37,3 +37,4 @@ df |> ana_fn_chisq("Nationality", "TreatmentGroup")
 \seealso{
 \code{\link[stats:chisq.test]{stats::chisq.test()}}
 }
+\concept{descriptives}

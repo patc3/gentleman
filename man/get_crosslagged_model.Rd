@@ -46,3 +46,4 @@ Three extensions of the random intercept cross-lagged panel model.
 \emph{Structural Equation Modeling: A Multidisciplinary Journal}.
 \url{https://doi.org/10.1080/10705511.2020.1784738}.
 }
+\concept{models}

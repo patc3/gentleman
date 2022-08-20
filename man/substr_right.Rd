@@ -20,4 +20,6 @@ This function returns the nth last characters of a string
 \examples{
 vars <- c("Gender.x", "Gender.y")
 vars |> substr_right(1)
+
 }
+\concept{helpers}

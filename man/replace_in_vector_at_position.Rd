@@ -21,4 +21,6 @@ This function replaces the element at a given position of a vector by the replac
 }
 \examples{
 c(1,2,3,4,5) |> replace_in_vector_at_position(1, 0)
+
 }
+\concept{helpers}

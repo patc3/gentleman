@@ -56,3 +56,4 @@ logger |> logtext(expr={
 \seealso{
 \code{\link[=get_logger]{get_logger()}}, \code{\link[base:sink]{base::sink()}}
 }
+\concept{logger}

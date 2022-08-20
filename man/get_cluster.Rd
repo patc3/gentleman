@@ -31,4 +31,6 @@ number of clusters is determined for the current distance matrix using \code{\li
 }
 \examples{
 df |> get_cluster() |> table()
+
 }
+\concept{models}

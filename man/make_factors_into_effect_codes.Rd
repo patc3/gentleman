@@ -45,4 +45,6 @@ df |> make_factors_into_effect_codes(
   make_into_dummy_instead = "Gender"
 )
 }
+
 }
+\concept{data_prep}

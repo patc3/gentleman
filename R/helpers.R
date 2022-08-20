@@ -13,6 +13,8 @@
 #' \dontrun{
 #' view(df)
 #' }
+#'
+#' @concept helpers
 view <- function(...){ utils::View(...) }
 
 
@@ -27,6 +29,8 @@ view <- function(...){ utils::View(...) }
 #'
 #' @examples
 #' df |> copy()
+#'
+#' @concept helpers
 copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
 
 
@@ -42,6 +46,8 @@ copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
 #' \dontrun{
 #' df |> copy2()
 #' }
+#'
+#' @concept helpers
 copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.names=T, row.names=F, append=T) }
 
 
@@ -60,6 +66,8 @@ copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.
 #'
 #' @examples
 #' c(1,2,3,4,5) |> replace_in_vector_at_position(1, 0)
+#'
+#' @concept helpers
 replace_in_vector_at_position <- function(vec, position, replace)
 {
   # add (replace)
@@ -87,6 +95,8 @@ replace_in_vector_at_position <- function(vec, position, replace)
 #'
 #' @examples
 #' c(1,1,3,6,6,7,9) |> replace_in_vector(find=6, replace=5)
+#'
+#' @concept helpers
 replace_in_vector <- function(vec, find, replace, n_max=Inf)
 {
   n <- sum(vec %in% find)
@@ -124,6 +134,8 @@ replace_in_vector <- function(vec, find, replace, n_max=Inf)
 #'   )
 #' )
 #' values |> replace_in_nested_list(find=5, replace=0)
+#'
+#' @concept helpers
 replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 {
   if(find |> identical(replace)) return(list)
@@ -147,6 +159,8 @@ replace_in_nested_list <- function(list, find, replace, n_max_per_vector=Inf)
 #' @examples
 #' vars <- c("Gender.x", "Gender.y")
 #' vars |> substr_right(1)
+#'
+#' @concept helpers
 substr_right <- function(x, n){
   n_char <- nchar(x)
   substr(x, n_char-n+1, n_char)
@@ -180,6 +194,8 @@ substr_right <- function(x, n){
 #' l |> make_df_from_named_list()
 #'
 #' @seealso [gentleman::ana_fn_aov()], [gentleman::ana_fn_rm_aov()], [gentleman::ana_fn_chisq()]
+#'
+#' @concept helpers
 make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1:length(list[[1]])))
 {
   "
@@ -217,6 +233,8 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
 #'
 #' @examples
 #' get_all_pairs(c("x1", "x2", "y1", "y2"))
+#'
+#' @concept helpers
 get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
 {
   "
@@ -245,6 +263,8 @@ get_all_pairs <- function(vec, direction=c("direct", "double", "reverse"))
 #' @param ... Named arguments passed to \code{get_all_pairs()}
 #'
 #' @return Character vector with all pairs with operator separator
+#'
+#' @concept helpers
 get_all_pairs_with_op <- function(vars, op, ...)
 {
   all_pairs <- vars |>

@@ -36,4 +36,6 @@ of the homogeneous subsets.
 }
 \examples{
 df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
+
 }
+\concept{descriptives}

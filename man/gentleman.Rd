@@ -23,3 +23,4 @@ Useful links:
 \author{
 Patrick Coulombe \email{patrick.coulombe@d22consulting.com}
 }
+\concept{package}

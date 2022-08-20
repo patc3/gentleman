@@ -23,4 +23,6 @@ Replace all occurrences of a value in a vector and replace
 }
 \examples{
 c(1,1,3,6,6,7,9) |> replace_in_vector(find=6, replace=5)
+
 }
+\concept{helpers}

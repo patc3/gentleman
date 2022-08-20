@@ -17,6 +17,8 @@
 #' get_mediation_model("x1", "x2", "x3") |>
 #'    sem(df) |>
 #'    summary()
+#'
+#' @concept models
 get_mediation_model <- function(x, med, y)
 {
   # structural model
@@ -117,6 +119,8 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 #' Three extensions of the random intercept cross-lagged panel model.
 #' \emph{Structural Equation Modeling: A Multidisciplinary Journal}.
 #' \url{https://doi.org/10.1080/10705511.2020.1784738}.
+#'
+#' @concept models
 get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 {
   "
@@ -270,6 +274,8 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' }
 #'
 #' @seealso [emmeans::emmeans()], [emmeans::emtrends()], [emmeans::emmip()]
+#'
+#' @concept models
 decompose_interaction <- function(model,
                                   df=NULL,
                                   x1,
@@ -332,6 +338,8 @@ decompose_interaction <- function(model,
 #'
 #' @examples
 #' df |> get_cluster() |> table()
+#'
+#' @concept models
 get_cluster <- function(df, v_cluster=NULL, k=NULL)
 {
   # clustering vars
@@ -399,6 +407,8 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #'    add_cluster_assignment(return_df_cluster_instead=TRUE) |>
 #'    plot_density_by_groups(group="Cluster")
 #' }
+#'
+#' @concept models
 add_cluster_assignment <- function(df,
                                    v_cluster=NULL,
                                    k=NULL,

@@ -34,4 +34,6 @@ ana <- list()
 ana$y1 <- sem("y1 ~ x1+x2", df)
 ana$y2 <- sem("y2 ~ x1+x2", df)
 ana |> make_pub_table_from_lavaan_models()
+
 }
+\concept{publications}

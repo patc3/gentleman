@@ -61,4 +61,6 @@ a warning will be thrown with the list of values that could not be matched.
 df$Nationality <- df$Nationality |>
    recode_using_excel_map("map.xlsx", sheet="Nationality")
 }
+
 }
+\concept{data_prep}

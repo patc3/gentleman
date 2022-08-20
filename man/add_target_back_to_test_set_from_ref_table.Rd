@@ -35,3 +35,4 @@ tt <- tt |> add_target_back_to_test_set_from_ref_table(target_values)
 \seealso{
 \code{\link[=remove_target_from_test_and_add_ref_to_env]{remove_target_from_test_and_add_ref_to_env()}}
 }
+\concept{machine_learning}

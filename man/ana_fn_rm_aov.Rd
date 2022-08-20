@@ -41,3 +41,4 @@ df |>
 \code{\link[=get_desc_time]{get_desc_time()}},
 \code{\link[stats:aov]{stats::aov()}}
 }
+\concept{descriptives}

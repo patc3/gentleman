@@ -29,4 +29,6 @@ ana$y1 <- sem("y1 ~ x1+x2", df)
 ana$y2 <- sem("y2 ~ x1+x2", df)
 pub <- ana |> make_pub_table_from_lavaan_models()
 pub |> get_sig_effects_from_pub_table()
+
 }
+\concept{publications}

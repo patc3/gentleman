@@ -63,3 +63,4 @@ df |> get_desc_table(
 \code{\link[=ana_fn_aov]{ana_fn_aov()}},
 \code{\link[=ana_fn_chisq]{ana_fn_chisq()}}
 }
+\concept{descriptives}
