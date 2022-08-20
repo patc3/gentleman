@@ -25,6 +25,9 @@
     <loc>/reference/add_target_back_to_test_set_from_ref_table.html</loc>
   </url>
   <url>
+    <loc>/reference/add_vars_from_one_df_to_another.html</loc>
+  </url>
+  <url>
     <loc>/reference/ana_fn_aov.html</loc>
   </url>
   <url>
@@ -142,10 +145,16 @@
     <loc>/reference/remove_blank_factor_levels.html</loc>
   </url>
   <url>
+    <loc>/reference/remove_factors_with_too_many_levels.html</loc>
+  </url>
+  <url>
     <loc>/reference/remove_non_ascii_from_df.html</loc>
   </url>
   <url>
     <loc>/reference/remove_target_from_test_and_add_ref_to_env.html</loc>
+  </url>
+  <url>
+    <loc>/reference/remove_vars_with_too_many_missing.html</loc>
   </url>
   <url>
     <loc>/reference/replace_in_nested_list.html</loc>

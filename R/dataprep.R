@@ -34,6 +34,31 @@ remove_non_ascii_from_df <- function(df) # helper function
 
 
 
+#' Remove variables with too many missing
+#'
+#' This function removes variables from a data.frames when their proportion
+#' of missing values is too high.
+#'
+#' @param df data.frame
+#' @param pmissing (proportion 0-1) maximum proportion of
+#' missingness tolerated in each variable
+#'
+#' @return \code{df} with variables with too many missing values removed
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_vars_with_too_many_missing(pmissing=.80)
+remove_vars_with_too_many_missing <- function(df, pmissing=.90)
+{
+  keep <- sapply(df, function(x) !(sum(is.na(x))/length(x) > pmissing))
+  df <- subset(df, select=keep)
+  print(paste0("Removed variables with more than ", pmissing*100, "% missing"))
+  return(df)
+}
+
+
+
+
 
 #### types & classes ####
 #' Cast variables of one type to another
@@ -329,6 +354,30 @@ remove_blank_factor_levels <- function(df)
 
 
 
+#' Remove factors with too many levels
+#'
+#' This function removes from a data.frame factors that have
+#' too many levels.
+#'
+#' @param df data.frame
+#' @param maxlevels (integer) maximum number of levels for factors
+#'
+#' @return \code{df} with factors with more than \code{maxlevels} levels removed
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_factors_with_too_many_levels()
+remove_factors_with_too_many_levels <- function(df, maxlevels=20)
+{
+  keep <- sapply(df, function(x) !(nlevels(x) > maxlevels))
+  df <- subset(df, select=keep)
+  print(paste0("Removed factors with more than ", maxlevels, " levels"))
+  return(df)
+}
+
+
+
+
 
 
 #### recoding & mapping ####
@@ -403,4 +452,58 @@ recode_using_excel_map <- function(values,
   # out
   new_values
 
+}
+
+
+#### several data.frames ####
+
+#' Add variables from one data.frame to another
+#'
+#' This function adds some variables from one data.frame to another,
+#' by matching rows by a given variable.
+#'
+#' @details
+#' This is a convenience function using \code{merge()}, with only selected variables merged
+#' into the first data.frame, and with the order of columns preserved. The matching variable
+#' may or may not be named the same in both data.frames (as controlled by \code{by_to} and
+#' \code{by_from}).
+#'
+#' @param df_to data.frame in which to add the wanted variables
+#' @param df_from data.frame that contains the wanted variables
+#' @param by_to (character) matching variable in \code{df_to}
+#' @param by_from (character, optional) matching variable in \code{df_from}
+#' (if different from \code{by_to})
+#' @param vars (character) vector of variable names to add to \code{df_to}
+#'
+#' @return \code{df_to} with columns added (if any row match by \code{by})
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df <- df |> add_vars_from_one_df_to_another(ref_table, by_to="id", vars=c("Gender", "Age"))
+#' }
+#'
+#' @seealso [base::merge()]
+add_vars_from_one_df_to_another <- function(df_to,
+                                            df_from,
+                                            by_to,
+                                            by_from=NULL,
+                                            vars)
+{
+  if(is.null(by_from)) by <- by_from <- by_to else by <- c(From=by_from, To=by_to)
+  .df <- df_from[,c(by_from, vars)]
+  df_to <- merge(x=df_to,
+                 y=.df,
+                 by.x=by_to,
+                 by.y=by_from,
+                 all.x=TRUE)[, c(names(df_to), vars)] # prevent column reordering
+
+  # out
+  print("Added variables:")
+  print(vars)
+  print("Matching by:")
+  print(by)
+
+  # return
+  return(df_to)
 }
