@@ -16,6 +16,7 @@ and cross-lagged models.
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://d22consulting.com/gentleman/}
   \item \url{https://github.com/patc3-phd/gentleman}
 }
 

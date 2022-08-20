@@ -2,5 +2,8 @@ pandoc: '2.18'
 pkgdown: 2.0.6
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-08-20T02:38Z
+last_built: 2022-08-20T03:45Z
+urls:
+  reference: https://d22consulting.com/gentleman/reference
+  article: https://d22consulting.com/gentleman/articles
 

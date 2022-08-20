@@ -1,198 +1,198 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>/404.html</loc>
+    <loc>https://d22consulting.com/gentleman/404.html</loc>
   </url>
   <url>
-    <loc>/authors.html</loc>
+    <loc>https://d22consulting.com/gentleman/authors.html</loc>
   </url>
   <url>
-    <loc>/index.html</loc>
+    <loc>https://d22consulting.com/gentleman/index.html</loc>
   </url>
   <url>
-    <loc>/LICENSE-text.html</loc>
+    <loc>https://d22consulting.com/gentleman/LICENSE-text.html</loc>
   </url>
   <url>
-    <loc>/LICENSE.html</loc>
+    <loc>https://d22consulting.com/gentleman/LICENSE.html</loc>
   </url>
   <url>
-    <loc>/reference/add_cluster_assignment.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/add_cluster_assignment.html</loc>
   </url>
   <url>
-    <loc>/reference/add_predictions_from_automl.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/add_predictions_from_automl.html</loc>
   </url>
   <url>
-    <loc>/reference/add_target_back_to_test_set_from_ref_table.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/add_target_back_to_test_set_from_ref_table.html</loc>
   </url>
   <url>
-    <loc>/reference/add_vars_from_one_df_to_another.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/add_vars_from_one_df_to_another.html</loc>
   </url>
   <url>
-    <loc>/reference/ana_fn_aov.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/ana_fn_aov.html</loc>
   </url>
   <url>
-    <loc>/reference/ana_fn_chisq.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/ana_fn_chisq.html</loc>
   </url>
   <url>
-    <loc>/reference/ana_fn_rm_aov.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/ana_fn_rm_aov.html</loc>
   </url>
   <url>
-    <loc>/reference/cast.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/cast.html</loc>
   </url>
   <url>
-    <loc>/reference/compare_pairs_of_vars.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/compare_pairs_of_vars.html</loc>
   </url>
   <url>
-    <loc>/reference/compare_sig_effects_in_two_pub_tables.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/compare_sig_effects_in_two_pub_tables.html</loc>
   </url>
   <url>
-    <loc>/reference/contr.dummy_or_effect.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/contr.dummy_or_effect.html</loc>
   </url>
   <url>
-    <loc>/reference/copy.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/copy.html</loc>
   </url>
   <url>
-    <loc>/reference/copy2.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/copy2.html</loc>
   </url>
   <url>
-    <loc>/reference/decompose_interaction.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/decompose_interaction.html</loc>
   </url>
   <url>
-    <loc>/reference/df.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/df.html</loc>
   </url>
   <url>
-    <loc>/reference/format_p.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/format_p.html</loc>
   </url>
   <url>
-    <loc>/reference/gentleman.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/gentleman.html</loc>
   </url>
   <url>
-    <loc>/reference/get_all_pairs.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_all_pairs.html</loc>
   </url>
   <url>
-    <loc>/reference/get_all_pairs_with_op.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_all_pairs_with_op.html</loc>
   </url>
   <url>
-    <loc>/reference/get_automl_config.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_automl_config.html</loc>
   </url>
   <url>
-    <loc>/reference/get_automl_model.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_automl_model.html</loc>
   </url>
   <url>
-    <loc>/reference/get_cluster.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_cluster.html</loc>
   </url>
   <url>
-    <loc>/reference/get_crosslagged_model.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_crosslagged_model.html</loc>
   </url>
   <url>
-    <loc>/reference/get_desc_table.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_desc_table.html</loc>
   </url>
   <url>
-    <loc>/reference/get_desc_time.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_desc_time.html</loc>
   </url>
   <url>
-    <loc>/reference/get_git_commit.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_git_commit.html</loc>
   </url>
   <url>
-    <loc>/reference/get_logger.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_logger.html</loc>
   </url>
   <url>
-    <loc>/reference/get_mediation_model.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_mediation_model.html</loc>
   </url>
   <url>
-    <loc>/reference/get_sig_differences_between_groups.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_sig_differences_between_groups.html</loc>
   </url>
   <url>
-    <loc>/reference/get_sig_effects_from_pub_table.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/get_sig_effects_from_pub_table.html</loc>
   </url>
   <url>
-    <loc>/reference/group_some_factor_levels.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/group_some_factor_levels.html</loc>
   </url>
   <url>
-    <loc>/reference/index.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/index.html</loc>
   </url>
   <url>
-    <loc>/reference/init_h2o.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/init_h2o.html</loc>
   </url>
   <url>
-    <loc>/reference/keep_only_vars_in_both_train_and_test.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/keep_only_vars_in_both_train_and_test.html</loc>
   </url>
   <url>
-    <loc>/reference/logtext.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/logtext.html</loc>
   </url>
   <url>
-    <loc>/reference/make_df_from_named_list.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/make_df_from_named_list.html</loc>
   </url>
   <url>
-    <loc>/reference/make_factors_into_effect_codes.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/make_factors_into_effect_codes.html</loc>
   </url>
   <url>
-    <loc>/reference/make_pub_table_from_broom_tidy.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/make_pub_table_from_broom_tidy.html</loc>
   </url>
   <url>
-    <loc>/reference/make_pub_table_from_lavaan_models.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/make_pub_table_from_lavaan_models.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_and_print_variable_importances.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/plot_and_print_variable_importances.html</loc>
   </url>
   <url>
-    <loc>/reference/plot_density_by_groups.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/plot_density_by_groups.html</loc>
   </url>
   <url>
-    <loc>/reference/recode_using_excel_map.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/recode_using_excel_map.html</loc>
   </url>
   <url>
-    <loc>/reference/remove_blank_factor_levels.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/remove_blank_factor_levels.html</loc>
   </url>
   <url>
-    <loc>/reference/remove_factors_with_too_many_levels.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/remove_factors_with_too_many_levels.html</loc>
   </url>
   <url>
-    <loc>/reference/remove_non_ascii_from_df.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/remove_non_ascii_from_df.html</loc>
   </url>
   <url>
-    <loc>/reference/remove_target_from_test_and_add_ref_to_env.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/remove_target_from_test_and_add_ref_to_env.html</loc>
   </url>
   <url>
-    <loc>/reference/remove_vars_with_too_many_missing.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/remove_vars_with_too_many_missing.html</loc>
   </url>
   <url>
-    <loc>/reference/replace_in_nested_list.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/replace_in_nested_list.html</loc>
   </url>
   <url>
-    <loc>/reference/replace_in_vector.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/replace_in_vector.html</loc>
   </url>
   <url>
-    <loc>/reference/replace_in_vector_at_position.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/replace_in_vector_at_position.html</loc>
   </url>
   <url>
-    <loc>/reference/run_automl_pipeline.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/run_automl_pipeline.html</loc>
   </url>
   <url>
-    <loc>/reference/scale_and_combine.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/scale_and_combine.html</loc>
   </url>
   <url>
-    <loc>/reference/scale_numeric_features_in_train_and_test.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/scale_numeric_features_in_train_and_test.html</loc>
   </url>
   <url>
-    <loc>/reference/ship_train_and_test_to_h2o.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/ship_train_and_test_to_h2o.html</loc>
   </url>
   <url>
-    <loc>/reference/substr_right.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/substr_right.html</loc>
   </url>
   <url>
-    <loc>/reference/tbl_fn_fac.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/tbl_fn_fac.html</loc>
   </url>
   <url>
-    <loc>/reference/tbl_fn_num.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/tbl_fn_num.html</loc>
   </url>
   <url>
-    <loc>/reference/to_long.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/to_long.html</loc>
   </url>
   <url>
-    <loc>/reference/ttsplit.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/ttsplit.html</loc>
   </url>
   <url>
-    <loc>/reference/view.html</loc>
+    <loc>https://d22consulting.com/gentleman/reference/view.html</loc>
   </url>
 </urlset>
