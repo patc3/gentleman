@@ -23,13 +23,13 @@ reference:
   contents:
   - has_concept("machine_learning")
 
-- title: Logger
-  contents:
-  - has_concept("logger")
-
 - title: Publications
   contents:
   - has_concept("publications")
+
+- title: Logger
+  contents:
+  - has_concept("logger")
 
 - title: Helpers
   contents:
