@@ -39,6 +39,6 @@ automl <- tt_h2o |> get_automl_model(target="y1")
 
 }
 \seealso{
-\code{\link[=get_automl_config]{get_automl_config()}}, \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}
+\code{\link[=get_automl_config]{get_automl_config()}}, \code{\link[=run_automl_pipeline]{run_automl_pipeline()}}, \code{\link[h2o:h2o.automl]{h2o::h2o.automl()}}
 }
 \concept{machine_learning}

@@ -1,5 +1,5 @@
 #### config ####
-#' Create configuration object for running autoML
+#' Create configuration object for running AutoML
 #'
 #' This function creates the configuration object
 #' required to execute [get_automl_model()] and
@@ -391,7 +391,7 @@ ship_train_and_test_to_h2o <- function(tt)
 #' }
 #'
 #' @seealso
-#' [get_automl_config()], [h2o::h2o.automl()]
+#' [get_automl_config()], [run_automl_pipeline()], [h2o::h2o.automl()]
 #'
 #' @concept machine_learning
 get_automl_model <- function(tt_h2o,

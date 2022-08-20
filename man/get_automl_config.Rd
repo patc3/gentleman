@@ -2,7 +2,7 @@
 % Please edit documentation in R/ml.R
 \name{get_automl_config}
 \alias{get_automl_config}
-\title{Create configuration object for running autoML}
+\title{Create configuration object for running AutoML}
 \usage{
 get_automl_config(
   include_algos = "DRF",
