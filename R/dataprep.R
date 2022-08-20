@@ -50,9 +50,11 @@ remove_non_ascii_from_df <- function(df) # helper function
 #' df <- df |> remove_vars_with_too_many_missing(pmissing=.80)
 remove_vars_with_too_many_missing <- function(df, pmissing=.90)
 {
+  orig <- names(df)
   keep <- sapply(df, function(x) !(sum(is.na(x))/length(x) > pmissing))
   df <- subset(df, select=keep)
-  print(paste0("Removed variables with more than ", pmissing*100, "% missing"))
+  print(paste0("Removed variables with more than ", pmissing*100, "% missing:"))
+  print(orig |> setdiff(names(df)))
   return(df)
 }
 
@@ -369,9 +371,11 @@ remove_blank_factor_levels <- function(df)
 #' df <- df |> remove_factors_with_too_many_levels()
 remove_factors_with_too_many_levels <- function(df, maxlevels=20)
 {
+  orig <- names(df)
   keep <- sapply(df, function(x) !(nlevels(x) > maxlevels))
   df <- subset(df, select=keep)
   print(paste0("Removed factors with more than ", maxlevels, " levels"))
+  print(orig |> setdiff(names(df)))
   return(df)
 }
 
