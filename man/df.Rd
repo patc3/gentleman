@@ -36,5 +36,5 @@ parameter values:
 \item y(t) ~~ .25*x(t)
 }
 }
-\concept{package}
+\concept{datasets}
 \keyword{datasets}

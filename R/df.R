@@ -24,5 +24,5 @@
 #' }
 #' @source Simulated data using the \code{simsem} package
 #'
-#' @concept package
+#' @concept datasets
 "df"

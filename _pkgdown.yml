@@ -7,6 +7,10 @@ reference:
   contents:
   - has_concept("package")
 
+- title: Datasets
+  contents:
+  - has_concept("datasets")
+
 - title: Data Preparation
   contents:
   - has_concept("data_prep")
