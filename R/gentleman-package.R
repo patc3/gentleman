@@ -1,13 +1,3 @@
-#' gentleman: Helpers for Data Preparation, Descriptives, Models, & Publication
-#'
-#' This package provides a suite of modules to help with data preparation,
-#' descriptive statistics, modeling, and publication formatting.
-#' The Descriptives module is extensible to accommodate custom functions
-#' to generate tables and p-values (or other useful statistic to compare groups).
-#' The Models module can be used to generate lavaan model strings for mediation
-#' and cross-lagged models.
-#'
-#' @author Patrick Coulombe \email{patrick.coulombe@d22consulting.com}
 #' @docType package
 #' @name gentleman
 #' @import dplyr
