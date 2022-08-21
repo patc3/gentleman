@@ -462,15 +462,12 @@ recode_using_excel_map <- function(values,
   new_values <- map[i,col_replace]
 
   # in case of NA: retain original name
-  if(keep_original_when_no_match)
+  if(keep_original_when_no_match && any(is.na(i)))
   {
-    i_NA <- new_values |> is.na() |> which()
-    if(length(i_NA)>0)
-    {
-      new_values[i_NA] <- values[i_NA]
-      warning("Unchanged values (not found in map):\n" |>
-                paste(values[i_NA] |> paste(collapse="\n")), sep="\n")
-    }
+    i_NA <- i |> is.na() |> which()
+    new_values[i_NA] <- values[i_NA]
+    warning("Unchanged values (not found in map):\n" |>
+              paste(values[i_NA] |> unique() |> paste(collapse="\n")), sep="\n")
   }
 
   # out
