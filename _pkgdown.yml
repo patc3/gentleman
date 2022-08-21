@@ -3,7 +3,7 @@ template:
   bootstrap: 5
 
 reference:
-- title: Gentleman Package
+- title: gentleman Package
   contents:
   - has_concept("package")
 
