@@ -79,11 +79,11 @@
 </div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p>The <em>gentleman</em> package provides a suite of modules to help with data preparation, descriptive statistics, modeling, and publication formatting. The Descriptives module is extensible to accommodate custom functions to generate tables and p-values (or other useful statistic to compare groups). The Models module can be used to generate lavaan model strings for mediation and cross-lagged models.</p>
+<p>The <strong>gentleman</strong> package provides a suite of modules to help with data preparation, descriptive statistics, modeling, and publication formatting. The Descriptives module is extensible to accommodate custom functions to generate tables and p-values (or other useful statistic to compare groups). The Models module can be used to generate lavaan model strings for mediation and cross-lagged models.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>You can install the development version of gentleman from <a href="https://github.com/" class="external-link">GitHub</a> with:</p>
+<p>You can install gentleman from the public repository on GitHub with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
 <span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"patc3-phd/gentleman"</span><span class="op">)</span></span></code></pre></div>
@@ -94,6 +94,179 @@
 <p>Once installed, you can use the package by loading it into your R session.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://d22consulting.com/gentleman/">gentleman</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="modules">Modules<a class="anchor" aria-label="anchor" href="#modules"></a>
+</h2>
+<p>The package is composed of several modules that accomplish related tasks (see the <a href="https://d22consulting.com/gentleman/reference/index.html">reference page</a> for a complete list of functions):</p>
+<ul>
+<li>Data preparation</li>
+<li>Descriptive statistics</li>
+<li>Models &amp; clustering</li>
+<li>Machine learning</li>
+<li>Publications</li>
+<li>Logger</li>
+<li>Helpers</li>
+</ul>
+<div class="section level3">
+<h3 id="id_1-data-preparation">1. Data Preparation<a class="anchor" aria-label="anchor" href="#id_1-data-preparation"></a>
+</h3>
+<p>With the data preparation module, you can clean and manipulate data.frames, and recode variables and modify factors. For example:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Remove non-ASCII characters and variables with too many missing values,</span></span>
+<span><span class="co"># cast character vars as factors, and remove factors with too many categories</span></span>
+<span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/remove_non_ascii_from_df.html">remove_non_ascii_from_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/remove_vars_with_too_many_missing.html">remove_vars_with_too_many_missing</a></span><span class="op">(</span>pmissing<span class="op">=</span><span class="fl">.80</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/cast.html">cast</a></span><span class="op">(</span><span class="st">"character"</span>, <span class="st">"factors"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/remove_factors_with_too_many_levels.html">remove_factors_with_too_many_levels</a></span><span class="op">(</span>maxlevels<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Recode 'Nationality' using a lookup table in an Excel file</span></span>
+<span><span class="va">df</span><span class="op">$</span><span class="va">Nationality</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">Nationality</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/recode_using_excel_map.html">recode_using_excel_map</a></span><span class="op">(</span><span class="st">"map.xlsx"</span>, sheet<span class="op">=</span><span class="st">"Nationality"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_2-descriptive-statistics">2. Descriptive Statistics<a class="anchor" aria-label="anchor" href="#id_2-descriptive-statistics"></a>
+</h3>
+<p>The package is equipped with an extensive and customizable module for descriptive statistics. In particular, you can generate publication-ready tables of descriptive statistics for numeric and categorical variables, optionally with added columns for group-specific statistics and group comparison.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Get a table of descriptive statistics for numeric variables</span></span>
+<span><span class="co"># and test for group differences by treatment group</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_desc_table.html">get_desc_table</a></span><span class="op">(</span></span>
+<span>  vars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"score"</span><span class="op">)</span>,</span>
+<span>  tbl_fn<span class="op">=</span><span class="fu"><a href="reference/tbl_fn_num.html">tbl_fn_num</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  group<span class="op">=</span><span class="st">"TreatmentGroup"</span>,</span>
+<span>  ana_fn<span class="op">=</span><span class="fu"><a href="reference/ana_fn_aov.html">ana_fn_aov</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get a table of descriptive statistics for factor variables</span></span>
+<span><span class="co"># and test for group differences by treatment group</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_desc_table.html">get_desc_table</a></span><span class="op">(</span></span>
+<span>  vars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nationality"</span>, <span class="st">"Diagnostic"</span><span class="op">)</span>,</span>
+<span>  tbl_fn<span class="op">=</span><span class="fu"><a href="reference/tbl_fn_fac.html">tbl_fn_fac</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  group<span class="op">=</span><span class="st">"TreatmentGroup"</span>,</span>
+<span>  ana_fn<span class="op">=</span><span class="fu"><a href="reference/ana_fn_chisq.html">ana_fn_chisq</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get all variables that significantly vary by groups</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_sig_differences_between_groups.html">get_sig_differences_between_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot densities by group</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span></code></pre></div>
+<p>The <code><a href="reference/get_desc_table.html">get_desc_table()</a></code> function is the workhorse of the module, which takes as arguments:</p>
+<ul>
+<li>
+<strong><code>tbl_fn</code></strong>: A function that returns a table of statistics for given variables; the package comes with <code><a href="reference/tbl_fn_num.html">tbl_fn_num()</a></code> for numeric variables, and <code><a href="reference/tbl_fn_fac.html">tbl_fn_fac()</a></code> for categorical (factor) variables</li>
+<li>
+<strong><code>ana_fn</code></strong>: A function that returns a table of test statistics (typically <em>p</em>-values) to compare groups on a set of variables; the package comes with <code><a href="reference/ana_fn_aov.html">ana_fn_aov()</a></code> and <code><a href="reference/ana_fn_rm_aov.html">ana_fn_rm_aov()</a></code> for (repeated) numeric variables (<em>p</em>-values from ANOVA), and <code><a href="reference/ana_fn_chisq.html">ana_fn_chisq()</a></code> for categorical (factor) variables (<em>p</em>-values from Chi-square tests)</li>
+</ul>
+<p>You can develop custom <code>tbl_fn</code> and <code>ana_fn</code> functions as you wish and pass them as arguments to <code><a href="reference/get_desc_table.html">get_desc_table()</a></code>, which will take care of the rest.</p>
+</div>
+<div class="section level3">
+<h3 id="id_3-models--clustering">3. Models &amp; Clustering<a class="anchor" aria-label="anchor" href="#id_3-models--clustering"></a>
+</h3>
+<p>The models module can generate <code>lavaan</code> syntax to estimate complex mediation and cross-lagged models:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Mediation model with one x, one mediator, and one y</span></span>
+<span><span class="fu"><a href="reference/get_mediation_model.html">get_mediation_model</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Cross-lagged model with 3 different variables assessed at 3 occasions each</span></span>
+<span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span><span class="op">)</span>,</span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"z1"</span>, <span class="st">"z2"</span>, <span class="st">"z3"</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="fu"><a href="reference/get_crosslagged_model.html">get_crosslagged_model</a></span><span class="op">(</span><span class="va">vars</span>, random_intercepts<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>The module can also be used to decompose 2-way interactions in different types of models (like <code>lm</code> and <code>lmer</code>):</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">SelfEsteem</span> <span class="op">~</span> <span class="va">Gender</span><span class="op">*</span><span class="va">AttitudeTowardsSchool</span>, <span class="va">df</span><span class="op">)</span></span>
+<span><span class="va">fit</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/decompose_interaction.html">decompose_interaction</a></span><span class="op">(</span>x1<span class="op">=</span><span class="st">"Gender"</span>, x2<span class="op">=</span><span class="st">"AttitudeTowardsSchool"</span><span class="op">)</span></span></code></pre></div>
+<p>Clustering can also be performed easily with mixed types of variables and missing data:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate clusters with variable selection using an optimal number of clusters</span></span>
+<span><span class="co"># and plot densities of variables on which clusters significantly vary</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_cluster_assignment.html">add_cluster_assignment</a></span><span class="op">(</span>k<span class="op">=</span><span class="cn">NULL</span>, maxit<span class="op">=</span><span class="fl">10</span>, return_df_cluster_instead<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"Cluster"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_4-machine-learning">4. Machine Learning<a class="anchor" aria-label="anchor" href="#id_4-machine-learning"></a>
+</h3>
+<p>The machine learning module uses the library <strong>h2o</strong> to generate and process an AutoML model by adding predictions to a test set and retrieving variable importances. The module also comes with a pipeline built-in, which takes in a data.frame, splits it into training and test sets, prepares them for h2o, and requests an AutoML model and obtains predictions and variable importances.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># AutoML pipeline with default configuration (random forest),</span></span>
+<span><span class="co"># 70%-30% train-test split, scaled numeric features,</span></span>
+<span><span class="co"># confidence levels for predictions, and variable importances</span></span>
+<span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/run_automl_pipeline.html">run_automl_pipeline</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>,</span>
+<span>                                 prop_train<span class="op">=</span><span class="fl">.7</span>,</span>
+<span>                                 scale_numeric_features<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>                                 add_confidence_level<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>                                 plot_and_print_variable_importances<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_5-publications">5. Publications<a class="anchor" aria-label="anchor" href="#id_5-publications"></a>
+</h3>
+<p>With the publications module, you can generate publication-ready tables for different types of models that you can copy-paste, for example into Excel. Effects are formatted with 2 decimals and no leading zero, and significance is indicated with common standards using asterisks. Currently, publication tables are available for <code>lavaan</code> models and models that can be summarized using <code>broom</code> (like <code>lm</code> and <code>glm</code>).</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate a publication table for two regressions using lavaan </span></span>
+<span><span class="co"># and full-information maximum likelihood estimation</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
+<span><span class="va">fit_lavaan</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">fit_lavaan</span><span class="op">$</span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="st">"y1 ~ x1+x2"</span>, <span class="va">df</span>, missing<span class="op">=</span><span class="st">"ml.x"</span><span class="op">)</span></span>
+<span><span class="va">fit_lavaan</span><span class="op">$</span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="st">"y2 ~ x1+x2"</span>, <span class="va">df</span>, missing<span class="op">=</span><span class="st">"ml.x"</span><span class="op">)</span></span>
+<span><span class="va">pub_lavaan</span> <span class="op">&lt;-</span> <span class="va">fit_lavaan</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/make_pub_table_from_lavaan_models.html">make_pub_table_from_lavaan_models</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Generate a publication table for two regressions with OLS estimation </span></span>
+<span><span class="co"># and listwise deletion of missing data</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://broom.tidymodels.org/" class="external-link">broom</a></span><span class="op">)</span></span>
+<span><span class="va">fit_lm</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">fit_lm</span><span class="op">$</span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">fit_lm</span><span class="op">$</span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">pub_lm</span> <span class="op">&lt;-</span> <span class="va">fit_lm</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/make_pub_table_from_broom_tidy.html">make_pub_table_from_broom_tidy</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>You can also compare significant effects between publication tables:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Sensitivity analysis: effect of missing data</span></span>
+<span><span class="va">pub_lm</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/compare_sig_effects_in_two_pub_tables.html">compare_sig_effects_in_two_pub_tables</a></span><span class="op">(</span><span class="va">pub_lavaan</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_6-logger">6. Logger<a class="anchor" aria-label="anchor" href="#id_6-logger"></a>
+</h3>
+<p>The logger module offers a simple way to log console output to a text file on disk. All logs are saved in a given directory in a folder called <code>gentleman_logs</code>, and the file name can be optionally specified (by default the file name will be the current date and time). Logs can be updated by passing a logger object. The module can also be used to retrieve information about the latest commit in a git repository.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Simple one-time log</span></span>
+<span><span class="fu"><a href="reference/logtext.html">logtext</a></span><span class="op">(</span>expr<span class="op">=</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"model without covariates:"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"model with covariates"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Create a logger with git information and update log</span></span>
+<span><span class="va">logger</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/get_logger.html">get_logger</a></span><span class="op">(</span>fname<span class="op">=</span><span class="st">"models with and without covariates"</span>, add_git_info<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">logger</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/logtext.html">logtext</a></span><span class="op">(</span>expr<span class="op">=</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"model without covariates:"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">logger</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/logtext.html">logtext</a></span><span class="op">(</span>expr<span class="op">=</span><span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"model with covariates"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span> <span class="op">+</span> <span class="va">x2</span> <span class="op">+</span> <span class="va">x3</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_7-helpers">7. Helpers<a class="anchor" aria-label="anchor" href="#id_7-helpers"></a>
+</h3>
+<p>Other miscellaneous helper functions are available. Some are aliases and wrappers (like <code><a href="reference/view.html">view()</a></code>, <code><a href="reference/copy.html">copy()</a></code> and <code><a href="reference/copy2.html">copy2()</a></code>), others are utility functions that can fasten development (for example, you can use <code><a href="reference/replace_in_nested_list.html">replace_in_nested_list()</a></code> to find and replace values in a complex list of vectors with a nested structure while preserving the structure).</p>
+<p>See the <a href="https://d22consulting.com/gentleman/reference/index.html">complete list of functions</a> for more details.</p>
+</div>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
