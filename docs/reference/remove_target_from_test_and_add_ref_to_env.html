@@ -98,9 +98,7 @@ and <code>ref_name</code> added to global environment</p>
 <span class="r-in"><span>   <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span>id<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="ttsplit.html">ttsplit</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu">remove_target_from_test_and_add_ref_to_env</span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"id"</span>, <span class="st">"target_values"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Split df into list with: train, test (proportion train = 0.7)"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Target column y1 replaced with NA in test set"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Added reference table 'target_values' to global environment"</span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in remove_target_from_test_and_add_ref_to_env(ttsplit(dplyr::mutate(df,     id = 1:nrow(df))), "y1", "id", "target_values"):</span> could not find function "remove_target_from_test_and_add_ref_to_env"</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

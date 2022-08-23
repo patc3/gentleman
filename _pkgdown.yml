@@ -19,17 +19,17 @@ reference:
   contents:
   - has_concept("descriptives")
 
-- title: Models & Clustering
+- title: Models
   contents:
   - has_concept("models")
+
+- title: Clusters
+  contents:
+  - has_concept("cluster")
 
 - title: Machine Learning
   contents:
   - has_concept("machine_learning")
-
-- title: Publications
-  contents:
-  - has_concept("publications")
 
 - title: Logger
   contents:

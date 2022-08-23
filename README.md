@@ -40,9 +40,9 @@ complete list of functions):
 
 -   Data preparation
 -   Descriptive statistics
--   Models & clustering
+-   Models
+-   Clusters
 -   Machine learning
--   Publications
 -   Logger
 -   Helpers
 
@@ -58,18 +58,23 @@ df <- df |>
   remove_non_ascii_from_df() |> 
   remove_vars_with_too_many_missing(pmissing=.80) |> 
   cast("character", "factors") |> 
+  remove_blank_factor_levels() |> 
   remove_factors_with_too_many_levels(maxlevels=20)
 
 # Recode 'Nationality' using a lookup table in an Excel file
 df$Nationality <- df$Nationality |> 
   recode_using_excel_map("map.xlsx", sheet="Nationality")
+
+# Use effect coding for factors in regression and other models
+options(contrasts=c(unordered="contr.dummy_or_effect", 
+                    ordered="contr.poly"))
 ```
 
 ### 2. Descriptive Statistics
 
 The package is equipped with an extensive and customizable module for
 descriptive statistics. In particular, you can generate
-publication-ready tables of descriptive statistics for numeric and
+**publication-ready tables** of descriptive statistics for numeric and
 categorical variables, optionally with added columns for group-specific
 statistics and group comparison.
 
@@ -93,12 +98,6 @@ df |> get_desc_table(
   group="TreatmentGroup",
   ana_fn=ana_fn_chisq()
 )
-
-# Get all variables that significantly vary by groups
-df |> get_sig_differences_between_groups(group="TreatmentGroup")
-
-# Plot densities by group
-df |> plot_density_by_groups(group="TreatmentGroup")
 ```
 
 The `get_desc_table()` function is the workhorse of the module, which
@@ -118,7 +117,21 @@ You can develop custom `tbl_fn` and `ana_fn` functions as you wish and
 pass them as arguments to `get_desc_table()`, which will take care of
 the rest.
 
-### 3. Models & Clustering
+The module can also be used to detect which variables vary within
+persons or by groups, and to plot densities by groups.
+
+``` r
+# Test mean differences between subscales
+df |> compare_pairs_of_vars(c("x1", "x2", "x3"))
+
+# Get all variables that significantly vary by groups
+df |> get_sig_differences_between_groups(group="TreatmentGroup")
+
+# Plot densities by group
+df |> plot_density_by_groups(group="TreatmentGroup")
+```
+
+### 3. Models
 
 The models module can generate `lavaan` syntax to estimate complex
 mediation and cross-lagged models:
@@ -150,47 +163,13 @@ fit <- lm(SelfEsteem ~ Gender*AttitudeTowardsSchool, df)
 fit |> decompose_interaction(x1="Gender", x2="AttitudeTowardsSchool")
 ```
 
-Clustering can also be performed easily with mixed types of variables
-and missing data:
-
-``` r
-# Generate clusters with variable selection using an optimal number of clusters
-# and plot densities of variables on which clusters significantly vary
-df |>
-  add_cluster_assignment(k=NULL, maxit=10, return_df_cluster_instead=TRUE) |>
-  plot_density_by_groups(group="Cluster")
-```
-
-### 4. Machine Learning
-
-The machine learning module uses the library **h2o** to generate and
-process an AutoML model by adding predictions to a test set and
-retrieving variable importances. The module also comes with a pipeline
-built-in, which takes in a data.frame, splits it into training and test
-sets, prepares them for h2o, and requests an AutoML model and obtains
-predictions and variable importances.
-
-For example:
-
-``` r
-# AutoML pipeline with default configuration (random forest),
-# 70%-30% train-test split, scaled numeric features,
-# confidence levels for predictions, and variable importances
-pip <- df |> run_automl_pipeline(target="y1",
-                                 prop_train=.7,
-                                 scale_numeric_features=TRUE,
-                                 add_confidence_level=TRUE,
-                                 plot_and_print_variable_importances=TRUE)
-```
-
-### 5. Publications
-
-With the publications module, you can generate publication-ready tables
-for different types of models that you can copy-paste, for example into
-Excel. Effects are formatted with 2 decimals and no leading zero, and
-significance is indicated with common standards using asterisks.
-Currently, publication tables are available for `lavaan` models and
-models that can be summarized using `broom` (like `lm` and `glm`).
+Similar to the descriptives module, you can generate **publication-ready
+tables** for different types of models that you can copy-paste, for
+example into Excel. Effects are formatted with 2 decimals and no leading
+zero, and significance is indicated with common standards using
+asterisks. Currently, publication tables are available for `lavaan`
+models and models that can be summarized using `broom` (like `lm` and
+`glm`).
 
 ``` r
 # Generate a publication table for two regressions using lavaan 
@@ -210,11 +189,80 @@ fit_lm$y2 <- lm(y2 ~ x1+x2, df) |> tidy()
 pub_lm <- fit_lm |> make_pub_table_from_broom_tidy()
 ```
 
-You can also compare significant effects between publication tables:
+Once you’ve generated publication tables from several models, you can
+compare significant effects between publication tables:
 
 ``` r
 # Sensitivity analysis: effect of missing data
 pub_lm |> compare_sig_effects_in_two_pub_tables(pub_lavaan)
+```
+
+### 4. Clusters
+
+Clustering can be performed easily with mixed types of variables and
+missing data. The module uses the **cluster** package to first calculate
+distance matrices based on Gower distances, then generate clusters
+around medoids. The desired number of clusters can be specified, or it
+can be determined automatically via the **NbClust** package.
+
+``` r
+# Generate 3 clusters using all variables
+df |> get_cluster(k=3)
+```
+
+The module also implements an iterative variable selection procedure,
+where variables are kept in the clustering process only if they are
+related to the final cluster assignments.
+
+``` r
+# Generate clusters with variable selection using an optimal number of clusters
+# and plot densities of variables on which clusters significantly vary
+df |>
+  add_cluster_assignment(k=NULL, 
+                         maxit=10, 
+                         return_df_cluster_instead=TRUE) |>
+  plot_density_by_groups(group="Cluster")
+```
+
+### 5. Machine Learning
+
+The machine learning module provides functions to support the
+development of ML pipelines, particularly for supervised learning. You
+can split into training and test sets, scale numeric features on both
+sets using the information from the training set, and remove the target
+from the test set to prevent target leakage (an implementation of the
+method discussed
+[here](https://en.d22consulting.com/quantcafe/preventing-target-leakage)).
+
+``` r
+# Split into train-test sets, scale numeric features,
+# and remove target from test set to prevent target leakage
+tt <- df |> 
+  ttsplit(prop_train=.67) |> 
+  scale_numeric_features_in_train_and_test() |> 
+  remove_target_from_test_and_add_ref_to_env(target="y1", 
+                                             unique_id="id", 
+                                             ref_name="target_values")
+```
+
+The module also offers an interface to generate and process an AutoML
+model using the **h2o** library, and can be used to add predictions to a
+test set and retrieve variable importances. The module also comes with
+an AutoML pipeline built-in, which takes in a `data.frame`, splits it
+into training and test sets, prepares them for h2o, and requests an
+AutoML model and obtains predictions and variable importances.
+
+For example:
+
+``` r
+# AutoML pipeline with default configuration (random forest),
+# 70%-30% train-test split, scaled numeric features,
+# confidence levels for predictions, and variable importances
+pip <- df |> run_automl_pipeline(target="y1",
+                                 prop_train=.7,
+                                 scale_numeric_features=TRUE,
+                                 add_confidence_level=TRUE,
+                                 plot_and_print_variable_importances=TRUE)
 ```
 
 ### 6. Logger

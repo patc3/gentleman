@@ -102,9 +102,9 @@
 <ul>
 <li>Data preparation</li>
 <li>Descriptive statistics</li>
-<li>Models &amp; clustering</li>
+<li>Models</li>
+<li>Clusters</li>
 <li>Machine learning</li>
-<li>Publications</li>
 <li>Logger</li>
 <li>Helpers</li>
 </ul>
@@ -119,16 +119,21 @@
 <span>  <span class="fu"><a href="reference/remove_non_ascii_from_df.html">remove_non_ascii_from_df</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/remove_vars_with_too_many_missing.html">remove_vars_with_too_many_missing</a></span><span class="op">(</span>pmissing<span class="op">=</span><span class="fl">.80</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/cast.html">cast</a></span><span class="op">(</span><span class="st">"character"</span>, <span class="st">"factors"</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/remove_blank_factor_levels.html">remove_blank_factor_levels</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
 <span>  <span class="fu"><a href="reference/remove_factors_with_too_many_levels.html">remove_factors_with_too_many_levels</a></span><span class="op">(</span>maxlevels<span class="op">=</span><span class="fl">20</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Recode 'Nationality' using a lookup table in an Excel file</span></span>
 <span><span class="va">df</span><span class="op">$</span><span class="va">Nationality</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">Nationality</span> <span class="op">|&gt;</span> </span>
-<span>  <span class="fu"><a href="reference/recode_using_excel_map.html">recode_using_excel_map</a></span><span class="op">(</span><span class="st">"map.xlsx"</span>, sheet<span class="op">=</span><span class="st">"Nationality"</span><span class="op">)</span></span></code></pre></div>
+<span>  <span class="fu"><a href="reference/recode_using_excel_map.html">recode_using_excel_map</a></span><span class="op">(</span><span class="st">"map.xlsx"</span>, sheet<span class="op">=</span><span class="st">"Nationality"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Use effect coding for factors in regression and other models</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>contrasts<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>unordered<span class="op">=</span><span class="st">"contr.dummy_or_effect"</span>, </span>
+<span>                    ordered<span class="op">=</span><span class="st">"contr.poly"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_2-descriptive-statistics">2. Descriptive Statistics<a class="anchor" aria-label="anchor" href="#id_2-descriptive-statistics"></a>
 </h3>
-<p>The package is equipped with an extensive and customizable module for descriptive statistics. In particular, you can generate publication-ready tables of descriptive statistics for numeric and categorical variables, optionally with added columns for group-specific statistics and group comparison.</p>
+<p>The package is equipped with an extensive and customizable module for descriptive statistics. In particular, you can generate <strong>publication-ready tables</strong> of descriptive statistics for numeric and categorical variables, optionally with added columns for group-specific statistics and group comparison.</p>
 <p>For example:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get a table of descriptive statistics for numeric variables</span></span>
@@ -147,13 +152,7 @@
 <span>  tbl_fn<span class="op">=</span><span class="fu"><a href="reference/tbl_fn_fac.html">tbl_fn_fac</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  group<span class="op">=</span><span class="st">"TreatmentGroup"</span>,</span>
 <span>  ana_fn<span class="op">=</span><span class="fu"><a href="reference/ana_fn_chisq.html">ana_fn_chisq</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Get all variables that significantly vary by groups</span></span>
-<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_sig_differences_between_groups.html">get_sig_differences_between_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># Plot densities by group</span></span>
-<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="op">)</span></span></code></pre></div>
 <p>The <code><a href="reference/get_desc_table.html">get_desc_table()</a></code> function is the workhorse of the module, which takes as arguments:</p>
 <ul>
 <li>
@@ -162,12 +161,22 @@
 <strong><code>ana_fn</code></strong>: A function that returns a table of test statistics (typically <em>p</em>-values) to compare groups on a set of variables; the package comes with <code><a href="reference/ana_fn_aov.html">ana_fn_aov()</a></code> and <code><a href="reference/ana_fn_rm_aov.html">ana_fn_rm_aov()</a></code> for (repeated) numeric variables (<em>p</em>-values from ANOVA), and <code><a href="reference/ana_fn_chisq.html">ana_fn_chisq()</a></code> for categorical (factor) variables (<em>p</em>-values from Chi-square tests)</li>
 </ul>
 <p>You can develop custom <code>tbl_fn</code> and <code>ana_fn</code> functions as you wish and pass them as arguments to <code><a href="reference/get_desc_table.html">get_desc_table()</a></code>, which will take care of the rest.</p>
+<p>The module can also be used to detect which variables vary within persons or by groups, and to plot densities by groups.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Test mean differences between subscales</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/compare_pairs_of_vars.html">compare_pairs_of_vars</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Get all variables that significantly vary by groups</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_sig_differences_between_groups.html">get_sig_differences_between_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Plot densities by group</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"TreatmentGroup"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
-<h3 id="id_3-models--clustering">3. Models &amp; Clustering<a class="anchor" aria-label="anchor" href="#id_3-models--clustering"></a>
+<h3 id="id_3-models">3. Models<a class="anchor" aria-label="anchor" href="#id_3-models"></a>
 </h3>
 <p>The models module can generate <code>lavaan</code> syntax to estimate complex mediation and cross-lagged models:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Mediation model with one x, one mediator, and one y</span></span>
@@ -185,37 +194,11 @@
 <span>  <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>The module can also be used to decompose 2-way interactions in different types of models (like <code>lm</code> and <code>lmer</code>):</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">SelfEsteem</span> <span class="op">~</span> <span class="va">Gender</span><span class="op">*</span><span class="va">AttitudeTowardsSchool</span>, <span class="va">df</span><span class="op">)</span></span>
 <span><span class="va">fit</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/decompose_interaction.html">decompose_interaction</a></span><span class="op">(</span>x1<span class="op">=</span><span class="st">"Gender"</span>, x2<span class="op">=</span><span class="st">"AttitudeTowardsSchool"</span><span class="op">)</span></span></code></pre></div>
-<p>Clustering can also be performed easily with mixed types of variables and missing data:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Generate clusters with variable selection using an optimal number of clusters</span></span>
-<span><span class="co"># and plot densities of variables on which clusters significantly vary</span></span>
-<span><span class="va">df</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/add_cluster_assignment.html">add_cluster_assignment</a></span><span class="op">(</span>k<span class="op">=</span><span class="cn">NULL</span>, maxit<span class="op">=</span><span class="fl">10</span>, return_df_cluster_instead<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
-<span>  <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"Cluster"</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="id_4-machine-learning">4. Machine Learning<a class="anchor" aria-label="anchor" href="#id_4-machine-learning"></a>
-</h3>
-<p>The machine learning module uses the library <strong>h2o</strong> to generate and process an AutoML model by adding predictions to a test set and retrieving variable importances. The module also comes with a pipeline built-in, which takes in a data.frame, splits it into training and test sets, prepares them for h2o, and requests an AutoML model and obtains predictions and variable importances.</p>
-<p>For example:</p>
+<p>Similar to the descriptives module, you can generate <strong>publication-ready tables</strong> for different types of models that you can copy-paste, for example into Excel. Effects are formatted with 2 decimals and no leading zero, and significance is indicated with common standards using asterisks. Currently, publication tables are available for <code>lavaan</code> models and models that can be summarized using <code>broom</code> (like <code>lm</code> and <code>glm</code>).</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># AutoML pipeline with default configuration (random forest),</span></span>
-<span><span class="co"># 70%-30% train-test split, scaled numeric features,</span></span>
-<span><span class="co"># confidence levels for predictions, and variable importances</span></span>
-<span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/run_automl_pipeline.html">run_automl_pipeline</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>,</span>
-<span>                                 prop_train<span class="op">=</span><span class="fl">.7</span>,</span>
-<span>                                 scale_numeric_features<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>                                 add_confidence_level<span class="op">=</span><span class="cn">TRUE</span>,</span>
-<span>                                 plot_and_print_variable_importances<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="id_5-publications">5. Publications<a class="anchor" aria-label="anchor" href="#id_5-publications"></a>
-</h3>
-<p>With the publications module, you can generate publication-ready tables for different types of models that you can copy-paste, for example into Excel. Effects are formatted with 2 decimals and no leading zero, and significance is indicated with common standards using asterisks. Currently, publication tables are available for <code>lavaan</code> models and models that can be summarized using <code>broom</code> (like <code>lm</code> and <code>glm</code>).</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Generate a publication table for two regressions using lavaan </span></span>
 <span><span class="co"># and full-information maximum likelihood estimation</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span>
@@ -231,16 +214,58 @@
 <span><span class="va">fit_lm</span><span class="op">$</span><span class="va">y1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y1</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">fit_lm</span><span class="op">$</span><span class="va">y2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y2</span> <span class="op">~</span> <span class="va">x1</span><span class="op">+</span><span class="va">x2</span>, <span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://generics.r-lib.org/reference/tidy.html" class="external-link">tidy</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">pub_lm</span> <span class="op">&lt;-</span> <span class="va">fit_lm</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/make_pub_table_from_broom_tidy.html">make_pub_table_from_broom_tidy</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p>You can also compare significant effects between publication tables:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<p>Once you’ve generated publication tables from several models, you can compare significant effects between publication tables:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sensitivity analysis: effect of missing data</span></span>
 <span><span class="va">pub_lm</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/compare_sig_effects_in_two_pub_tables.html">compare_sig_effects_in_two_pub_tables</a></span><span class="op">(</span><span class="va">pub_lavaan</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_4-clusters">4. Clusters<a class="anchor" aria-label="anchor" href="#id_4-clusters"></a>
+</h3>
+<p>Clustering can be performed easily with mixed types of variables and missing data. The module uses the <strong>cluster</strong> package to first calculate distance matrices based on Gower distances, then generate clusters around medoids. The desired number of clusters can be specified, or it can be determined automatically via the <strong>NbClust</strong> package.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate 3 clusters using all variables</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_cluster.html">get_cluster</a></span><span class="op">(</span>k<span class="op">=</span><span class="fl">3</span><span class="op">)</span></span></code></pre></div>
+<p>The module also implements an iterative variable selection procedure, where variables are kept in the clustering process only if they are related to the final cluster assignments.</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generate clusters with variable selection using an optimal number of clusters</span></span>
+<span><span class="co"># and plot densities of variables on which clusters significantly vary</span></span>
+<span><span class="va">df</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/add_cluster_assignment.html">add_cluster_assignment</a></span><span class="op">(</span>k<span class="op">=</span><span class="cn">NULL</span>, </span>
+<span>                         maxit<span class="op">=</span><span class="fl">10</span>, </span>
+<span>                         return_df_cluster_instead<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="reference/plot_density_by_groups.html">plot_density_by_groups</a></span><span class="op">(</span>group<span class="op">=</span><span class="st">"Cluster"</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="id_5-machine-learning">5. Machine Learning<a class="anchor" aria-label="anchor" href="#id_5-machine-learning"></a>
+</h3>
+<p>The machine learning module provides functions to support the development of ML pipelines, particularly for supervised learning. You can split into training and test sets, scale numeric features on both sets using the information from the training set, and remove the target from the test set to prevent target leakage (an implementation of the method discussed <a href="https://en.d22consulting.com/quantcafe/preventing-target-leakage" class="external-link">here</a>).</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Split into train-test sets, scale numeric features,</span></span>
+<span><span class="co"># and remove target from test set to prevent target leakage</span></span>
+<span><span class="va">tt</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/ttsplit.html">ttsplit</a></span><span class="op">(</span>prop_train<span class="op">=</span><span class="fl">.67</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/scale_numeric_features_in_train_and_test.html">scale_numeric_features_in_train_and_test</a></span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span> </span>
+<span>  <span class="fu"><a href="reference/remove_target_from_test_and_add_ref_to_env.html">remove_target_from_test_and_add_ref_to_env</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>, </span>
+<span>                                             unique_id<span class="op">=</span><span class="st">"id"</span>, </span>
+<span>                                             ref_name<span class="op">=</span><span class="st">"target_values"</span><span class="op">)</span></span></code></pre></div>
+<p>The module also offers an interface to generate and process an AutoML model using the <strong>h2o</strong> library, and can be used to add predictions to a test set and retrieve variable importances. The module also comes with an AutoML pipeline built-in, which takes in a <code>data.frame</code>, splits it into training and test sets, prepares them for h2o, and requests an AutoML model and obtains predictions and variable importances.</p>
+<p>For example:</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># AutoML pipeline with default configuration (random forest),</span></span>
+<span><span class="co"># 70%-30% train-test split, scaled numeric features,</span></span>
+<span><span class="co"># confidence levels for predictions, and variable importances</span></span>
+<span><span class="va">pip</span> <span class="op">&lt;-</span> <span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/run_automl_pipeline.html">run_automl_pipeline</a></span><span class="op">(</span>target<span class="op">=</span><span class="st">"y1"</span>,</span>
+<span>                                 prop_train<span class="op">=</span><span class="fl">.7</span>,</span>
+<span>                                 scale_numeric_features<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>                                 add_confidence_level<span class="op">=</span><span class="cn">TRUE</span>,</span>
+<span>                                 plot_and_print_variable_importances<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="id_6-logger">6. Logger<a class="anchor" aria-label="anchor" href="#id_6-logger"></a>
 </h3>
 <p>The logger module offers a simple way to log console output to a text file on disk. All logs are saved in a given directory in a folder called <code>gentleman_logs</code>, and the file name can be optionally specified (by default the file name will be the current date and time). Logs can be updated by passing a logger object. The module can also be used to retrieve information about the latest commit in a git repository.</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Simple one-time log</span></span>
 <span><span class="fu"><a href="reference/logtext.html">logtext</a></span><span class="op">(</span>expr<span class="op">=</span><span class="op">{</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"model without covariates:"</span><span class="op">)</span></span>

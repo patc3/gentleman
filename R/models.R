@@ -313,160 +313,245 @@ decompose_interaction <- function(model,
 
 
 
-#### clustering ####
-
-#' Get cluster assignment using Gower distance matrix
+#### publication tables ####
+# make table to copy-paste in excel
+#' Generate publication table from lavaan models
 #'
-#' This function assigns each row of a data.frame to a cluster based on the Gower distance matrix,
-#' and either a pre-specified or an optimal number of clusters.
+#' @description
+#' This function generates a publication table from a list of lavaan models
+#' to be exported or copy-pasted (e.g. into Excel). The table shows all
+#' parameters with operator "~" (i.e. regression paths) with significance level:
+#' \itemize{
+#' \item{\code{***}}{p < .001}
+#' \item{\code{**}}{p < .01}
+#' \item{\code{*}}{p < .05}
+#' \item{\code{+}}{p < .10}
+#' }
 #'
-#' @details
-#' First, a distance matrix is computed using [cluster::daisy()] with \code{metric="gower"}
-#' and \code{stand=TRUE}. Next, clustering is performed around medoids (a more robust version of k-means
-#' clustering) as implemented in [cluster::pam()].
+#' Each column is a different outcome variable/lavaan model, each row is
+#' a different predictor.
 #'
-#' If no number of clusters \code{k} was specified, then the optimal
-#' number of clusters is determined for the current distance matrix using [NbClust::NbClust()] with the
-#' \code{method="median"} and \code{index="silhouette"}.
+#' @param ana List of lavaan models
+#' @param check_same_format (logical) Whether to force all models to have the same predictors
 #'
-#' @param df data.frame
-#' @param v_cluster variables used to compute Gower distances between rows (if \code{NULL}, use all)
-#' @param k number of clusters (if \code{NULL}, determined optimally; see Details)
-#'
-#' @return (factor) vector of cluster assignments (0 to k-1)
+#' @return data.frame with predictors and coefficients (and significance level) in each model
 #' @export
 #'
 #' @examples
-#' df |> get_cluster() |> table()
+#' library(lavaan)
+#' ana <- list()
+#' ana$y1 <- sem("y1 ~ x1+x2", df)
+#' ana$y2 <- sem("y2 ~ x1+x2", df)
+#' ana |> make_pub_table_from_lavaan_models()
 #'
 #' @concept models
-get_cluster <- function(df, v_cluster=NULL, k=NULL)
+make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 {
-  # clustering vars
-  if(is.null(v_cluster)) v_cluster <- names(df)
+  "
+  input: ana list (list of lavaan models)
+  out: df with IVs and estimate+pvalue for each target
+  "
 
-  # df and distance matrix
-  df_cluster <- df |> select(all_of(v_cluster))
-  distmat <- cluster::daisy(df_cluster, metric="gower", stand=TRUE)
+  pe <- lapply(ana, parameterEstimates)
+  pe <- lapply(pe, function(x) x[x$op=="~",])
 
-  # choose number of clusters
-  if(is.null(k))
+  # check  that all summaries have the same format
+  if(check_same_format)
   {
-    (nbclust <- NbClust(diss=distmat, distance=NULL,
-                        method=c("median", "ward.D2")[1],
-                        index=c("all","silhouette","frey","mcclain","cindex","dunn")[2]))
-    k <- nbclust$Best.nc["Number_clusters"] #6
-    message("k chosen by NbClust():" |> paste(k))
+    same_row_orders <- lapply(pe, function(x) all(x[,"rhs"] == pe[[1]][,"rhs"]))
+    if (!all(unlist(same_row_orders))) stop("Not all summaries have the same format")
   }
 
-  # clustering using distance matrix
-  # see documentation for pam() and advantages over kmeans
-  pr <- pam(x = distmat, k = k, diss = TRUE)
-  pr$clustering |> table() |> print()
+  # get estimates, p-value from each model
+  out <- subset(pe[[1]], select=rhs) |> rename(Predictor=rhs)
+  for(s in pe)
+  {
+    # postproc p-value
+    s$sig <- weights::starmaker(s$pvalue, symbols=c("***", "**", "*", "+"))
 
-  # cluster assignment
-  (pr$clustering - 1) |> factor() # - 1 so that 0/1 when 2 clusters
+    # concat est (2 decimals) and sig
+    s$est_sig <- paste0(sprintf('%.2f',s$est), s$sig)
 
+    # store in table
+    v_out <- c("est", "pvalue", "sig", "est_sig")[4]
+    out[,ncol(out)+1:length(v_out)] <- s[,v_out]
+
+
+  }
+
+  # colnames
+  if(length(v_out)==1 & !is.null(names(ana))) names(out)[2:ncol(out)] <- names(ana)
+
+  #out
+  return(out)
+}
+
+
+# make table to copy-paste in excel from broom::tidy() output
+#' Generate publication table from broom::tidy summaries
+#'
+#' @description
+#' This function generates a publication table from a list of tidy summaries
+#' to be exported or copy-pasted (e.g. into Excel). The table shows all
+#' coefficients in the 'term' column with significance level:
+#' \itemize{
+#' \item{\code{***}}{p < .001}
+#' \item{\code{**}}{p < .01}
+#' \item{\code{*}}{p < .05}
+#' \item{\code{+}}{p < .10}
+#' }
+#'
+#' Each column is a different outcome variable/tidy summary, each row is
+#' a different predictor.
+#'
+#' @param ana List of tidy summaries
+#'
+#' @return data.frame with predictors and coefficients (and significance level) in each model
+#' @export
+#'
+#' @examples
+#' library(broom)
+#' ana <- list()
+#' ana$y1 <- lm(y1 ~ x1+x2, df) |> tidy()
+#' ana$y2 <- lm(y2 ~ x1+x2, df) |> tidy()
+#' ana |> make_pub_table_from_broom_tidy()
+#'
+#' @concept models
+make_pub_table_from_broom_tidy <- function(ana)
+{
+  "
+  input: ana list (list of tidy outputs)
+  out: df with IVs and estimate+pvalue for each target
+  "
+  # make dfs
+  ana <- ana |> lapply(as.data.frame)
+
+  # get estimates, p-value from each model
+  out <- ana[[1]][c("term")]
+  for(i in 1:length(ana))
+  {
+    # ith analysis
+    a <- ana[[i]]
+    y <- names(ana)[i]
+
+    # postproc p-value
+    a$sig <- weights::starmaker(a$p.value, symbols=c("***", "**", "*", "+"))
+
+    # concat est (2 decimals) and sig
+    a[,y] <- paste0(sprintf('%.2f',a$estimate), a$sig)
+
+    # store in table
+    a <- a[,c("term", y)]
+    out <- out |> full_join(a, by="term")
+
+  }
+
+  # rename as Predictor
+  out <- out |> rename(Predictor=term)
+
+  #out
+  return(out)
 }
 
 
 
-#' Add cluster with iterative variable selection
+# get list of significant/trend effects from a pub table
+#' Extract significant effects from a publication table
 #'
-#' This function adds cluster assignment to each row of a data.frame with
-#' iterative variable selection during clustering.
+#' This function extracts the significant effects from a publication table generated by any
+#' of the \code{make_pub_table_from_...()} functions.
 #'
-#' @details
-#' An initial set of clusters is determined using [get_cluster()] (Gower distance matrix with
-#' clustering around medoids). Then, significant differences between clusters are determined using
-#' [get_sig_differences_between_groups()] (ANOVA for numeric variables, Chi-square for categorical
-#' variables), and clustering is performed again using the reduced set of significant variables.
-#' This variable-reduction method is repeated until all remaining variables are significant,
-#' or until \code{maxit} is reached. If \code{maxit} is reached before convergence, a warning is
-#' thrown.
+#' @param table Publication generated for lavaan models or tidy summaries
+#' @param pattern Regular expression used to find significant effects (default is any * or +)
+#' @param fixed (logical) Whether pattern is to be searched as is (TRUE)
+#' or as a regular expression (FALSE)
 #'
-#' When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
-#' is performed, and this is equivalent to using [get_cluster()] directly.
-#'
-#' @param df data.frame
-#' @param v_cluster (character) vector of variable names to use in clustering (if \code{NULL}, use all)
-#' @param k (numeric) number of clusters (if \code{NULL}, determined optimally; see [get_cluster()])
-#' @param maxit (numeric) maximum number of iterations to select significant outcomes of clusters
-#' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
-#' variables and cluster assignment (default \code{FALSE})
-#' @param new_var_name (character) new variable name
-#'
-#' @return \code{df} with new cluster variable added
+#' @return data.frame with columns Outcome, Predictor, and Sign
+#' (indicating whether the coefficient is positive or negative)
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' df <- df |> add_cluster_assignment()
-#'
-#' df |>
-#'    add_cluster_assignment(return_df_cluster_instead=TRUE) |>
-#'    plot_density_by_groups(group="Cluster")
-#' }
+#' library(lavaan)
+#' ana <- list()
+#' ana$y1 <- sem("y1 ~ x1+x2", df)
+#' ana$y2 <- sem("y2 ~ x1+x2", df)
+#' pub <- ana |> make_pub_table_from_lavaan_models()
+#' pub |> get_sig_effects_from_pub_table()
 #'
 #' @concept models
-add_cluster_assignment <- function(df,
-                                   v_cluster=NULL,
-                                   k=NULL,
-                                   maxit=10,
-                                   return_df_cluster_instead=FALSE,
-                                   new_var_name="Cluster")
+get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
 {
-  "
-  this is a wrapper that starts off with all cluster vars,
-  then picks only significant predictors of cluster,
-  and re-estimates clusters with same k
-  "
+  # get significant predictors with outcome
+  sig <- table |>
+    remove_rownames() |>
+    column_to_rownames("Predictor") |>
+    apply(1:2, grepl, pattern=pattern, fixed=fixed) |>
+    which(arr.ind=T) |>
+    (\(m)(data.frame(Predictor=rownames(m), m, row.names=NULL)))() |>
+    select(-row) |>
+    mutate(col=names(table |> select(-1))[col]) |>
+    rename(Outcome=col) |>
+    select(Outcome, Predictor)
 
-  # check
-  if(maxit<0) stop("Max. iteration needs to be >= 0")
-  if(maxit==0) warning("With maxit=0 there is no predictor selection; if return_df_cluster_instead=TRUE, equivalent to get_df_cluser()")
-
-  # arg
-  if(new_var_name %in% names(df)) stop("Variable" |> paste(new_var_name, "already in df"))
-  message("Max. iteration:" |> paste(maxit))
-
-  # get init clusters
-  if(is.null(v_cluster)) v_cluster <- names(df)
-  clusters <- v_cluster |>
-    get_cluster(df=df, v_cluster=_, k=k)
-  if(is.null(k)) k <- clusters |> unique() |> length()
-  df[,new_var_name] <- clusters
-
-  # use only sig vars to assign to clusters
-  current_sig <- v_cluster
-  updated_sig <- c()
-  it <- 0
-  while(!identical(updated_sig, current_sig))
-  {
-    if(it>maxit)
-    {
-      warning("Maximum iteration reached: Sig. predictors not converged")
-      break
-    }
-    if(it>0)
-    {
-      current_sig <- updated_sig
-      df[,new_var_name] <- current_sig |>
-        get_cluster(df=df, v_cluster=_, k=k)
-    }
-    updated_sig <- df |> get_sig_differences_between_groups(test_vars=current_sig, group=new_var_name)
-    print("Next iteration, removing from vars:");print(current_sig |> setdiff(updated_sig))
-    #print("Next iteration, adding to vars:");print(updated_sig |> setdiff(current_sig))
-    it <- it+1
-  }
-  if(identical(updated_sig, current_sig)) message("Sig. predictors converged")
-
+  # add sign
+  sig$Sign <- NA
+  for(i in 1:nrow(sig)) sig$Sign[i] <- table |>
+    filter(Predictor == sig$Predictor[i]) |>
+    select(all_of(sig$Outcome[i])) |>
+    substr(1,1)
+  sig$Sign <- (sig$Sign == "-") |> ifelse("-", "+")
 
   # out
-  message("Added variable" |> paste(new_var_name))
-  message("Predictor selection ran for" |> paste(it-1, "iteration(s)"))
-  message("Final vars:")
-  print(current_sig)
-  if(return_df_cluster_instead) df |> select(all_of(c(current_sig, new_var_name))) else df
+  return(sig)
+}
 
+
+# compare sig effects from two pub tables
+#' Compare significant effects from two publication tables
+#'
+#' This function prints to console which effects are significant in table1 but not in table2,
+#' and which are significant in table2 but not in table1. The two tables are
+#' publication tables generated by any of the \code{make_pub_table_from_...()} functions
+#'
+#' @param table1 A publication table
+#' @param table2 Another publication table
+#' @param pattern Pattern used to determine significant effects (default is *)
+#' @param fixed (logical) Whether pattern is to be searched as is (TRUE)
+#' or as a regular expression (FALSE)
+#'
+#' @export
+#'
+#' @examples
+#' library(lavaan)
+#' ana <- list()
+#' ana$y1 <- sem("y1 ~ x1+x2", df, missing="ml.x")
+#' ana$y2 <- sem("y2 ~ x1+x2", df, missing="ml.x")
+#' pub_sem <- ana |> make_pub_table_from_lavaan_models()
+#'
+#'library(broom)
+#' ana <- list()
+#' ana$y1 <- lm(y1 ~ x1+x2, df) |> tidy()
+#' ana$y2 <- lm(y2 ~ x1+x2, df) |> tidy()
+#' pub_lm <- ana |> make_pub_table_from_broom_tidy()
+#'
+#' # sensitivity analysis: effect of missing data
+#' pub_lm |> compare_sig_effects_in_two_pub_tables(pub_sem)
+#'
+#' @concept models
+compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", fixed=T)
+{
+  # get significant effects in both tables
+  sig <- list(table1, table2) |>
+    lapply(\(t) t |>
+             get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
+             with(paste0(Outcome, ": ", Predictor, " (", Sign, ")")))
+
+  # output
+  cat("_______________________________\n")
+  cat(pattern |> paste("in table1 but not in table2:\n"))
+  (!sig[[1]] %in% sig[[2]]) |> (\(v)sig[[1]][v])() |> print()
+
+  cat("_______________________________\n")
+  cat(pattern |> paste("in table2 but not in table1:\n"))
+  (!sig[[2]] %in% sig[[1]]) |> (\(v)sig[[2]][v])() |> print()
 }
