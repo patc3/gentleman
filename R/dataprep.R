@@ -100,7 +100,8 @@ cast <- function(df, type_from, type_to, vars=NULL)
 }
 
 
-#### scale & combine ####
+#### numeric vars ####
+
 # generic fn: combine numeric vars into one on same scale (z)
 #' Combine numeric variables into one
 #'
@@ -148,6 +149,66 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
   print("Added var" |> paste(name))
   return(df_orig)
 }
+
+
+
+#' Dichotomize by picking value returned by a function
+#'
+#' This function dichotomizes (0/1) a variable by applying a function to it
+#' and checking whether each element equals the function's return value.
+#'
+#' @param df data.frame
+#' @param vars (character) variable names to dichotomize
+#' @param value_fn function that returns desired value for `1` (default `max()`)
+#' @param na.rm (logical) whether to remove NAs before applying `value_fn` (default `TRUE`)
+#'
+#' @return `df` with `vars` dichotomized
+#' @export
+#'
+#' @examples
+#' df <- df |> dichotomize(vars="x1")
+#'
+#' @concept data_prep
+dichotomize <- function(df, vars, value_fn=max, na.rm=TRUE)
+{
+  print("Making 0-1 numeric by matching to value obtained with value_fn() (1) or else (0)")
+  values <- if(na.rm) df[,var] |> na.omit() |> as.numeric() else df[,var]
+  for(var in vars) df[,var] <- (df[,var]==value_fn(values)) |> as.numeric()
+  df
+}
+
+
+
+#' Winsorize variables
+#'
+#' This function replaces all values more extreme than a desired
+#' minimum and/or maximum value in a variable by that value.
+#'
+#' @param df data.frame
+#' @param var (character) variable to winsorize
+#' @param min `var`'s new min value (default `NULL`, keep as is)
+#' @param max `var`'s new max value (default `NULL`, keep as is)
+#'
+#' @return `df` with `var` winsorized
+#' @export
+#'
+#' @examples
+#' df <- df |> winsorize("x1", max=1)
+#'
+#' @concept data_prep
+winsorize <- function(df, var, min=NULL, max=NULL)
+{
+  i_min <- which(df[,var] < min)
+  df[i_min,var] <- min
+
+  i_max <- which(df[,var] > max)
+  df[i_max,var] <- max
+
+  # out
+  print("Replaced" |> paste(length(i_min)+length(i_max), "values in var", var))
+  df
+}
+
 
 
 #### factors ####
@@ -396,7 +457,6 @@ remove_factors_with_too_many_levels <- function(df, maxlevels=20)
   print(orig |> setdiff(names(df)))
   return(df)
 }
-
 
 
 
