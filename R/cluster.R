@@ -125,6 +125,7 @@ add_cluster_assignment <- function(df,
   # arg
   if(new_var_name %in% names(df)) stop("Variable" |> paste(new_var_name, "already in df"))
   elimination <- match.arg(elimination)
+  message("Elimination:" |> paste(elimination))
   message("Max. iteration:" |> paste(maxit))
 
   # track clusters
