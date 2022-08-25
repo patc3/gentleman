@@ -140,7 +140,7 @@ add_cluster_assignment <- function(df,
   it <- 0
   while(!identical(updated_sig, current_sig))
   {
-    cat("Iteration # " |> paste(it))
+    message("Iteration # " |> paste(it))
     if(it>maxit)
     {
       warning("Maximum iteration reached: Sig. predictors not converged")
