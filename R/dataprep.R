@@ -161,6 +161,7 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 #' @param vars (character) variable names to dichotomize
 #' @param value_fn function that returns desired value for `1` (default `max()`)
 #' @param na.rm (logical) whether to remove NAs before applying `value_fn` (default `TRUE`)
+#' @param ... (optional) additional arguments passed to `value_fn`
 #'
 #' @return `df` with `vars` dichotomized
 #' @export
@@ -169,11 +170,14 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 #' df <- df |> dichotomize(vars="x1")
 #'
 #' @concept data_prep
-dichotomize <- function(df, vars, value_fn=max, na.rm=TRUE)
+dichotomize <- function(df, vars, value_fn=max, na.rm=TRUE, ...)
 {
   print("Making 0-1 numeric by matching to value obtained with value_fn() (1) or else (0)")
-  values <- if(na.rm) df[,var] |> na.omit() |> as.numeric() else df[,var]
-  for(var in vars) df[,var] <- (df[,var]==value_fn(values)) |> as.numeric()
+  for(var in vars)
+  {
+    values <- if(na.rm) df[,var] |> na.omit() |> as.numeric() else df[,var]
+    df[,var] <- (df[,var]==value_fn(values, ...)) |> as.numeric()
+  }
   df
 }
 

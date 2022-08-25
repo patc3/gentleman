@@ -4,7 +4,7 @@
 \alias{dichotomize}
 \title{Dichotomize by picking value returned by a function}
 \usage{
-dichotomize(df, vars, value_fn = max, na.rm = TRUE)
+dichotomize(df, vars, value_fn = max, na.rm = TRUE, ...)
 }
 \arguments{
 \item{df}{data.frame}
@@ -14,6 +14,8 @@ dichotomize(df, vars, value_fn = max, na.rm = TRUE)
 \item{value_fn}{function that returns desired value for \code{1} (default \code{max()})}
 
 \item{na.rm}{(logical) whether to remove NAs before applying \code{value_fn} (default \code{TRUE})}
+
+\item{...}{(optional) additional arguments passed to \code{value_fn}}
 }
 \value{
 \code{df} with \code{vars} dichotomized
