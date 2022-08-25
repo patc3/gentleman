@@ -127,12 +127,15 @@ add_cluster_assignment <- function(df,
   elimination <- match.arg(elimination)
   message("Max. iteration:" |> paste(maxit))
 
+  # track clusters
+  clusters <- list()
+
   # get init clusters
   if(is.null(v_cluster)) v_cluster <- names(df)
-  clusters <- v_cluster |>
+  clusters[[1]] <- v_cluster |>
     get_cluster(df=df, v_cluster=_, k=k)
-  if(is.null(k)) k <- clusters |> unique() |> length()
-  df[,new_var_name] <- clusters
+  if(is.null(k)) k <- clusters[[1]] |> unique() |> length()
+  df[,new_var_name] <- clusters[[1]]
 
   # use only sig vars to assign to clusters
   current_sig <- v_cluster
@@ -149,8 +152,14 @@ add_cluster_assignment <- function(df,
     if(it>0)
     {
       current_sig <- updated_sig
-      df[,new_var_name] <- current_sig |>
+      clusters[[it+1]] <- current_sig |>
         get_cluster(df=df, v_cluster=_, k=k)
+      df[,new_var_name] <- clusters[[it+1]]
+    }
+    if(it>=3 && clusters[[it+1]] |> identical(clusters[[it-1]]))
+    {
+      message("Cluster assignments repeated from 2 iterations ago; Stopping now")
+      break
     }
     test_vars <- switch(elimination, backward=current_sig, bidirectional=v_cluster)
     updated_sig <- df |> get_sig_differences_between_groups(test_vars=test_vars, group=new_var_name)
