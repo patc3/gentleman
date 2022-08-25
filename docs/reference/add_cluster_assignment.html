@@ -56,6 +56,7 @@ iterative variable selection during clustering.</p>
 <span>  v_cluster <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  k <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  maxit <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  elimination <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"backward"</span>, <span class="st">"bidirectional"</span><span class="op">)</span>,</span>
 <span>  return_df_cluster_instead <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  new_var_name <span class="op">=</span> <span class="st">"Cluster"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -79,6 +80,11 @@ iterative variable selection during clustering.</p>
 <dd><p>(numeric) maximum number of iterations to select significant outcomes of clusters</p></dd>
 
 
+<dt>elimination</dt>
+<dd><p>(character) whether to use backward or bidirectional elimination
+(see Details; default <code>backward</code>)</p></dd>
+
+
 <dt>return_df_cluster_instead</dt>
 <dd><p>(logical) whether to return <code>df</code> with only final clustering
 variables and cluster assignment (default <code>FALSE</code>)</p></dd>
@@ -99,12 +105,26 @@ variables and cluster assignment (default <code>FALSE</code>)</p></dd>
     <p>An initial set of clusters is determined using <code><a href="get_cluster.html">get_cluster()</a></code> (Gower distance matrix with
 clustering around medoids). Then, significant differences between clusters are determined using
 <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code> (ANOVA for numeric variables, Chi-square for categorical
-variables), and clustering is performed again using the reduced set of significant variables.
-This variable-reduction method is repeated until all remaining variables are significant,
+variables), and clustering is performed again using the set of significant variables (and the same <code>k</code>).
+This variable-selection method is repeated until all remaining variables are significant,
 or until <code>maxit</code> is reached. If <code>maxit</code> is reached before convergence, a warning is
 thrown.</p>
+<p>Variable selection can be achieved either through <strong>backward</strong> elimination, where the full set
+of candidate variables is first considered, then only significant predictors are kept in the
+next iteration, and so on until all variables are significant. This guarantees that each iteration
+will have a reduced set of variables.</p>
+<p>Alternatively, variable selection can be achieved through <strong>bidirectional</strong> elimination, where
+at each step the full set of initial variables is tested for differences between clusters,
+whether or not they were included in the previous iteration. All significant predictors are
+included in the next iteration. This guarantees that the final set of variables will match
+the output of <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code> with <code>test_vars=v_cluster</code> and <code>group=new_var_name</code>
+(provided convergence has been reached).</p>
 <p>When <code>maxit</code> is set to 0, a warning is thrown indicating that no variable selection
 is performed, and this is equivalent to using <code><a href="get_cluster.html">get_cluster()</a></code> directly.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="get_cluster.html">get_cluster()</a></code>, <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code></p></div>
     </div>
 
     <div class="section level2">

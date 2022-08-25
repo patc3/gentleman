@@ -65,10 +65,22 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' An initial set of clusters is determined using [get_cluster()] (Gower distance matrix with
 #' clustering around medoids). Then, significant differences between clusters are determined using
 #' [get_sig_differences_between_groups()] (ANOVA for numeric variables, Chi-square for categorical
-#' variables), and clustering is performed again using the reduced set of significant variables.
-#' This variable-reduction method is repeated until all remaining variables are significant,
+#' variables), and clustering is performed again using the set of significant variables (and the same `k`).
+#' This variable-selection method is repeated until all remaining variables are significant,
 #' or until \code{maxit} is reached. If \code{maxit} is reached before convergence, a warning is
 #' thrown.
+#'
+#' Variable selection can be achieved either through **backward** elimination, where the full set
+#' of candidate variables is first considered, then only significant predictors are kept in the
+#' next iteration, and so on until all variables are significant. This guarantees that each iteration
+#' will have a reduced set of variables.
+#'
+#' Alternatively, variable selection can be achieved through **bidirectional** elimination, where
+#' at each step the full set of initial variables is tested for differences between clusters,
+#' whether or not they were included in the previous iteration. All significant predictors are
+#' included in the next iteration. This guarantees that the final set of variables will match
+#' the output of [get_sig_differences_between_groups()] with `test_vars=v_cluster` and `group=new_var_name`
+#' (provided convergence has been reached).
 #'
 #' When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
 #' is performed, and this is equivalent to using [get_cluster()] directly.
@@ -77,12 +89,16 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' @param v_cluster (character) vector of variable names to use in clustering (if \code{NULL}, use all)
 #' @param k (numeric) number of clusters (if \code{NULL}, determined optimally; see [get_cluster()])
 #' @param maxit (numeric) maximum number of iterations to select significant outcomes of clusters
+#' @param elimination (character) whether to use backward or bidirectional elimination
+#' (see Details; default `backward`)
 #' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
 #' variables and cluster assignment (default \code{FALSE})
 #' @param new_var_name (character) new variable name
 #'
 #' @return \code{df} with new cluster variable added
 #' @export
+#'
+#' @seealso [get_cluster()], [get_sig_differences_between_groups()]
 #'
 #' @examples
 #' \dontrun{
@@ -98,21 +114,17 @@ add_cluster_assignment <- function(df,
                                    v_cluster=NULL,
                                    k=NULL,
                                    maxit=10,
+                                   elimination=c("backward", "bidirectional"),
                                    return_df_cluster_instead=FALSE,
                                    new_var_name="Cluster")
 {
-  "
-  this is a wrapper that starts off with all cluster vars,
-  then picks only significant predictors of cluster,
-  and re-estimates clusters with same k
-  "
-
   # check
   if(maxit<0) stop("Max. iteration needs to be >= 0")
   if(maxit==0) warning("With maxit=0 there is no predictor selection; if return_df_cluster_instead=TRUE, equivalent to get_df_cluser()")
 
   # arg
   if(new_var_name %in% names(df)) stop("Variable" |> paste(new_var_name, "already in df"))
+  elimination <- match.arg(elimination)
   message("Max. iteration:" |> paste(maxit))
 
   # get init clusters
@@ -139,9 +151,10 @@ add_cluster_assignment <- function(df,
       df[,new_var_name] <- current_sig |>
         get_cluster(df=df, v_cluster=_, k=k)
     }
-    updated_sig <- df |> get_sig_differences_between_groups(test_vars=current_sig, group=new_var_name)
+    test_vars <- switch(elimination, backward=current_sig, bidirectional=v_cluster)
+    updated_sig <- df |> get_sig_differences_between_groups(test_vars=test_vars, group=new_var_name)
     print("Next iteration, removing from vars:");print(current_sig |> setdiff(updated_sig))
-    #print("Next iteration, adding to vars:");print(updated_sig |> setdiff(current_sig))
+    print("Next iteration, adding to vars:");print(updated_sig |> setdiff(current_sig))
     it <- it+1
   }
   if(identical(updated_sig, current_sig)) message("Sig. predictors converged")

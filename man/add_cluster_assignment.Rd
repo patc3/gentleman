@@ -9,6 +9,7 @@ add_cluster_assignment(
   v_cluster = NULL,
   k = NULL,
   maxit = 10,
+  elimination = c("backward", "bidirectional"),
   return_df_cluster_instead = FALSE,
   new_var_name = "Cluster"
 )
@@ -21,6 +22,9 @@ add_cluster_assignment(
 \item{k}{(numeric) number of clusters (if \code{NULL}, determined optimally; see \code{\link[=get_cluster]{get_cluster()}})}
 
 \item{maxit}{(numeric) maximum number of iterations to select significant outcomes of clusters}
+
+\item{elimination}{(character) whether to use backward or bidirectional elimination
+(see Details; default \code{backward})}
 
 \item{return_df_cluster_instead}{(logical) whether to return \code{df} with only final clustering
 variables and cluster assignment (default \code{FALSE})}
@@ -38,10 +42,22 @@ iterative variable selection during clustering.
 An initial set of clusters is determined using \code{\link[=get_cluster]{get_cluster()}} (Gower distance matrix with
 clustering around medoids). Then, significant differences between clusters are determined using
 \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}} (ANOVA for numeric variables, Chi-square for categorical
-variables), and clustering is performed again using the reduced set of significant variables.
-This variable-reduction method is repeated until all remaining variables are significant,
+variables), and clustering is performed again using the set of significant variables (and the same \code{k}).
+This variable-selection method is repeated until all remaining variables are significant,
 or until \code{maxit} is reached. If \code{maxit} is reached before convergence, a warning is
 thrown.
+
+Variable selection can be achieved either through \strong{backward} elimination, where the full set
+of candidate variables is first considered, then only significant predictors are kept in the
+next iteration, and so on until all variables are significant. This guarantees that each iteration
+will have a reduced set of variables.
+
+Alternatively, variable selection can be achieved through \strong{bidirectional} elimination, where
+at each step the full set of initial variables is tested for differences between clusters,
+whether or not they were included in the previous iteration. All significant predictors are
+included in the next iteration. This guarantees that the final set of variables will match
+the output of \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}} with \code{test_vars=v_cluster} and \code{group=new_var_name}
+(provided convergence has been reached).
 
 When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
 is performed, and this is equivalent to using \code{\link[=get_cluster]{get_cluster()}} directly.
@@ -55,5 +71,8 @@ df |>
    plot_density_by_groups(group="Cluster")
 }
 
+}
+\seealso{
+\code{\link[=get_cluster]{get_cluster()}}, \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}}
 }
 \concept{cluster}
