@@ -654,3 +654,39 @@ add_vars_from_one_df_to_another <- function(df_to,
   # return
   return(df_to)
 }
+
+
+#' Transpose data.frame
+#'
+#' This function transposes a data.frame by switching its rows and columns.
+#'
+#' @details
+#' If `names_in_first_col` is set to `FALSE`, then the first column
+#' in the transposed data.frame will be named `Columns`, indicating original column names,
+#' and subsequent columns (original rows) will be named with integers starting at "1".
+#'
+#' @param df data.frame
+#' @param names_in_first_col (logical) whether to use first column
+#' as new column names (see Details; default `TRUE`)
+#'
+#' @return (data.frame) `df` transposed
+#' @export
+#'
+#' @examples
+#' df |>
+#'    head() |>
+#'    transpose_df(FALSE)
+#'
+#' @concept data_prep
+transpose_df <- function(df, names_in_first_col=TRUE)
+{
+  if(!names_in_first_col) df <- data.frame(Columns=1:nrow(df), df)
+  df |>
+    t() |>
+    as.data.frame() |>
+    tibble::rownames_to_column() |>
+    (\(df){
+      names(df) <- df[1,]
+      df <- df[-1,]
+      df} )()
+}

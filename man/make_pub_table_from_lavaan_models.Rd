@@ -4,12 +4,18 @@
 \alias{make_pub_table_from_lavaan_models}
 \title{Generate publication table from lavaan models}
 \usage{
-make_pub_table_from_lavaan_models(ana, check_same_format = TRUE)
+make_pub_table_from_lavaan_models(
+  ana,
+  check_same_format = TRUE,
+  transpose = FALSE
+)
 }
 \arguments{
-\item{ana}{List of lavaan models}
+\item{ana}{list of lavaan models}
 
-\item{check_same_format}{(logical) Whether to force all models to have the same predictors}
+\item{check_same_format}{(logical) whether to force all models to have the same predictors}
+
+\item{transpose}{(logical) whether to transpose the table (default \code{FALSE})}
 }
 \value{
 data.frame with predictors and coefficients (and significance level) in each model

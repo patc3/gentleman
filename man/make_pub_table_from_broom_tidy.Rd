@@ -4,10 +4,12 @@
 \alias{make_pub_table_from_broom_tidy}
 \title{Generate publication table from broom::tidy summaries}
 \usage{
-make_pub_table_from_broom_tidy(ana)
+make_pub_table_from_broom_tidy(ana, transpose = FALSE)
 }
 \arguments{
-\item{ana}{List of tidy summaries}
+\item{ana}{list of tidy summaries}
+
+\item{transpose}{(logical) whether to transpose the table (default \code{FALSE})}
 }
 \value{
 data.frame with predictors and coefficients (and significance level) in each model

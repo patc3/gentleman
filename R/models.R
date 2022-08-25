@@ -331,8 +331,9 @@ decompose_interaction <- function(model,
 #' Each column is a different outcome variable/lavaan model, each row is
 #' a different predictor.
 #'
-#' @param ana List of lavaan models
-#' @param check_same_format (logical) Whether to force all models to have the same predictors
+#' @param ana list of lavaan models
+#' @param check_same_format (logical) whether to force all models to have the same predictors
+#' @param transpose (logical) whether to transpose the table (default `FALSE`)
 #'
 #' @return data.frame with predictors and coefficients (and significance level) in each model
 #' @export
@@ -345,7 +346,9 @@ decompose_interaction <- function(model,
 #' ana |> make_pub_table_from_lavaan_models()
 #'
 #' @concept models
-make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
+make_pub_table_from_lavaan_models <- function(ana,
+                                              check_same_format=TRUE,
+                                              transpose=FALSE)
 {
   "
   input: ana list (list of lavaan models)
@@ -382,6 +385,9 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
   # colnames
   if(length(v_out)==1 & !is.null(names(ana))) names(out)[2:ncol(out)] <- names(ana)
 
+  # transpose?
+  if(transpose) out <- out |> transpose_df()
+
   #out
   return(out)
 }
@@ -404,7 +410,8 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 #' Each column is a different outcome variable/tidy summary, each row is
 #' a different predictor.
 #'
-#' @param ana List of tidy summaries
+#' @param ana list of tidy summaries
+#' @param transpose (logical) whether to transpose the table (default `FALSE`)
 #'
 #' @return data.frame with predictors and coefficients (and significance level) in each model
 #' @export
@@ -417,7 +424,7 @@ make_pub_table_from_lavaan_models <- function(ana, check_same_format=TRUE)
 #' ana |> make_pub_table_from_broom_tidy()
 #'
 #' @concept models
-make_pub_table_from_broom_tidy <- function(ana)
+make_pub_table_from_broom_tidy <- function(ana, transpose=FALSE)
 {
   "
   input: ana list (list of tidy outputs)
@@ -448,6 +455,9 @@ make_pub_table_from_broom_tidy <- function(ana)
 
   # rename as Predictor
   out <- out |> rename(Predictor=term)
+
+  # transpose?
+  if(transpose) out <- out |> transpose_df()
 
   #out
   return(out)
