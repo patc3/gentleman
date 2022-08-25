@@ -156,13 +156,22 @@ add_cluster_assignment <- function(df,
         get_cluster(df=df, v_cluster=_, k=k)
       df[,new_var_name] <- clusters[[it+1]]
     }
-    if(it>=3 && clusters[[it+1]] |> identical(clusters[[it-1]]))
-    {
-      message("Cluster assignments repeated from 2 iterations ago; Stopping now")
-      break
-    }
     test_vars <- switch(elimination, backward=current_sig, bidirectional=v_cluster)
     updated_sig <- df |> get_sig_differences_between_groups(test_vars=test_vars, group=new_var_name)
+
+    # check for stuck in loop
+    if(it>=3 &&
+       clusters[[it+1]] |> identical(clusters[[it-1]]) &&
+       (current_sig |> setdiff(updated_sig) |> length()) == 0 # no n.s. vars to remove
+    )
+    {
+      message("Cluster assignments repeated from 2 iterations ago and
+              clusters different on all variables;
+              Stopping now")
+      break
+    }
+
+    # print and increase
     print("Next iteration, removing from vars:");print(current_sig |> setdiff(updated_sig))
     print("Next iteration, adding to vars:");print(updated_sig |> setdiff(current_sig))
     it <- it+1
