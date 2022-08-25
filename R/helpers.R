@@ -51,6 +51,28 @@ copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
 copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.names=T, row.names=F, append=T) }
 
 
+
+#' Wrapper for writing table to clipboard
+#'
+#' This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"}
+#' and `quote=FALSE`. Ideal for copy-pasting a data.frame into a text file.
+#'
+#' @param tbl Object to be written
+#'
+#' @export
+#'
+#' @examples
+#' df |> copy3()
+#'
+#' @concept helpers
+copy3 <- function(tbl){ write.table(tbl,
+                                   file="clipboard-9999",
+                                   quote = FALSE,
+                                   col.names=TRUE,
+                                   row.names=FALSE) }
+
+
+
 #### find & replace ####
 # internal fn: replace at position in vec
 #' Replace vector element at given position with value
