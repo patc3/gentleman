@@ -3,11 +3,14 @@
 \name{\%P\%}
 \alias{\%P\%}
 \alias{\%p\%}
+\alias{\%c\%}
 \title{Pasting operators}
 \usage{
 lhs \%P\% rhs
 
 lhs \%p\% rhs
+
+lhs \%c\% rhs
 }
 \arguments{
 \item{lhs}{left-hand side}
@@ -24,5 +27,6 @@ with the \code{+} operator in Python.
 \examples{
 "this adds a space" \%P\% "between strings"
 "this doesn" \%p\% "'" \%p\% "t"
+"y1" \%P\% "~" \%P\% (("x" \%p\% 1:3) \%c\% "+") |> formula()
 }
 \concept{helpers}

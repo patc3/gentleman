@@ -89,14 +89,19 @@ copy3 <- function(tbl){ write.table(tbl,
 #'
 #' @examples
 #' "this adds a space" %P% "between strings"
-#' "this doesn" %p% "'" %p% "t"
 `%P%` <- function(lhs, rhs){ paste(lhs, rhs) }
 
 #' @rdname paste
 #' @export
+#' @examples
+#' "this doesn" %p% "'" %p% "t"
 `%p%` <- function(lhs, rhs){ paste0(lhs, rhs) }
 
-
+#' @rdname paste
+#' @export
+#' @examples
+#' "y1" %P% "~" %P% (("x" %p% 1:3) %c% "+") |> formula()
+`%c%` <- function(lhs, rhs){ paste0(lhs, collapse=rhs) }
 
 
 #### find & replace ####
