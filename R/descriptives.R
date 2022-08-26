@@ -699,6 +699,9 @@ get_sig_differences_between_groups <- function(df, test_vars=NULL, group)
 
   v_cluster <- v_cluster_num[sig$num] |> c(v_cluster_fac[sig$fac])
 
+  # preserve original order
+  v_cluster <- test_vars[v_cluster |> match(test_vars) |> sort()]
+
   # out
   v_cluster
 }
