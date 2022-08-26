@@ -66,10 +66,36 @@ copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.
 #'
 #' @concept helpers
 copy3 <- function(tbl){ write.table(tbl,
-                                   file="clipboard-9999",
-                                   quote = FALSE,
-                                   col.names=TRUE,
-                                   row.names=FALSE) }
+                                    file="clipboard-9999",
+                                    quote = FALSE,
+                                    col.names=TRUE,
+                                    row.names=FALSE) }
+
+
+#### operators ####
+
+#' Pasting operators
+#'
+#' These operators are used to paste objects together as you would
+#' with the `+` operator in Python.
+#'
+#' @param lhs left-hand side
+#' @param rhs right-hand side
+#'
+#' @return (character) pasted objects
+#' @rdname paste
+#' @concept helpers
+#' @export
+#'
+#' @examples
+#' "this adds a space" %P% "between strings"
+#' "this doesn" %p% "'" %p% "t"
+`%P%` <- function(lhs, rhs){ paste(lhs, rhs) }
+
+#' @rdname paste
+#' @export
+`%p%` <- function(lhs, rhs){ paste0(lhs, rhs) }
+
 
 
 
