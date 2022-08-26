@@ -55,8 +55,9 @@ iterative variable selection during clustering.</p>
 <span>  <span class="va">df</span>,</span>
 <span>  v_cluster <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  k <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  maxit <span class="op">=</span> <span class="fl">10</span>,</span>
+<span>  maxit <span class="op">=</span> <span class="fl">100</span>,</span>
 <span>  elimination <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"backward"</span>, <span class="st">"bidirectional"</span><span class="op">)</span>,</span>
+<span>  max_vars_rm_or_add_each_it <span class="op">=</span> <span class="cn">Inf</span>,</span>
 <span>  return_df_cluster_instead <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  new_var_name <span class="op">=</span> <span class="st">"Cluster"</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -83,6 +84,11 @@ iterative variable selection during clustering.</p>
 <dt>elimination</dt>
 <dd><p>(character) whether to use backward or bidirectional elimination
 (see Details; default <code>backward</code>)</p></dd>
+
+
+<dt>max_vars_rm_or_add_each_it</dt>
+<dd><p>(positive int) max number of variables to add and remove (each)
+at each iteration (default <code>Inf</code>)</p></dd>
 
 
 <dt>return_df_cluster_instead</dt>
