@@ -193,11 +193,12 @@ add_cluster_assignment <- function(df,
 
 
     # restrict changes next iteration as requested
-    if(max_vars_rm_or_add_each_it>0)
+    if(max_vars_rm_or_add_each_it>0 &&
+       any(max_vars_rm_or_add_each_it > (v_change |> sapply(length))))
     {
       v_change_adjusted <- v_change |>
-        lapply(\(v) if(length(v)>0) v |>
-                 sample(size=min(length(v), max_vars_rm_or_add_each_it))
+        lapply(\(v) if(max_vars_rm_or_add_each_it < length(v)) v |>
+                 sample(size=max_vars_rm_or_add_each_it)
                else v)
 
 
@@ -208,7 +209,7 @@ add_cluster_assignment <- function(df,
       updated_sig <- current_sig |> # start from current sig
         replace_in_vector(find=v_change$no_longer_pred, NULL) |> # remove selected no longer preds
         c(v_change$new_pred) # add new selected preds
-      updated_sig <- v_cluster[updated_sig |> match(v_cluster) |> sort()] # to preserve original order
+      #updated_sig <- v_cluster[updated_sig |> match(v_cluster) |> sort()] # to preserve original order
     }
 
 
