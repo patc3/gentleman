@@ -112,7 +112,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' }
 #'
 #' @concept cluster
-add_cluster_assignment2 <- function(df,
+add_cluster_assignment <- function(df,
                                     v_cluster=NULL,
                                     k=NULL,
                                     maxit=100,

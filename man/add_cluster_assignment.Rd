@@ -8,8 +8,9 @@ add_cluster_assignment(
   df,
   v_cluster = NULL,
   k = NULL,
-  maxit = 10,
+  maxit = 100,
   elimination = c("backward", "bidirectional"),
+  max_vars_rm_or_add_each_it = Inf,
   return_df_cluster_instead = FALSE,
   new_var_name = "Cluster"
 )
@@ -25,6 +26,9 @@ add_cluster_assignment(
 
 \item{elimination}{(character) whether to use backward or bidirectional elimination
 (see Details; default \code{backward})}
+
+\item{max_vars_rm_or_add_each_it}{(positive int) max number of variables to add and remove (each)
+at each iteration (default \code{Inf})}
 
 \item{return_df_cluster_instead}{(logical) whether to return \code{df} with only final clustering
 variables and cluster assignment (default \code{FALSE})}
