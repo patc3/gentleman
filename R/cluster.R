@@ -91,6 +91,8 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' @param maxit (numeric) maximum number of iterations to select significant outcomes of clusters
 #' @param elimination (character) whether to use backward or bidirectional elimination
 #' (see Details; default `backward`)
+#' @param max_vars_rm_or_add_each_it (positive int) max number of variables to add and remove (each)
+#' at each iteration (default `Inf`)
 #' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
 #' variables and cluster assignment (default \code{FALSE})
 #' @param new_var_name (character) new variable name
@@ -110,13 +112,14 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' }
 #'
 #' @concept cluster
-add_cluster_assignment <- function(df,
-                                   v_cluster=NULL,
-                                   k=NULL,
-                                   maxit=10,
-                                   elimination=c("backward", "bidirectional"),
-                                   return_df_cluster_instead=FALSE,
-                                   new_var_name="Cluster")
+add_cluster_assignment2 <- function(df,
+                                    v_cluster=NULL,
+                                    k=NULL,
+                                    maxit=100,
+                                    elimination=c("backward", "bidirectional"),
+                                    max_vars_rm_or_add_each_it=Inf,
+                                    return_df_cluster_instead=FALSE,
+                                    new_var_name="Cluster")
 {
   # check
   if(maxit<0) stop("Max. iteration needs to be >= 0")
@@ -131,18 +134,22 @@ add_cluster_assignment <- function(df,
   # track clusters
   clusters <- list()
 
+
   # get init clusters
   if(is.null(v_cluster)) v_cluster <- names(df)
-  clusters[[1]] <- v_cluster |>
-    get_cluster(df=df, v_cluster=_, k=k)
+  clusters[[1]] <- v_cluster |> get_cluster(df=df, k=k)
   if(is.null(k)) k <- clusters[[1]] |> unique() |> length()
   df[,new_var_name] <- clusters[[1]]
+
 
   # use only sig vars to assign to clusters
   current_sig <- v_cluster
   updated_sig <- c()
   it <- 0
-  while(!identical(updated_sig, current_sig))
+
+
+  # variable selection
+  while(!setequal(updated_sig, current_sig))
   {
     message("Iteration #" |> paste(it))
     if(it>maxit)
@@ -150,37 +157,74 @@ add_cluster_assignment <- function(df,
       warning("Maximum iteration reached: Sig. predictors not converged")
       break
     }
+
+
+    # update clusters
     if(it>0)
     {
       current_sig <- updated_sig
-      clusters[[it+1]] <- current_sig |>
-        get_cluster(df=df, v_cluster=_, k=k)
+      current_sig <- sample(current_sig) # randomize order
+      clusters[[it+1]] <- current_sig |> get_cluster(df=df, k=k)
       df[,new_var_name] <- clusters[[it+1]]
     }
+
+
+    # get significant outcomes
     test_vars <- switch(elimination, backward=current_sig, bidirectional=v_cluster)
     updated_sig <- df |> get_sig_differences_between_groups(test_vars=test_vars, group=new_var_name)
 
-    # check for stuck in loop
+
+    # define changes in significant outcomes vs. previous iteration
+    v_change <- list()
+    v_change$no_longer_pred <- current_sig |> setdiff(updated_sig)
+    v_change$new_pred <- updated_sig |> setdiff(current_sig)
+
+
+    # check for stuck in loop & no n.s. predictors to remove
     if(it>=3 &&
        clusters[[it+1]] |> identical(clusters[[it-1]]) &&
-       (current_sig |> setdiff(updated_sig) |> length()) == 0 # no n.s. vars to remove
-    )
+       length(v_change$no_longer_pred) == 0) # no n.s. vars to remove
     {
       message("Cluster assignments repeated from 2 iterations ago and
-              clusters different on all variables;
+              clusters significantly different on all variables;
               Stopping now")
       break
     }
 
+
+    # restrict changes next iteration as requested
+    if(max_vars_rm_or_add_each_it>0)
+    {
+      v_change_adjusted <- v_change |>
+        lapply(\(v) if(length(v)>0) v |>
+                 sample(size=min(length(v), max_vars_rm_or_add_each_it))
+               else v)
+
+
+      # adjust updated sig
+      for(i in 1:length(v_change)) v_change[[i]] <- v_change[[i]] |>
+          replace_in_vector(find=setdiff(v_change[[i]], v_change_adjusted[[i]]),
+                            replace=NULL)
+      updated_sig <- current_sig |> # start from current sig
+        replace_in_vector(find=v_change$no_longer_pred, NULL) |> # remove selected no longer preds
+        c(v_change$new_pred) # add new selected preds
+      updated_sig <- v_cluster[updated_sig |> match(v_cluster) |> sort()] # to preserve original order
+    }
+
+
     # print and increase
-    print("Next iteration, removing from vars:");print(current_sig |> setdiff(updated_sig))
-    print("Next iteration, adding to vars:");print(updated_sig |> setdiff(current_sig))
+    print("Next iteration, removing from vars:");print(v_change$no_longer_pred)
+    print("Next iteration, adding to vars:");print(v_change$new_pred)
     it <- it+1
   }
-  if(identical(updated_sig, current_sig)) message("Sig. predictors converged")
+
+
+  # check convergence
+  if(setequal(updated_sig, current_sig)) message("Sig. predictors converged")
 
 
   # out
+  current_sig <- v_cluster[current_sig |> match(v_cluster) |> sort()] # preserve original order
   message("Added variable" |> paste(new_var_name))
   message("Predictor selection ran for" |> paste(it-1, "iteration(s)"))
   message("Final vars:")
