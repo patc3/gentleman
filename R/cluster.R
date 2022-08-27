@@ -233,3 +233,49 @@ add_cluster_assignment <- function(df,
   if(return_df_cluster_instead) df |> select(all_of(c(current_sig, new_var_name))) else df
 
 }
+
+
+
+#' Calculate variable importances in clustering
+#'
+#' This function calculates variable importances when clustering with variable selection.
+#'
+#' @details
+#' Variable importances are estimated through simulation with `nrep` calls to `add_cluster_assignment()`
+#' with the specified configuration via `...`. The function retrieves the number of times each
+#' variable was kept at the final step of clustering.
+#'
+#' @param df data.frame
+#' @param nrep (positive int) number of repetitions in the simulation (default `100`)
+#' @param ... arguments passed to `add_cluster_assignment()`
+#'
+#' @return (table) percentage of times each variable was used in the final clustering step
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df |>
+#'   calc_cluster_importances(k=2,
+#'                            maxit=100,
+#'                            elimination="bidirectional",
+#'                            max_vars_rm_or_add_each_it=1)
+#' }
+#' @concept cluster
+calc_cluster_importances <- function(df, nrep=100, ...)
+{
+  vars <- list()
+  for (i in 1:nrep)
+  {
+    message("\n****************** Cluster Importances: Iteration #"%p%i%p%"/"%p%nrep%p%"\n")
+    try(sink("NULL"), silent = TRUE)
+    vars[[i]] <- df |>
+      add_cluster_assignment(return_df_cluster_instead = TRUE,
+                             new_var_name = "_gntlmn_cluster",
+                             ...) |>
+      select(-`_gntlmn_cluster`) |>
+      names()
+    sink()
+  }
+  vars |> unlist() |> table() |> sort(decreasing = TRUE) |> (\(t)t/nrep*100)()
+
+}
