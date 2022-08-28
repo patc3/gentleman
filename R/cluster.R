@@ -82,6 +82,14 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' the output of [get_sig_differences_between_groups()] with `test_vars=v_cluster` and `group=new_var_name`
 #' (provided convergence has been reached).
 #'
+#' If `max_vars_rm_or_add_each_it` is less than the number of significant variables at a given
+#' iteration, then this sets the maximum number of changes made to the variable set for the next
+#' iteration, separately for variables removed and variables added (if elimination is bidirectional).
+#' For example, if `max_vars_rm_or_add_each_it` is set to 1, then at each iteration, only one variable can
+#' be removed, and only one variable can be added. If several candidates are available, then which variable
+#' gets added or removed is selected randomly. This can be useful in determining cluster variable
+#' importances using `calc_cluster_importances()`.
+#'
 #' When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
 #' is performed, and this is equivalent to using [get_cluster()] directly.
 #'
@@ -92,7 +100,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' @param elimination (character) whether to use backward or bidirectional elimination
 #' (see Details; default `backward`)
 #' @param max_vars_rm_or_add_each_it (positive int) max number of variables to add and remove (each)
-#' at each iteration (default `Inf`)
+#' at each iteration (see Details; default `Inf`)
 #' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
 #' variables and cluster assignment (default \code{FALSE})
 #' @param new_var_name (character) new variable name
@@ -100,7 +108,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' @return \code{df} with new cluster variable added
 #' @export
 #'
-#' @seealso [get_cluster()], [get_sig_differences_between_groups()]
+#' @seealso [get_cluster()], [get_sig_differences_between_groups()], [calc_cluster_importances()]
 #'
 #' @examples
 #' \dontrun{
@@ -261,13 +269,15 @@ add_cluster_assignment <- function(df,
 #'                            max_vars_rm_or_add_each_it=1)
 #' }
 #' @concept cluster
+#'
+#' @seealso [add_cluster_assignment()]
 calc_cluster_importances <- function(df, nrep=100, ...)
 {
   vars <- list()
   for (i in 1:nrep)
   {
     message("\n****************** Cluster Importances: Iteration #"%p%i%p%"/"%p%nrep%p%"\n")
-    try(sink("NULL"), silent = TRUE)
+    try(sink("NUL"), silent = TRUE)
     vars[[i]] <- df |>
       add_cluster_assignment(return_df_cluster_instead = TRUE,
                              new_var_name = "_gntlmn_cluster",

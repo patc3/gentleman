@@ -28,7 +28,7 @@ add_cluster_assignment(
 (see Details; default \code{backward})}
 
 \item{max_vars_rm_or_add_each_it}{(positive int) max number of variables to add and remove (each)
-at each iteration (default \code{Inf})}
+at each iteration (see Details; default \code{Inf})}
 
 \item{return_df_cluster_instead}{(logical) whether to return \code{df} with only final clustering
 variables and cluster assignment (default \code{FALSE})}
@@ -63,6 +63,14 @@ included in the next iteration. This guarantees that the final set of variables 
 the output of \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}} with \code{test_vars=v_cluster} and \code{group=new_var_name}
 (provided convergence has been reached).
 
+If \code{max_vars_rm_or_add_each_it} is less than the number of significant variables at a given
+iteration, then this sets the maximum number of changes made to the variable set for the next
+iteration, separately for variables removed and variables added (if elimination is bidirectional).
+For example, if \code{max_vars_rm_or_add_each_it} is set to 1, then at each iteration, only one variable can
+be removed, and only one variable can be added. If several candidates are available, then which variable
+gets added or removed is selected randomly. This can be useful in determining cluster variable
+importances using \code{calc_cluster_importances()}.
+
 When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
 is performed, and this is equivalent to using \code{\link[=get_cluster]{get_cluster()}} directly.
 }
@@ -77,6 +85,6 @@ df |>
 
 }
 \seealso{
-\code{\link[=get_cluster]{get_cluster()}}, \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}}
+\code{\link[=get_cluster]{get_cluster()}}, \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}}, \code{\link[=calc_cluster_importances]{calc_cluster_importances()}}
 }
 \concept{cluster}

@@ -33,4 +33,7 @@ df |>
                            max_vars_rm_or_add_each_it=1)
 }
 }
+\seealso{
+\code{\link[=add_cluster_assignment]{add_cluster_assignment()}}
+}
 \concept{cluster}

@@ -88,7 +88,7 @@ iterative variable selection during clustering.</p>
 
 <dt>max_vars_rm_or_add_each_it</dt>
 <dd><p>(positive int) max number of variables to add and remove (each)
-at each iteration (default <code>Inf</code>)</p></dd>
+at each iteration (see Details; default <code>Inf</code>)</p></dd>
 
 
 <dt>return_df_cluster_instead</dt>
@@ -125,12 +125,19 @@ whether or not they were included in the previous iteration. All significant pre
 included in the next iteration. This guarantees that the final set of variables will match
 the output of <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code> with <code>test_vars=v_cluster</code> and <code>group=new_var_name</code>
 (provided convergence has been reached).</p>
+<p>If <code>max_vars_rm_or_add_each_it</code> is less than the number of significant variables at a given
+iteration, then this sets the maximum number of changes made to the variable set for the next
+iteration, separately for variables removed and variables added (if elimination is bidirectional).
+For example, if <code>max_vars_rm_or_add_each_it</code> is set to 1, then at each iteration, only one variable can
+be removed, and only one variable can be added. If several candidates are available, then which variable
+gets added or removed is selected randomly. This can be useful in determining cluster variable
+importances using <code><a href="calc_cluster_importances.html">calc_cluster_importances()</a></code>.</p>
 <p>When <code>maxit</code> is set to 0, a warning is thrown indicating that no variable selection
 is performed, and this is equivalent to using <code><a href="get_cluster.html">get_cluster()</a></code> directly.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="get_cluster.html">get_cluster()</a></code>, <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="get_cluster.html">get_cluster()</a></code>, <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code>, <code><a href="calc_cluster_importances.html">calc_cluster_importances()</a></code></p></div>
     </div>
 
     <div class="section level2">
