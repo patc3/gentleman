@@ -125,12 +125,12 @@ whether or not they were included in the previous iteration. All significant pre
 included in the next iteration. This guarantees that the final set of variables will match
 the output of <code><a href="get_sig_differences_between_groups.html">get_sig_differences_between_groups()</a></code> with <code>test_vars=v_cluster</code> and <code>group=new_var_name</code>
 (provided convergence has been reached).</p>
-<p>If <code>max_vars_rm_or_add_each_it</code> is less than the number of significant variables at a given
-iteration, then this sets the maximum number of changes made to the variable set for the next
-iteration, separately for variables removed and variables added (if elimination is bidirectional).
-For example, if <code>max_vars_rm_or_add_each_it</code> is set to 1, then at each iteration, only one variable can
-be removed, and only one variable can be added. If several candidates are available, then which variable
-gets added or removed is selected randomly. This can be useful in determining cluster variable
+<p>If <code>max_vars_rm_or_add_each_it</code> is less than the number of variables to add or remove at a given
+iteration, then this sets the number of changes made to the variable set for that iteration,
+separately for variables removed and variables added (if elimination is bidirectional). For example,
+if <code>max_vars_rm_or_add_each_it</code> is set to 1, then at each iteration, only one variable can be removed,
+and only one variable can be added. If several candidates are available, then which variable(s)
+get added or removed are selected randomly. This can be useful in determining cluster variable
 importances using <code><a href="calc_cluster_importances.html">calc_cluster_importances()</a></code>.</p>
 <p>When <code>maxit</code> is set to 0, a warning is thrown indicating that no variable selection
 is performed, and this is equivalent to using <code><a href="get_cluster.html">get_cluster()</a></code> directly.</p>

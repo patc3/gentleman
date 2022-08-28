@@ -63,12 +63,12 @@ included in the next iteration. This guarantees that the final set of variables 
 the output of \code{\link[=get_sig_differences_between_groups]{get_sig_differences_between_groups()}} with \code{test_vars=v_cluster} and \code{group=new_var_name}
 (provided convergence has been reached).
 
-If \code{max_vars_rm_or_add_each_it} is less than the number of significant variables at a given
-iteration, then this sets the maximum number of changes made to the variable set for the next
-iteration, separately for variables removed and variables added (if elimination is bidirectional).
-For example, if \code{max_vars_rm_or_add_each_it} is set to 1, then at each iteration, only one variable can
-be removed, and only one variable can be added. If several candidates are available, then which variable
-gets added or removed is selected randomly. This can be useful in determining cluster variable
+If \code{max_vars_rm_or_add_each_it} is less than the number of variables to add or remove at a given
+iteration, then this sets the number of changes made to the variable set for that iteration,
+separately for variables removed and variables added (if elimination is bidirectional). For example,
+if \code{max_vars_rm_or_add_each_it} is set to 1, then at each iteration, only one variable can be removed,
+and only one variable can be added. If several candidates are available, then which variable(s)
+get added or removed are selected randomly. This can be useful in determining cluster variable
 importances using \code{calc_cluster_importances()}.
 
 When \code{maxit} is set to 0, a warning is thrown indicating that no variable selection
