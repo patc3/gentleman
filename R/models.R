@@ -5,9 +5,16 @@
 #' This function generates the \pkg{lavaan} syntax for a mediation model. The model can
 #' take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 #'
+#' @details
+#' This function implements the method used by JASP v0.16.3 to generate a mediation model,
+#' possibly adjusting for covariates. Adjustment for covariates is done by partialling
+#' out the effect of the control variables given in `covariates` from all predictor `x`,
+#' mediator `m`, and outcome `y` variables.
+#'
 #' @param x Vector of predictor (x) variable names
-#' @param med Vector of mediator (m) variable names
+#' @param m Vector of mediator (m) variable names
 #' @param y Vector of outcome (y) variable names
+#' @param covariates Vector of covariate (control) variable names (default `NULL`)
 #'
 #' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
@@ -18,18 +25,22 @@
 #'    sem(df) |>
 #'    summary()
 #'
+#' @references
+#' JASP Team (2022). *JASP* (Version 0.16.3). Computer software:
+#' \url{https://jasp-stats.org/}
+#'
 #' @concept models
-get_mediation_model <- function(x, med, y)
+get_mediation_model <- function(x, m, y, covariates=NULL)
 {
   # structural model
-  i_m <- 1:length(med)
+  i_m <- 1:length(m)
   i_x <- 1:length(x)
   i_y <- 1:length(y)
 
   # outcome regression
   model_outcome_regression <- "# outcome regression\n"
   for(i_dv in i_y) model_outcome_regression <- model_outcome_regression |>
-    paste0(y[i_dv], " ~ ", paste0("b",i_dv, i_m, "*", med, collapse=" + "), " + ", paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
+    paste0(y[i_dv], " ~ ", paste0("b",i_dv, i_m, "*", m, collapse=" + "), " + ", paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
 
   # effect decomposition
   model_effect_decomposition <- "# effect decomposition\n"
@@ -50,7 +61,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
   # mediator regression
   model_mediator_regression <- "# mediator regression\n"
   for(i_med in i_m) model_mediator_regression <- model_mediator_regression |>
-    paste0(med[i_med], " ~ ", paste0("a",i_med, i_x, "*", x, collapse=" + "), "\n")
+    paste0(m[i_med], " ~ ", paste0("a",i_med, i_x, "*", x, collapse=" + "), "\n")
 
   # residual covariances
   model_residual_covariances <- paste(
@@ -58,7 +69,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
     if(length(x)>1) paste0(apply(t(combn(x, 2)), 1, paste, collapse=" ~~ "), collapse="\n"), # necessary?
     "
 # mediator residual covariance",
-    if(length(med)>1) paste0(apply(t(combn(med, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
+    if(length(m)>1) paste0(apply(t(combn(m, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
     "
 # outcome residual covariance",
     if(length(y)>1) paste0(apply(t(combn(y, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
@@ -66,12 +77,20 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
     sep="\n"
   )
 
+
+  # control variables
+  model_control <- "# adjustment for control variables"
+  if(!is.null(covariates)) for(v in c(x, m, y)) model_control <- c(model_control,
+                                            v %P% "~" %P% (covariates %c% "+")) %c% "\n"
+
+
   # model
   model <- paste(
     model_outcome_regression,
     model_mediator_regression,
     model_residual_covariances,
     model_effect_decomposition,
+    model_control,
     sep="\n"
   )
 

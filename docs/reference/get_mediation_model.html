@@ -51,7 +51,7 @@ take an arbitrary number of predictor (x), mediator (m), and outcome (y) variabl
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_mediation_model</span><span class="op">(</span><span class="va">x</span>, <span class="va">med</span>, <span class="va">y</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_mediation_model</span><span class="op">(</span><span class="va">x</span>, <span class="va">m</span>, <span class="va">y</span>, covariates <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -60,12 +60,16 @@ take an arbitrary number of predictor (x), mediator (m), and outcome (y) variabl
 <dd><p>Vector of predictor (x) variable names</p></dd>
 
 
-<dt>med</dt>
+<dt>m</dt>
 <dd><p>Vector of mediator (m) variable names</p></dd>
 
 
 <dt>y</dt>
 <dd><p>Vector of outcome (y) variable names</p></dd>
+
+
+<dt>covariates</dt>
+<dd><p>Vector of covariate (control) variable names (default <code>NULL</code>)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -74,10 +78,24 @@ take an arbitrary number of predictor (x), mediator (m), and outcome (y) variabl
 
 <p>Character value to be used with <span class="pkg">lavaan</span> as model syntax</p>
     </div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>This function implements the method used by JASP v0.16.3 to generate a mediation model,
+possibly adjusting for covariates. Adjustment for covariates is done by partialling
+out the effect of the control variables given in <code>covariates</code> from all predictor <code>x</code>,
+mediator <code>m</code>, and outcome <code>y</code> variables.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
+    <p>JASP Team (2022). <em>JASP</em> (Version 0.16.3). Computer software:
+<a href="https://jasp-stats.org/" class="external-link">https://jasp-stats.org/</a></p>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is lavaan 0.6-12</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> lavaan is FREE software! Please report any bugs.</span>
 <span class="r-in"><span><span class="fu">get_mediation_model</span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span></span>

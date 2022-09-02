@@ -4,14 +4,16 @@
 \alias{get_mediation_model}
 \title{Generate lavaan syntax for mediation model}
 \usage{
-get_mediation_model(x, med, y)
+get_mediation_model(x, m, y, covariates = NULL)
 }
 \arguments{
 \item{x}{Vector of predictor (x) variable names}
 
-\item{med}{Vector of mediator (m) variable names}
+\item{m}{Vector of mediator (m) variable names}
 
 \item{y}{Vector of outcome (y) variable names}
+
+\item{covariates}{Vector of covariate (control) variable names (default \code{NULL})}
 }
 \value{
 Character value to be used with \pkg{lavaan} as model syntax
@@ -20,11 +22,21 @@ Character value to be used with \pkg{lavaan} as model syntax
 This function generates the \pkg{lavaan} syntax for a mediation model. The model can
 take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 }
+\details{
+This function implements the method used by JASP v0.16.3 to generate a mediation model,
+possibly adjusting for covariates. Adjustment for covariates is done by partialling
+out the effect of the control variables given in \code{covariates} from all predictor \code{x},
+mediator \code{m}, and outcome \code{y} variables.
+}
 \examples{
 library(lavaan)
 get_mediation_model("x1", "x2", "x3") |>
    sem(df) |>
    summary()
 
+}
+\references{
+JASP Team (2022). \emph{JASP} (Version 0.16.3). Computer software:
+\url{https://jasp-stats.org/}
 }
 \concept{models}
