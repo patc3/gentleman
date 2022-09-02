@@ -3,12 +3,18 @@
 \name{\%P\%}
 \alias{\%P\%}
 \alias{\%p\%}
+\alias{\%N\%}
+\alias{\%C\%}
 \alias{\%c\%}
 \title{Pasting operators}
 \usage{
 lhs \%P\% rhs
 
 lhs \%p\% rhs
+
+lhs \%N\% rhs
+
+lhs \%C\% rhs
 
 lhs \%c\% rhs
 }
@@ -27,6 +33,8 @@ with the \code{+} operator in Python.
 \examples{
 "this adds a space" \%P\% "between strings"
 "this doesn" \%p\% "'" \%p\% "t"
-"y1" \%P\% "~" \%P\% (("x" \%p\% 1:3) \%c\% "+") |> formula()
+"This skips" \%N\% "a line" |> cat()
+"y1" \%P\% "~" \%P\% (("x" \%p\% 1:3) \%C\% "+") # collapse with space
+"y1" \%P\% "~" \%P\% (("x" \%p\% 1:3) \%c\% "+") # collapse without space
 }
 \concept{helpers}

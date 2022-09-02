@@ -89,19 +89,33 @@ copy3 <- function(tbl){ write.table(tbl,
 #'
 #' @examples
 #' "this adds a space" %P% "between strings"
-`%P%` <- function(lhs, rhs){ paste(lhs, rhs) }
+`%P%` <- function(lhs, rhs){ paste(lhs, rhs, sep=" ") }
 
 #' @rdname paste
 #' @export
 #' @examples
 #' "this doesn" %p% "'" %p% "t"
-`%p%` <- function(lhs, rhs){ paste0(lhs, rhs) }
+`%p%` <- function(lhs, rhs){ paste(lhs, rhs, sep="") }
 
 #' @rdname paste
 #' @export
 #' @examples
-#' "y1" %P% "~" %P% (("x" %p% 1:3) %c% "+") |> formula()
-`%c%` <- function(lhs, rhs){ paste0(lhs, collapse=rhs) }
+#' "This skips" %N% "a line" |> cat()
+`%N%` <- function(lhs, rhs){ paste(lhs, rhs, sep="\n") }
+
+#' @rdname paste
+#' @export
+#' @examples
+#' "y1" %P% "~" %P% (("x" %p% 1:3) %C% "+") # collapse with space
+`%C%` <- function(lhs, rhs){ paste(lhs, collapse=paste("", rhs, "")) }
+
+#' @rdname paste
+#' @export
+#' @examples
+#' "y1" %P% "~" %P% (("x" %p% 1:3) %c% "+") # collapse without space
+`%c%` <- function(lhs, rhs){ paste(lhs, collapse=rhs) }
+
+
 
 
 #### find & replace ####

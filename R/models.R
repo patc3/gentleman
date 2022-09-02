@@ -81,7 +81,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
   # control variables
   model_control <- "# adjustment for control variables"
   if(!is.null(covariates)) for(v in c(x, m, y)) model_control <- c(model_control,
-                                            v %P% "~" %P% (covariates %c% " + ")) %c% "\n"
+                                            v %P% "~" %P% (covariates %C% "+")) %c% "\n"
 
 
   # model
