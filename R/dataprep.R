@@ -152,6 +152,49 @@ scale_and_combine <- function(df, vars, name, scale=TRUE)
 
 
 
+#' Rescale using min-max normalization
+#'
+#' This function rescales variable(s) in a data.frame using
+#' min-max normalization with arbitrary min and max values.
+#'
+#' @details
+#' Values are rescaled by subtracting the minimum from each value
+#' and multiplying by the new range, and dividing by the current
+#' range, and adding the new minimum (which acts as an offset).
+#' Missing values remain missing. See
+#' [Feature scaling](https://en.wikipedia.org/wiki/Feature_scaling#Rescaling_(min-max_normalization))
+#' (Wikipedia)
+#'
+#' @param df data.frame
+#' @param vars (character) variables to rescale
+#' @param min (numeric) new minimum value (default 0)
+#' @param max (numeric) new maximum value (default 1)
+#'
+#' @return `df` with `vars` rescaled
+#' @export
+#'
+#' @examples
+#' df <- df |> rescale_min_max(c("x1", "x2", "x3"))
+#'
+#' @concept data_prep
+rescale_min_max <- function(df, vars, min=0, max=1)
+{
+  for(v in vars)
+  {
+    x<-df[,v]
+    xp <- min + (x-min(x, na.rm=T))*(max-min)/(max(x, na.rm=T) - min(x, na.rm=T))
+    df[,v] <- xp
+  }
+
+  # out
+  print("Rescaled vars to range from" %P% min %P% "to" %P% max %p% ":")
+  print(vars)
+  df
+}
+
+
+
+
 #' Dichotomize by picking value returned by a function
 #'
 #' This function dichotomizes (0/1) a variable by applying a function to it
