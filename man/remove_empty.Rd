@@ -2,21 +2,25 @@
 % Please edit documentation in R/dataprep.R
 \name{remove_empty_rows}
 \alias{remove_empty_rows}
-\title{Remove empty rows}
+\alias{remove_empty_cols}
+\title{Remove empty rows or columns}
 \usage{
 remove_empty_rows(df)
+
+remove_empty_cols(df)
 }
 \arguments{
 \item{df}{data.frame}
 }
 \value{
-\code{df} with empty rows removed
+\code{df} with empty rows or columns removed
 }
 \description{
-This function removes empty rows (all \code{NA}s) from a data.frame
+This function removes empty rows or columns (all \code{NA}s) from a data.frame
 }
 \examples{
 df <- df |> remove_empty_rows()
 
+df <- df |> remove_empty_cols()
 }
 \concept{data_prep}

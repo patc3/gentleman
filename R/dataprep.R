@@ -64,25 +64,41 @@ remove_vars_with_too_many_missing <- function(df, pmissing=.90)
 
 
 
-#' Remove empty rows
+
+#' Remove empty rows or columns
 #'
-#' This function removes empty rows (all `NA`s) from a data.frame
+#' This function removes empty rows or columns (all `NA`s) from a data.frame
 #'
 #' @param df data.frame
 #'
-#' @return `df` with empty rows removed
+#' @return `df` with empty rows or columns removed
 #' @export
 #'
 #' @examples
 #' df <- df |> remove_empty_rows()
 #'
 #' @concept data_prep
+#' @rdname remove_empty
 remove_empty_rows <- function(df)
 {
   remove <- rowSums(is.na(df)) == ncol(df)
   print("Removing" %P% sum(remove) %P% "row(s)")
   df[!remove,]
 }
+
+
+
+#' @rdname remove_empty
+#' @export
+#' @examples
+#' df <- df |> remove_empty_cols()
+remove_empty_cols <- function(df)
+{
+  remove <- colSums(is.na(df)) == nrow(df)
+  print("Removing" %P% sum(remove) %P% "column(s)")
+  df[,!remove]
+}
+
 
 
 
