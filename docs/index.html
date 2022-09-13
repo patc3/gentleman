@@ -140,18 +140,18 @@
 <span><span class="co"># and test for group differences by treatment group</span></span>
 <span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_desc_table.html">get_desc_table</a></span><span class="op">(</span></span>
 <span>  vars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"age"</span>, <span class="st">"score"</span><span class="op">)</span>,</span>
-<span>  tbl_fn<span class="op">=</span><span class="fu"><a href="reference/tbl_fn_num.html">tbl_fn_num</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  tbl_fn<span class="op">=</span><span class="va">tbl_fn_num</span>,</span>
 <span>  group<span class="op">=</span><span class="st">"TreatmentGroup"</span>,</span>
-<span>  ana_fn<span class="op">=</span><span class="fu"><a href="reference/ana_fn_aov.html">ana_fn_aov</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  ana_fn<span class="op">=</span><span class="va">ana_fn_aov</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Get a table of descriptive statistics for factor variables</span></span>
 <span><span class="co"># and test for group differences by treatment group</span></span>
 <span><span class="va">df</span> <span class="op">|&gt;</span> <span class="fu"><a href="reference/get_desc_table.html">get_desc_table</a></span><span class="op">(</span></span>
 <span>  vars<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Nationality"</span>, <span class="st">"Diagnostic"</span><span class="op">)</span>,</span>
-<span>  tbl_fn<span class="op">=</span><span class="fu"><a href="reference/tbl_fn_fac.html">tbl_fn_fac</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  tbl_fn<span class="op">=</span><span class="va">tbl_fn_fac</span>,</span>
 <span>  group<span class="op">=</span><span class="st">"TreatmentGroup"</span>,</span>
-<span>  ana_fn<span class="op">=</span><span class="fu"><a href="reference/ana_fn_chisq.html">ana_fn_chisq</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  ana_fn<span class="op">=</span><span class="va">ana_fn_chisq</span></span>
 <span><span class="op">)</span></span></code></pre></div>
 <p>The <code><a href="reference/get_desc_table.html">get_desc_table()</a></code> function is the workhorse of the module, which takes as arguments:</p>
 <ul>

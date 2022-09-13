@@ -85,18 +85,18 @@ For example:
 # and test for group differences by treatment group
 df |> get_desc_table(
   vars=c("age", "score"),
-  tbl_fn=tbl_fn_num(),
+  tbl_fn=tbl_fn_num,
   group="TreatmentGroup",
-  ana_fn=ana_fn_aov()
+  ana_fn=ana_fn_aov
 )
 
 # Get a table of descriptive statistics for factor variables
 # and test for group differences by treatment group
 df |> get_desc_table(
   vars=c("Nationality", "Diagnostic"),
-  tbl_fn=tbl_fn_fac(),
+  tbl_fn=tbl_fn_fac,
   group="TreatmentGroup",
-  ana_fn=ana_fn_chisq()
+  ana_fn=ana_fn_chisq
 )
 ```
 
