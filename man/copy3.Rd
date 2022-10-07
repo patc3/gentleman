@@ -10,8 +10,9 @@ copy3(tbl)
 \item{tbl}{Object to be written}
 }
 \description{
-This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"}
-and \code{quote=FALSE}. Ideal for copy-pasting a data.frame into a text file.
+This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"},
+\code{sep="\\t"} (tab-delimited), and \code{quote=FALSE}. Ideal for copy-pasting a
+data.frame into a text file.
 }
 \examples{
 df |> copy3()

@@ -54,8 +54,9 @@ copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.
 
 #' Wrapper for writing table to clipboard
 #'
-#' This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"}
-#' and `quote=FALSE`. Ideal for copy-pasting a data.frame into a text file.
+#' This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"},
+#' `sep="\t"` (tab-delimited), and `quote=FALSE`. Ideal for copy-pasting a
+#' data.frame into a text file.
 #'
 #' @param tbl Object to be written
 #'
@@ -67,6 +68,7 @@ copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.
 #' @concept helpers
 copy3 <- function(tbl){ write.table(tbl,
                                     file="clipboard-9999",
+                                    sep="\t",
                                     quote = FALSE,
                                     col.names=TRUE,
                                     row.names=FALSE) }
