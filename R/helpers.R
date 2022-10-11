@@ -18,54 +18,47 @@
 view <- function(...){ utils::View(...) }
 
 
-#' Wrapper for writing CSV2 to clipboard
+#' Wrappers for writing a data.frame to clipboard or to disk
 #'
-#' This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999"}.
-#' Ideal for copy-pasting a data.frame into Excel in non-English locale.
+#' The `copy` functions are wrappers for `write.table()` (and `write.csv2()`)
+#' with either `file="clipboard-9999"` (`copy()` and `copy3()`) or
+#' `file="gentleman_out.txt"` (`copy2()`).
 #'
-#' @param tbl Object to be written
-#'
-#' @export
-#'
-#' @examples
-#' df |> copy()
-#'
-#' @concept helpers
-copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
-
-
-#' Writes table to text file in current directory
-#'
-#' This is a wrapper for \code{write.table()} with \code{file="gentleman_out.txt"}.
-#'
-#' @param tbl Object to be written
-#'
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#' df |> copy2()
+#' @details
+#' \itemize{
+#' \item{`copy()`:} {Wrapper for `write.csv2()` to clipboard with `file="clipboard-9999"`.
+#' Ideal for copy-pasting a data.frame into Excel in non-English locale.}
+#' \item{`copy2()`:} {Wrapper for `write.table()` to disk with `file="gentleman_out.txt"`.
+#' This writes the table to a text file in the current directory.}
+#' \item{`copy3()`:} {wrapper for `write.table()` to clipboard with `file="clipboard-9999"`,
+#' `sep="\t"` (tab-delimited), and `quote=FALSE`. Ideal for copy-pasting a
+#' data.frame into a text file.}
 #' }
 #'
-#' @concept helpers
-copy2 <- function(tbl){ write.table(tbl, file="gentleman_out.txt", sep=";", col.names=T, row.names=F, append=T) }
-
-
-
-#' Wrapper for writing table to clipboard
-#'
-#' This is a wrapper for \code{write.table()} with \code{file="clipboard-9999"},
-#' `sep="\t"` (tab-delimited), and `quote=FALSE`. Ideal for copy-pasting a
-#' data.frame into a text file.
-#'
 #' @param tbl Object to be written
 #'
+#' @rdname copy
+#' @concept helpers
 #' @export
-#'
+#' @examples
+#' df |> copy()
+copy <- function(tbl){ write.csv2(tbl,file="clipboard-9999", row.names=F) }
+
+#' @rdname copy
+#' @export
+#' @examples
+#' \dontrun{df |> copy2()}
+copy2 <- function(tbl){ write.table(tbl,
+                                    file="gentleman_out.txt",
+                                    sep=";",
+                                    col.names=T,
+                                    row.names=F,
+                                    append=T) }
+
+#' @rdname copy
+#' @export
 #' @examples
 #' df |> copy3()
-#'
-#' @concept helpers
 copy3 <- function(tbl){ write.table(tbl,
                                     file="clipboard-9999",
                                     sep="\t",

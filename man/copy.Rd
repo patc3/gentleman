@@ -2,19 +2,38 @@
 % Please edit documentation in R/helpers.R
 \name{copy}
 \alias{copy}
-\title{Wrapper for writing CSV2 to clipboard}
+\alias{copy2}
+\alias{copy3}
+\title{Wrappers for writing a data.frame to clipboard or to disk}
 \usage{
 copy(tbl)
+
+copy2(tbl)
+
+copy3(tbl)
 }
 \arguments{
 \item{tbl}{Object to be written}
 }
 \description{
-This is a wrapper for \code{write.csv2()} with \code{file="clipboard-9999"}.
-Ideal for copy-pasting a data.frame into Excel in non-English locale.
+The \code{copy} functions are wrappers for \code{write.table()} (and \code{write.csv2()})
+with either \code{file="clipboard-9999"} (\code{copy()} and \code{copy3()}) or
+\code{file="gentleman_out.txt"} (\code{copy2()}).
+}
+\details{
+\itemize{
+\item{\code{copy()}:} {Wrapper for \code{write.csv2()} to clipboard with \code{file="clipboard-9999"}.
+Ideal for copy-pasting a data.frame into Excel in non-English locale.}
+\item{\code{copy2()}:} {Wrapper for \code{write.table()} to disk with \code{file="gentleman_out.txt"}.
+This writes the table to a text file in the current directory.}
+\item{\code{copy3()}:} {wrapper for \code{write.table()} to clipboard with \code{file="clipboard-9999"},
+\code{sep="\\t"} (tab-delimited), and \code{quote=FALSE}. Ideal for copy-pasting a
+data.frame into a text file.}
+}
 }
 \examples{
 df |> copy()
-
+\dontrun{df |> copy2()}
+df |> copy3()
 }
 \concept{helpers}
