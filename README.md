@@ -299,8 +299,8 @@ logger |> logtext(expr={
 ### 7. Helpers
 
 Other miscellaneous helper functions are available. Some are aliases and
-wrappers (like `view()`, `copy()` and `copy2()`), others are utility
-functions that can fasten development (for example, you can use
+wrappers (like `view()` and `copy()`), others are utility functions that
+can fasten development (for example, you can use
 `replace_in_nested_list()` to find and replace values in a complex list
 of vectors with a nested structure while preserving the structure).
 
