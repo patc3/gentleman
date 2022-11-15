@@ -1,3 +1,49 @@
+#### model objects ####
+#' Get model object(s) using formula interface
+#'
+#' This function generates a model formula using a vector of predictors
+#' and a predictor link, and returns a list of models obtained from
+#' calling a specified analysis function with the generated formula.
+#' Additional arguments can also be passed to the analysis function.
+#'
+#' @details
+#' The formula is constructed by surrounding each variable with backticks
+#' to allow for special characters in variable names. The analysis function receives
+#' the formula and the data.frame as first and second (positional) arguments,
+#' respectively.
+#'
+#' @param df data.frame
+#' @param dv (character) vector of outcome variable names
+#' @param preds (character) vector of predictor variable names
+#' @param preds_link link between predictors in model formula (default `+`)
+#' @param ana_fn analysis function (for example: lm, lavaan::sem)
+#' @param ... additional arguments passed to `ana_fn`
+#'
+#' @return Named list of objects returned by `ana_fn` with names `dv`
+#' @export
+#'
+#' @examples
+#' df |>
+#'    get_fmodel(dv="y3", preds=c("x1","x2","x3"), ana_fn=lm) |>
+#'    lapply(summary)
+#'
+#' @concept models
+get_fmodel <- function(df, dv, preds, preds_link="+", ana_fn, ...)
+{
+  preds <- "`" %p% preds %p% "`"
+  rhs <- preds %c% preds_link
+  ana <- list()
+  for(y in dv)
+  {
+    f <- "`" %p% y %p% "`" %P% "~" %P% rhs |> as.formula()
+    ana[[y]] <- ana_fn(f, df, ...)
+  }
+
+  # out
+  ana
+}
+
+
 #### model syntax ####
 # generate lavaan model string for mediation model
 #' Generate lavaan syntax for mediation model
