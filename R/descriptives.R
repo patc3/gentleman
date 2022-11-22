@@ -159,7 +159,7 @@ ana_fn_aov <- function(df,
 
   ana <- vars |> lapply(
     \(v) tryCatch({
-      f <- "`" |> paste0(v, "` ~ `", group, "`") |> as.formula()
+      f <- "`" |> paste0(v, "` ~ factor(`", group, "`)") |> as.formula()
       lm(f, df) |> summary() # to throw warning if data are constant: https://bugs.r-project.org/show_bug.cgi?id=18341
       aov(f, data=df) |>
         summary() |>
@@ -218,7 +218,7 @@ ana_fn_rm_aov <- function(df,
 
   ana <- vars |> lapply(
     \(v) tryCatch({
-      aov("`" |> paste0(v, "` ~ `", group, "`") |> paste0("+ Error(`", id, "`)") |> as.formula(), data=df) |>
+      aov("`" |> paste0(v, "` ~ factor(`", group, "`)") |> paste0("+ Error(factor(`", id, "`))") |> as.formula(), data=df) |>
         broom::tidy() |>
         filter(stratum=="Within", term==group) |>
         pull(p.value)
