@@ -328,7 +328,7 @@ tbl_fn_fac <- function(df, vars)
   {
     # alternative to dplyr::add_row():
     # https://stackoverflow.com/questions/11561856/add-new-row-to-dataframe-at-specific-row-index-not-appended
-    i_row <- grep(v |> paste0("\\."), tbl$Var)[1] # .group is suffix added by table()
+    i_row <- grep(v |> paste0("."), tbl$Var, fixed=T)[1] # .group is suffix added by table()
     tbl <- tbl |> add_row(Var=v, .before=i_row)
     tbl[i_row,] <- tbl[i_row,] |> unlist()# |> replace_in_vector(NA, "")
   }
