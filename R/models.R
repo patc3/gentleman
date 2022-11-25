@@ -565,16 +565,22 @@ get_sig_effects_from_pub_table <- function(table, pattern="\\*|\\+", fixed=F)
     (\(m)(data.frame(Predictor=rownames(m), m, row.names=NULL)))() |>
     select(-row) |>
     mutate(col=names(table |> select(-1))[col]) |>
-    rename(Outcome=col) |>
-    select(Outcome, Predictor)
+    rename(Outcome=col)
 
-  # add sign
-  sig$Sign <- NA
-  for(i in 1:nrow(sig)) sig$Sign[i] <- table |>
-    filter(Predictor == sig$Predictor[i]) |>
-    select(all_of(sig$Outcome[i])) |>
-    substr(1,1)
-  sig$Sign <- (sig$Sign == "-") |> ifelse("-", "+")
+  if(nrow(sig)==0)
+    sig <- data.frame(matrix(nrow=0,ncol=3)) |> setNames(c("Outcome", "Predictor", "Sign"))
+  else
+  {
+    sig <- sig |> select(Outcome, Predictor)
+
+    # add sign
+    sig$Sign <- NA
+    for(i in 1:nrow(sig)) sig$Sign[i] <- table |>
+      filter(Predictor == sig$Predictor[i]) |>
+      select(all_of(sig$Outcome[i])) |>
+      substr(1,1)
+    sig$Sign <- (sig$Sign == "-") |> ifelse("-", "+")
+  }
 
   # out
   return(sig)
@@ -617,9 +623,13 @@ compare_sig_effects_in_two_pub_tables <- function(table1, table2, pattern="*", f
 {
   # get significant effects in both tables
   sig <- list(table1, table2) |>
-    lapply(\(t) t |>
-             get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
-             with(paste0(Outcome, ": ", Predictor, " (", Sign, ")")))
+    lapply(\(t) if(nrow(t)>0)
+      t |>
+        get_sig_effects_from_pub_table(pattern=pattern, fixed=fixed) |>
+        (\(t_sig)
+         if(nrow(t_sig)>0) with(t_sig, paste0(Outcome, ": ", Predictor, " (", Sign, ")"))
+         else character())()
+    )
 
   # output
   cat("_______________________________\n")
