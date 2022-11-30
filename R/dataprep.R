@@ -621,6 +621,39 @@ recode_using_excel_map <- function(values,
 }
 
 
+#' Recode values to NA
+#'
+#' This function recodes given values to `NA` (missing)
+#' in given variables of a data.frame.
+#'
+#' @param df data.frame
+#' @param vars (character) vector of variable names
+#' @param values (vector) values to replace with `NA`
+#'
+#' @return `df` with `values` in `vars` replaced with `NA`
+#' @export
+#'
+#' @examples
+#' df <- df |> recode_values_to_NA(vars="x"%p%1:3, values=0)
+#'
+#' @seealso [recode_using_excel_map()]
+#'
+#' @concept data_prep
+recode_values_to_NA <- function(df, vars, values)
+{
+  for(v in vars) df[df[,v]%in%values,v] <- NA
+
+  # out
+  print("Replaced these values in variables with NA:")
+  print(list(Variables=vars, Values=values))
+  df
+}
+
+
+
+
+
+
 #### data.frames ####
 
 
