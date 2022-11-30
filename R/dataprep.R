@@ -651,6 +651,37 @@ recode_values_to_NA <- function(df, vars, values)
 
 
 
+#' Reverse-code numeric variables
+#'
+#' This function reverse-codes numeric variables. For example,
+#' a 1-7 Likert scale becomes a 7-1 Likert scale (1=7, 2=6, etc.).
+#' This is achieved by taking the maximum value of the variable,
+#' adding the minimum (acting as an offset), and subtracting each value.
+#'
+#' @param df data.frame
+#' @param vars (character) vector of variable names
+#'
+#' @return `df` with `vars` reverse-coded
+#' @export
+#'
+#' @examples
+#' df <- df |> reverse_code("x1")
+#'
+#' @seealso [recode_using_excel_map()]
+#'
+#' @concept data_prep
+reverse_code <- function(df, vars)
+{
+  for(v in vars)
+    df[,v] <- max(df[,v], na.rm=T) + min(df[,v], na.rm=T) - df[,v]
+
+  # out
+  print("Reverse-coded these variables:")
+  print(vars)
+  df
+}
+
+
 
 
 
