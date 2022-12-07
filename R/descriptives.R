@@ -388,7 +388,7 @@ ana_fn_chisq <- function(df,
 
   # get p-value
   ana <- chisq |>
-    lapply(\(c)if(!is.na(c))c$p.value |> format_p() else NA) |>
+    lapply(\(c)if(class(c)=="htest")c$p.value |> format_p() else NA) |>
     setNames(vars) |>
     make_df_from_named_list(index="Var", value="p")
 
@@ -396,7 +396,7 @@ ana_fn_chisq <- function(df,
   if(add_statistic)
   {
     s <- chisq |>
-      lapply(\(c)if(!is.na(c))c$statistic |> sprintf(fmt="%.2f") else NA) |>
+      lapply(\(c)if(class(c)=="htest")c$statistic |> sprintf(fmt="%.2f") else NA) |>
       setNames(vars) |>
       make_df_from_named_list(index="Var", value="Chi2")
     ana <- ana |> left_join(s, by="Var")
