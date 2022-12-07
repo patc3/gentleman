@@ -356,8 +356,9 @@ tbl_fn_fac <- function(df, vars)
 #' @param group Name of grouping variable
 #' @param correct (logical) Whether to apply continuity correction (see [stats::chisq.test()])
 #' @param simulate.p.value (logical) Whether to compute p-values by Monte Carlo simulation (see [stats::chisq.test()])
+#' @param add_statistic (logical) Whether to add chi-square to table
 #'
-#' @return \code{data.frame} with \code{Var} and \code{p} (formatted p-values) columns
+#' @return `data.frame` with columns `Var`, `p` (formatted p-values), and `Chi2` (if requested)
 #' @export
 #'
 #' @examples
@@ -372,23 +373,34 @@ ana_fn_chisq <- function(df,
                          vars,
                          group,
                          correct=FALSE,
-                         simulate.p.value=FALSE)
+                         simulate.p.value=FALSE,
+                         add_statistic=FALSE)
 {
-  "
-  use as ana_fn in get_desc_table() for categorical vars
-  return: named list of p-values (Chi square: vars ~ group)
-  "
-
-  ana <- vars |> lapply(
+  # compute chi-square
+  chisq <- vars |> lapply(
     \(v) tryCatch({
       chisq.test(x=df[,v] |> factor(),
                  y=df[,group] |> factor(),
                  correct=correct,
-                 simulate.p.value=simulate.p.value)$p.value |>
-        format_p()
+                 simulate.p.value=simulate.p.value)
     }, error=\(e) return(NA))
-  ) |> setNames(vars) |>
+  )
+
+  # get p-value
+  ana <- chisq |>
+    lapply(\(c)c$p.value |> format_p()) |>
+    setNames(vars) |>
     make_df_from_named_list(index="Var", value="p")
+
+  # add chi-square?
+  if(add_statistic)
+  {
+    s <- chisq |>
+      lapply(\(c)c$statistic |> sprintf(fmt="%.2f")) |>
+      setNames(vars) |>
+      make_df_from_named_list(index="Var", value="Chi2")
+    ana <- ana |> left_join(s, by="Var")
+  }
 
   # out
   return(ana)

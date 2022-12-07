@@ -4,7 +4,14 @@
 \alias{ana_fn_chisq}
 \title{Returns p-values from Chi-square tests for specified vars and grouping variable}
 \usage{
-ana_fn_chisq(df, vars, group, correct = FALSE, simulate.p.value = FALSE)
+ana_fn_chisq(
+  df,
+  vars,
+  group,
+  correct = FALSE,
+  simulate.p.value = FALSE,
+  add_statistic = FALSE
+)
 }
 \arguments{
 \item{df}{data.frame}
@@ -16,9 +23,11 @@ ana_fn_chisq(df, vars, group, correct = FALSE, simulate.p.value = FALSE)
 \item{correct}{(logical) Whether to apply continuity correction (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
 
 \item{simulate.p.value}{(logical) Whether to compute p-values by Monte Carlo simulation (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
+
+\item{add_statistic}{(logical) Whether to add chi-square to table}
 }
 \value{
-\code{data.frame} with \code{Var} and \code{p} (formatted p-values) columns
+\code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), and \code{Chi2} (if requested)
 }
 \description{
 This function computes p-values using Chi-square tests
