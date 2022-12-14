@@ -788,6 +788,7 @@ add_vars_from_one_df_to_another <- function(df_to,
                  y=.df,
                  by.x=by_to,
                  by.y=by_from,
+                 sort=FALSE, # prevent row reordering
                  all.x=TRUE)[, c(names(df_to), vars)] # prevent column reordering
 
   # out
