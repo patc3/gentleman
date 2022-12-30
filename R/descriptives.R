@@ -130,8 +130,14 @@ tbl_fn_num <- function(df, vars)
 #' This function computes p-values using ANOVA for each variable in \code{vars} and grouping variable
 #' specified in \code{group}
 #'
-#' This should be passed as \code{ana_fn} when calling [get_desc_table()] with a \code{group} argument
-#' to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
+#' @details
+#' Post-hoc pairwise comparisons are obtained using [stats::pairwise.t.test()]. If no adjustment
+#' for multiple comparisons is made and equal variances across groups are assumed (the default),
+#' the tests correspond to Fisher's LSD. If equal variances are not assumed (by setting
+#' `posthoc_equalvar` to `FALSE`), the tests correspond to Welch's t-tests.
+#'
+#' This function should be passed as `ana_fn` when calling [get_desc_table()] with a `group` argument
+#' to obtain p-values. If you want to create a custom `ana_fn`, you should model it after this one.
 #'
 #' @param df data.frame
 #' @param vars Vector of variable names
@@ -139,6 +145,8 @@ tbl_fn_num <- function(df, vars)
 #' @param add_statistic (logical) Whether to add F-test to table
 #' @param add_posthoc (logical) Whether to add post-hoc pairwise comparisons to table
 #' @param posthoc_adjust Method for adjusting p-values (see [stats::p.adjust()]; default 'none')
+#' @param posthoc_equalvar (logical) Whether to assume equal variances in all groups
+#' (see Details; default `FALSE`)
 #'
 #' @return `data.frame` with columns `Var`, `p` (formatted p-values), `F-test` (if requested),
 #' and (possibly adjusted) p-values from pairwise comparisons (if requested)
@@ -157,7 +165,8 @@ ana_fn_aov <- function(df,
                        group,
                        add_statistic=FALSE,
                        add_posthoc=FALSE,
-                       posthoc_adjust="none")
+                       posthoc_adjust="none",
+                       posthoc_equalvar=FALSE)
 {
   # compute F test
   Flist <- vars |> lapply(
@@ -196,7 +205,7 @@ ana_fn_aov <- function(df,
         pairwise.t.test(x=.df[,v],
                         g=.df[,group],
                         p.adjust.method = posthoc_adjust,
-                        pool.sd = TRUE,
+                        pool.sd = posthoc_equalvar,
                         paired=FALSE)$p.value
       }
     ) |> setNames(vars)

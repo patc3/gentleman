@@ -10,7 +10,8 @@ ana_fn_aov(
   group,
   add_statistic = FALSE,
   add_posthoc = FALSE,
-  posthoc_adjust = "none"
+  posthoc_adjust = "none",
+  posthoc_equalvar = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ ana_fn_aov(
 \item{add_posthoc}{(logical) Whether to add post-hoc pairwise comparisons to table}
 
 \item{posthoc_adjust}{Method for adjusting p-values (see \code{\link[stats:p.adjust]{stats::p.adjust()}}; default 'none')}
+
+\item{posthoc_equalvar}{(logical) Whether to assume equal variances in all groups
+(see Details; default \code{FALSE})}
 }
 \value{
 \code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), \code{F-test} (if requested),
@@ -35,7 +39,12 @@ This function computes p-values using ANOVA for each variable in \code{vars} and
 specified in \code{group}
 }
 \details{
-This should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}} with a \code{group} argument
+Post-hoc pairwise comparisons are obtained using \code{\link[stats:pairwise.t.test]{stats::pairwise.t.test()}}. If no adjustment
+for multiple comparisons is made and equal variances across groups are assumed (the default),
+the tests correspond to Fisher's LSD. If equal variances are not assumed (by setting
+\code{posthoc_equalvar} to \code{FALSE}), the tests correspond to Welch's t-tests.
+
+This function should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}} with a \code{group} argument
 to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
 }
 \examples{
