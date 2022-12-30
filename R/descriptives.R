@@ -146,7 +146,7 @@ tbl_fn_num <- function(df, vars)
 #' @param add_posthoc (logical) Whether to add post-hoc pairwise comparisons to table
 #' @param posthoc_adjust Method for adjusting p-values (see [stats::p.adjust()]; default 'none')
 #' @param posthoc_equalvar (logical) Whether to assume equal variances in all groups
-#' (see Details; default `FALSE`)
+#' (see Details; default `TRUE`)
 #'
 #' @return `data.frame` with columns `Var`, `p` (formatted p-values), `F-test` (if requested),
 #' and (possibly adjusted) p-values from pairwise comparisons (if requested)
@@ -166,7 +166,7 @@ ana_fn_aov <- function(df,
                        add_statistic=FALSE,
                        add_posthoc=FALSE,
                        posthoc_adjust="none",
-                       posthoc_equalvar=FALSE)
+                       posthoc_equalvar=TRUE)
 {
   # compute F test
   Flist <- vars |> lapply(

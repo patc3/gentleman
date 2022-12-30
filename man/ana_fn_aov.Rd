@@ -11,7 +11,7 @@ ana_fn_aov(
   add_statistic = FALSE,
   add_posthoc = FALSE,
   posthoc_adjust = "none",
-  posthoc_equalvar = FALSE
+  posthoc_equalvar = TRUE
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ ana_fn_aov(
 \item{posthoc_adjust}{Method for adjusting p-values (see \code{\link[stats:p.adjust]{stats::p.adjust()}}; default 'none')}
 
 \item{posthoc_equalvar}{(logical) Whether to assume equal variances in all groups
-(see Details; default \code{FALSE})}
+(see Details; default \code{TRUE})}
 }
 \value{
 \code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), \code{F-test} (if requested),
