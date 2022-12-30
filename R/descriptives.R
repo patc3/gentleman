@@ -137,9 +137,11 @@ tbl_fn_num <- function(df, vars)
 #' @param vars Vector of variable names
 #' @param group Name of grouping variable
 #' @param add_statistic (logical) Whether to add F-test to table
-#' @param add_posthoc (logical) Whether to add post-hoc comparisons to table (currently unused)
+#' @param add_posthoc (logical) Whether to add post-hoc pairwise comparisons to table
+#' @param posthoc_adjust Method for adjusting p-values (see [stats::p.adjust()]; default 'none')
 #'
-#' @return `data.frame` with columns `Var`, `p` (formatted p-values), and `F-test` (if requested)
+#' @return `data.frame` with columns `Var`, `p` (formatted p-values), `F-test` (if requested),
+#' and (possibly adjusted) p-values from pairwise comparisons (if requested)
 #' @export
 #'
 #' @examples
@@ -154,7 +156,8 @@ ana_fn_aov <- function(df,
                        vars,
                        group,
                        add_statistic=FALSE,
-                       add_posthoc=FALSE)
+                       add_posthoc=FALSE,
+                       posthoc_adjust="none")
 {
   # compute F test
   Flist <- vars |> lapply(
@@ -184,7 +187,51 @@ ana_fn_aov <- function(df,
 
 
   # post-hoc?
-  if(add_posthoc){}
+  if(add_posthoc)
+  {
+    # get p-value pairs for each t-test
+    p <- vars |> lapply(
+      \(v) {
+        .df<-df |> select(all_of(c(v,group))) |> na.omit()
+        pairwise.t.test(x=.df[,v],
+                        g=.df[,group],
+                        p.adjust.method = posthoc_adjust,
+                        pool.sd = TRUE,
+                        paired=FALSE)$p.value
+      }
+    ) |> setNames(vars)
+
+    # add one pair at a time for one var at a time
+    gs <- df[,group] |> unique()
+    gs_pairs <- gs |> get_all_pairs()
+    p_df<-data.frame(matrix(ncol=nrow(gs_pairs)+1, nrow=0))
+    colnames(p_df) <- "Var" |> c("p"%p%gs_pairs[,1]%p%"-"%p%gs_pairs[,2])
+    for(v in vars)
+    {
+      i <- nrow(p_df)+1
+      rows<-dimnames(p[[v]])[[1]]
+      cols<-dimnames(p[[v]])[[2]]
+      for(c in cols)
+      {
+        for(r in rows)
+        {
+          .p<-p[[v]][r,c]
+          if(!is.na(.p))
+          {
+            p_df[i,"Var"]<-v
+            p_df[i,"p"%p%c%p%"-"%p%r]<-.p
+          }
+        }
+      }
+    }
+
+    # format
+    p_df <- p_df |> mutate(across(starts_with("p"),format_p))
+
+    # add to ana
+    ana <- ana |> left_join(p_df, by="Var")
+
+  }
 
 
   # out

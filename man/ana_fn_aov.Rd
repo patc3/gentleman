@@ -4,7 +4,14 @@
 \alias{ana_fn_aov}
 \title{Returns p-values from ANOVA for specified vars and grouping variable}
 \usage{
-ana_fn_aov(df, vars, group, add_statistic = FALSE, add_posthoc = FALSE)
+ana_fn_aov(
+  df,
+  vars,
+  group,
+  add_statistic = FALSE,
+  add_posthoc = FALSE,
+  posthoc_adjust = "none"
+)
 }
 \arguments{
 \item{df}{data.frame}
@@ -15,10 +22,13 @@ ana_fn_aov(df, vars, group, add_statistic = FALSE, add_posthoc = FALSE)
 
 \item{add_statistic}{(logical) Whether to add F-test to table}
 
-\item{add_posthoc}{(logical) Whether to add post-hoc comparisons to table (currently unused)}
+\item{add_posthoc}{(logical) Whether to add post-hoc pairwise comparisons to table}
+
+\item{posthoc_adjust}{Method for adjusting p-values (see \code{\link[stats:p.adjust]{stats::p.adjust()}}; default 'none')}
 }
 \value{
-\code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), and \code{F-test} (if requested)
+\code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), \code{F-test} (if requested),
+and (possibly adjusted) p-values from pairwise comparisons (if requested)
 }
 \description{
 This function computes p-values using ANOVA for each variable in \code{vars} and grouping variable
