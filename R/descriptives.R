@@ -136,8 +136,10 @@ tbl_fn_num <- function(df, vars)
 #' @param df data.frame
 #' @param vars Vector of variable names
 #' @param group Name of grouping variable
+#' @param add_statistic (logical) Whether to add F-test to table
+#' @param add_posthoc (logical) Whether to add post-hoc comparisons to table (currently unused)
 #'
-#' @return \code{data.frame} with \code{Var} and \code{p} (formatted p-values) columns
+#' @return `data.frame` with columns `Var`, `p` (formatted p-values), and `F-test` (if requested)
 #' @export
 #'
 #' @examples
@@ -150,28 +152,45 @@ tbl_fn_num <- function(df, vars)
 #' @concept descriptives
 ana_fn_aov <- function(df,
                        vars,
-                       group)
+                       group,
+                       add_statistic=FALSE,
+                       add_posthoc=FALSE)
 {
-  "
-  use as ana_fn in get_desc_table() for numeric vars
-  return: named list of p-values (ANOVA: vars ~ group)
-  "
-
-  ana <- vars |> lapply(
+  # compute F test
+  Flist <- vars |> lapply(
     \(v) tryCatch({
       f <- "`" |> paste0(v, "` ~ factor(`", group, "`)") |> as.formula()
       lm(f, df) |> summary() # to throw warning if data are constant: https://bugs.r-project.org/show_bug.cgi?id=18341
-      aov(f, data=df) |>
-        summary() |>
-        {\(s)s[[1]]$`Pr(>F)`[1]}() |>
-        format_p()
+      aov(f, data=df) |> summary() |> (`[[`)(1)
     }, error=\(e) return(NA), warning=\(w) return(NA))
-  ) |> setNames(vars) |>
+  ) |> setNames(vars)
+
+  # p values
+  ana <- Flist |>
+    lapply(\(c)if(inherits(c,"anova")) c |>
+             (\(s)s$`Pr(>F)`[1])() |>
+             format_p() else NA) |>
     make_df_from_named_list(index="Var", value="p")
+
+  # add F-test?
+  if(add_statistic)
+  {
+    s <- Flist |>
+      lapply(\(c)if(inherits(c,"anova")) c$`F value`[1] |>
+               sprintf(fmt="%.2f") else NA) |>
+      make_df_from_named_list(index="Var", value="F-test")
+    ana <- ana |> left_join(s, by="Var")
+  }
+
+
+  # post-hoc?
+  if(add_posthoc){}
+
 
   # out
   return(ana)
 }
+
 
 # ana fn: RM ANOVA
 #' Returns p-values from repeated-measures (RM) ANOVA for specified vars and grouping (time) variable
