@@ -203,6 +203,86 @@ get_mediation_model_2level <- function(x, m, y)
 
 
 
+# listwise deletion reproduces process() (with no resid correl or covariates)
+# add_resid_correl=TRUE adds many parameters (exogeneous vars intercepts)
+# this is because of FIML:
+# lavaan WARNING: missing argument forces meanstructure = TRUE
+#' Generate lavaan syntax for 3-wave longitudinal mediation model
+#'
+#' This function generates the \pkg{lavaan} syntax for a longitudinal mediation model
+#' with three waves. The model uses a predictor x at time 1 (`x1`), one mediator at
+#' times 2 and 3 (`m2`, `m3`), and one outcome at times 1, 2, and 3 (`y1`, `y2`, `y3`).
+#'
+#' @details
+#' The indirect effect is computed as the effect from `x1` to `m2` to `y3`. The effect
+#' of `x1` on `m2` is estimated after removing the effects of `m1` and `y1` on `m2`, and
+#' the effect of `m2` on `y3` is estimated after removing the effects of `y1`, `y2`,
+#' `x1`, and `m1` on `y3`. This corresponds to the model described in Hayes (2022),
+#' Figure 14.4(B), p. 570.
+#'
+#' Optionally, residual correlations can be estimated between variables assessed
+#' at the same time (as is conventional in cross-lagged models). It is also
+#' possible to adjust for covariates, which is achieved by partialling
+#' out the effect of the control variables given in `covariates` from `x1`,
+#' `m2`, and `y3` (the variables involved in the indirect effect). This is
+#' the method used by JASP v0.16.4 to adjust for covariates in mediation models.
+#'
+#' @references
+#' Hayes, A. F. (2022).
+#' *Introduction to mediation, moderation, and conditional process analysis* (3rd ed.).
+#' New York: Guilford.
+#'
+#' JASP Team (2022). *JASP* (Version 0.16.4). Computer software:
+#' \url{https://jasp-stats.org/}
+#'
+#'
+#' @param x1 (character) variable name for predictor at time 1
+#' @param m1,m2 (character) variable names for mediator at times 1-2
+#' @param y1,y2,y3 (character) variable names for outcome at times 1-3
+#' @param add_resid_correl (logical) whether to add residual correlations between variables
+#' assessed at the same time (default `FALSE`)
+#' @param covariates (character) covariate (control) variable names (default `NULL`)
+#'
+#' @return Character value to be used with \pkg{lavaan} as model syntax
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(lavaan)
+#' get_mediation_model_3wave("x1", "m1", "m2", "y1", "y2", "y3") |>
+#'    sem(df) |>
+#'    summary()
+#' }
+#'
+#' @concept models
+get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=FALSE, covariates=NULL)
+{
+  model <- "
+  "%p%m2%p%" ~ a1*"%p%x1%p%" + a2*"%p%m1%p%" + a3*"%p%y1%p%"
+  "%p%y3%p%" ~ b1*"%p%m2%p%" + b2*"%p%m1%p%" + b3*"%p%y1%p%" + b4*"%p%y2%p%" + cp*"%p%x1%p%"
+
+  # new params
+  ind := a1*b1
+  "
+  if(add_resid_correl) model <- model %P% "
+  # resid correl at each time
+  "%p%x1%p%"~~"%p%m1%p%"
+  "%p%x1%p%"~~"%p%y1%p%"
+  "%p%m1%p%"~~"%p%y1%p%"
+  "%p%m2%p%"~~"%p%y2
+
+  # control variables (JASP method)
+  model_control <- "# adjustment for control variables"
+  if(!is.null(covariates)) for(v in c(x1, m2, y3))
+    model_control <- c(model_control, v %P% "~" %P% (covariates %C% "+")) %c% "\n"
+
+  # out
+  model %N% model_control
+}
+
+
+
+
 #' Generate lavaan syntax for cross-lagged model
 #'
 #' This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
