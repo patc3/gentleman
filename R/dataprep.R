@@ -102,6 +102,56 @@ remove_empty_cols <- function(df)
 
 
 
+#' Flag and remove outliers
+#'
+#' This function flags and removes outliers.
+#'
+#' @details
+#' Currently the method implemented uses the Mahalanobis distance to detect outliers,
+#' such that only numeric variables are supported. The critical chi-square value
+#' lies at the 99.9% mark and is based on the number of variables used in calculating
+#' the distances.
+#'
+#' This is the method implemented in [psych::outlier()].
+#'
+#' @param df data.frame
+#' @param vars (character) variable names used in determining outliers
+#' @param rm (logical) remove outliers from `df` (default TRUE)
+#'
+#' @return `df` with outliers possibly removed
+#' @export
+#'
+#' @examples
+#' df <- df |> remove_outliers(vars=c("x1","x2","x3"))
+#'
+#' @seealso [psych::outlier()]
+#' @concept data_prep
+remove_outliers <- function(df, vars, rm=TRUE)
+{
+  # multivariate
+  crit <- qchisq(p=0.999, df=length(vars)) # critical value
+  outliers <- df |>
+    select(all_of(vars)) |>
+    psych::outlier() |>
+    sort(decreasing=TRUE)
+
+  # remove outliers
+  if(rm)
+  {
+    i_rm <- outliers[which(outliers>crit)] |> names() |> as.numeric()
+    if(length(i_rm)>0) df <- df[-i_rm,]
+    print("Removed:"); print(i_rm)
+  }
+
+  # out
+  print("Critical value:"); print(crit)
+  print("Outliers:"); print(outliers)
+  df
+}
+
+
+
+
 
 
 #### types & classes ####

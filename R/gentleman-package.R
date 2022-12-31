@@ -17,6 +17,7 @@
 #' @importFrom h2o h2o.shutdown h2o.init h2o.varimp h2o.varimp_plot h2o.automl as.h2o h2o.predict
 #' @importFrom parallel detectCores
 #' @importFrom dataPreparation build_scales fast_scale
+#' @importFrom psych outlier
 #'
 #' @concept package
 "_PACKAGE"
