@@ -45,14 +45,13 @@ get_fmodel <- function(df, dv, preds, preds_link="+", ana_fn, ...)
 
 
 #### model syntax ####
-# generate lavaan model string for mediation model
 #' Generate lavaan syntax for mediation model
 #'
 #' This function generates the \pkg{lavaan} syntax for a mediation model. The model can
 #' take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 #'
 #' @details
-#' This function implements the method used by JASP v0.16.3 to generate a mediation model,
+#' This function implements the method used by JASP v0.16.4 to generate a mediation model,
 #' possibly adjusting for covariates. Adjustment for covariates is done by partialling
 #' out the effect of the control variables given in `covariates` from all predictor `x`,
 #' mediator `m`, and outcome `y` variables.
@@ -72,7 +71,7 @@ get_fmodel <- function(df, dv, preds, preds_link="+", ana_fn, ...)
 #'    summary()
 #'
 #' @references
-#' JASP Team (2022). *JASP* (Version 0.16.3). Computer software:
+#' JASP Team (2022). *JASP* (Version 0.16.4). Computer software:
 #' \url{https://jasp-stats.org/}
 #'
 #' @concept models
@@ -145,8 +144,65 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 }
 
 
+#' Generate lavaan syntax for 2-level mediation model
+#'
+#' This function generates the \pkg{lavaan} syntax for a two-level mediation model.
+#' The model takes one predictor (x), one mediator (m), and one outcome (y).
+#' The mediation model is reproduced at the within level (level 1) and the
+#' between level (level 2). A test of the difference between the level-1 and level-2
+#' indirect effects is also provided.
+#'
+#' @details
+#' This model is for fully-nested designs and is described in Lachowicz, Sterba, & Preacher (2015).
+#'
+#' @param x,m,y (character) variable names
+#'
+#' @return Character value to be used with \pkg{lavaan} as model syntax
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(lavaan)
+#' get_mediation_model_2level("x1", "x2", "x3") |>
+#'    sem(df, group="id") |>
+#'    summary()
+#' }
+#'
+#' @references
+#' Lachowicz, M. J., Sterba, S. K., & Preacher, K. J. (2015).
+#' Investigating multilevel mediation with fully or partially nested data.
+#' *Group Processes & Intergroup Relations*, *18*, 274–289.
+#' \url{https://doi.org/10.1177/1368430214550343}.
+#'
+#' @concept models
+get_mediation_model_2level <- function(x, m, y)
+{
+  get_model_1level <- function(x,m,y,level)
+  {
+    "
+    level:"%P%level%N%
 
-# generate lavaan model string from list of variables
+      # mediation
+      y%P%"~ b"%p%level%p%"*"%p%m%P%"+"%P%"c"%p%level%p%"*"%p%x%N%
+      m%P%"~ a"%p%level%p%"*"%p%x%N%
+
+      # effect decomposition
+      "ind"%p%level%P%":= a"%p%level%p%"*b"%p%level%N%
+      "tot"%p%level%P%":= ind"%p%level%P%"+ c"%p%level%N%
+
+      # within-level variances
+      x%P%"~~"%P%x%N%
+      m%P%"~~"%P%m%N%
+      y%P%"~~"%P%y
+  }
+  get_model_1level(x,m,y,1)%N%
+    get_model_1level(x,m,y,2)%N%
+    "diff := ind2-ind1"
+
+}
+
+
+
 #' Generate lavaan syntax for cross-lagged model
 #'
 #' This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).

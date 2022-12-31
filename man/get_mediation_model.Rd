@@ -23,7 +23,7 @@ This function generates the \pkg{lavaan} syntax for a mediation model. The model
 take an arbitrary number of predictor (x), mediator (m), and outcome (y) variables.
 }
 \details{
-This function implements the method used by JASP v0.16.3 to generate a mediation model,
+This function implements the method used by JASP v0.16.4 to generate a mediation model,
 possibly adjusting for covariates. Adjustment for covariates is done by partialling
 out the effect of the control variables given in \code{covariates} from all predictor \code{x},
 mediator \code{m}, and outcome \code{y} variables.
@@ -36,7 +36,7 @@ get_mediation_model("x1", "x2", "x3") |>
 
 }
 \references{
-JASP Team (2022). \emph{JASP} (Version 0.16.3). Computer software:
+JASP Team (2022). \emph{JASP} (Version 0.16.4). Computer software:
 \url{https://jasp-stats.org/}
 }
 \concept{models}
