@@ -45,6 +45,38 @@ get_fmodel <- function(df, dv, preds, preds_link="+", ana_fn, ...)
 
 
 #### model syntax ####
+
+#' Generate lavaan syntax for measurement model
+#'
+#' This function generates the \pkg{lavaan} syntax for a measurement model. The
+#' factor names and items are taken from a named list. This can be used by
+#' itself (e.g. for a CFA) or in conjunction with a structural model (e.g. with
+#' a mediation model).
+#'
+#' @param factors_list Named list: each element is a vector of items
+#'
+#' @return Character value to be used with \pkg{lavaan} as model syntax
+#' @export
+#'
+#' @examples
+#' library(lavaan)
+#' factors <- list(x="x"%p%1:3, y="y"%p%1:3)
+#' factors |>
+#'    get_measurement_model() |>
+#'    sem(data=df) |>
+#'    summary()
+#'
+#' @concept models
+get_measurement_model <- function(factors_list)
+{
+  # measurement model
+  model <- "# measurement model"
+  for(f in names(factors_list)) model <- model%N%f%P%"=~"%P%(factors_list[[f]]%C%"+")
+  model
+}
+
+
+
 #' Generate lavaan syntax for mediation model
 #'
 #' This function generates the \pkg{lavaan} syntax for a mediation model. The model can
@@ -85,7 +117,9 @@ get_mediation_model <- function(x, m, y, covariates=NULL)
   # outcome regression
   model_outcome_regression <- "# outcome regression\n"
   for(i_dv in i_y) model_outcome_regression <- model_outcome_regression |>
-    paste0(y[i_dv], " ~ ", paste0("b",i_dv, i_m, "*", m, collapse=" + "), " + ", paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
+    paste0(y[i_dv], " ~ ",
+           paste0("b",i_dv, i_m, "*", m, collapse=" + "), " + ",
+           paste0("c",i_dv, i_x, "*", x, collapse=" + "), "\n")
 
   # effect decomposition
   model_effect_decomposition <- "# effect decomposition\n"
