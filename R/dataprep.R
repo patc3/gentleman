@@ -734,6 +734,52 @@ reverse_code <- function(df, vars)
 
 
 
+#' Fuzzy-match strings
+#'
+#' This function returns the fuzzy matches for a character vector using a pool
+#' of potential matches. The distance between each string and each candidate
+#' in the pool is calculated using a specified method, and the candidate with
+#' the shortest distance to each string is returned.
+#'
+#' @details
+#' This function uses [stringdist::stringdistmatrix()] to calculate distances
+#' between each requested string in `old` and the candidates in `new`. The method
+#' is one of the following: `osa` (default), `lv`, `dl`, `lcs`, `qgram`, `cosine`,
+#' `jaccard`, or `jw`. See the corresponding [stringdist::stringdistmatrix()]
+#' documentation.
+#'
+#' @param old (character) vector of strings to fuzzy-match
+#' @param new (character) vector of strings to use as possible matches
+#' @param method method used to calculate distances between strings (see Details)
+#' @param nthread number of parallel threads (default all minus 1)
+#'
+#' @return (character) strings in `old` replaced with best matches in `new`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df$Country <- df$Country |> get_fuzzy_match(new=list_of_countries)
+#' }
+#'
+#' @concept data_prep
+get_fuzzy_match <- function(old,
+                            new,
+                            method=c("osa", "lv", "dl", #"hamming",
+                                     "lcs", "qgram", "cosine", "jaccard", "jw"),
+                            nthread=parallel::detectCores()-1)
+{
+  method <- match.arg(method)
+  a <- stringdist::stringdistmatrix(a=old,
+                        b=new,
+                        method=method,
+                        nthread = nthread)
+  min_ix <- apply(a, 1, which.min)
+  new[min_ix]
+}
+
+
+
+
 
 #### data.frames ####
 

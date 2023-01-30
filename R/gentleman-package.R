@@ -18,6 +18,7 @@
 #' @importFrom parallel detectCores
 #' @importFrom dataPreparation build_scales fast_scale
 #' @importFrom psych outlier
+#' @importFrom stringdist stringdistmatrix
 #'
 #' @concept package
 "_PACKAGE"
