@@ -4,10 +4,13 @@
 \alias{get_mediation_model_2level}
 \title{Generate lavaan syntax for 2-level mediation model}
 \usage{
-get_mediation_model_2level(x, m, y)
+get_mediation_model_2level(x, m, y, empty_level2 = FALSE)
 }
 \arguments{
 \item{x, m, y}{(character) variable names}
+
+\item{empty_level2}{(logical) should the level-2 model be left empty? (default \code{FALSE};
+see Details)}
 }
 \value{
 Character value to be used with \pkg{lavaan} as model syntax
@@ -15,12 +18,15 @@ Character value to be used with \pkg{lavaan} as model syntax
 \description{
 This function generates the \pkg{lavaan} syntax for a two-level mediation model.
 The model takes one predictor (x), one mediator (m), and one outcome (y).
-The mediation model is reproduced at the within level (level 1) and the
-between level (level 2). A test of the difference between the level-1 and level-2
-indirect effects is also provided.
+The mediation model is either reproduced at both the within (level 1) and between
+(level 2) levels, or the level-2 model is empty (corresponding to random-intercept
+models in multilevel modeling). When the mediation is estimated at both levels, a test
+of the difference between the level-1 and level-2 indirect effects is provided.
 }
 \details{
 This model is for fully-nested designs and is described in Lachowicz, Sterba, & Preacher (2015).
+The empty model at level 2 is saturated with covariances between endogeneous variables,
+yielding a model similar to random-intercept models in multilevel modeling.
 }
 \examples{
 \dontrun{

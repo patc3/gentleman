@@ -182,14 +182,19 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 #'
 #' This function generates the \pkg{lavaan} syntax for a two-level mediation model.
 #' The model takes one predictor (x), one mediator (m), and one outcome (y).
-#' The mediation model is reproduced at the within level (level 1) and the
-#' between level (level 2). A test of the difference between the level-1 and level-2
-#' indirect effects is also provided.
+#' The mediation model is either reproduced at both the within (level 1) and between
+#' (level 2) levels, or the level-2 model is empty (corresponding to random-intercept
+#' models in multilevel modeling). When the mediation is estimated at both levels, a test
+#' of the difference between the level-1 and level-2 indirect effects is provided.
 #'
 #' @details
 #' This model is for fully-nested designs and is described in Lachowicz, Sterba, & Preacher (2015).
+#' The empty model at level 2 is saturated with covariances between endogeneous variables,
+#' yielding a model similar to random-intercept models in multilevel modeling.
 #'
 #' @param x,m,y (character) variable names
+#' @param empty_level2 (logical) should the level-2 model be left empty? (default `FALSE`;
+#' see Details)
 #'
 #' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
@@ -209,7 +214,7 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 #' \url{https://doi.org/10.1177/1368430214550343}.
 #'
 #' @concept models
-get_mediation_model_2level <- function(x, m, y)
+get_mediation_model_2level <- function(x, m, y, empty_level2=FALSE)
 {
   get_model_1level <- function(x,m,y,level)
   {
@@ -229,9 +234,22 @@ get_mediation_model_2level <- function(x, m, y)
       m%P%"~~"%P%m%N%
       y%P%"~~"%P%y
   }
-  get_model_1level(x,m,y,1)%N%
-    get_model_1level(x,m,y,2)%N%
-    "diff := ind2-ind1"
+
+  # mediation at both levels
+  if(!empty_level2) model <- get_model_1level(x,m,y,1)%N%
+      get_model_1level(x,m,y,2)%N%
+      "diff := ind2-ind1"
+
+  # mediation at level-1 only
+  if(empty_level2) model <- get_model_1level(x,m,y,1)%N%"
+      level: 2
+    # saturated level (all vcov between endogenous vars)
+    "%p%m%p%" ~~ "%p%m%p%" + "%p%y%p%"
+    "%p%y%p%" ~~ "%p%y%p%"
+  "
+
+  # out
+  model
 
 }
 
