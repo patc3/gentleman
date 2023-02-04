@@ -7,16 +7,18 @@
 get_crosslagged_model(vars_list, random_intercepts = FALSE)
 }
 \arguments{
-\item{vars_list}{List of vectors of variable names of length t (number of repeated assessments)}
+\item{vars_list}{List of vectors of variable names of length t (number of repeated
+assessments)}
 
-\item{random_intercepts}{(logical) Whether to add random intercepts (RI-CLPM model)}
+\item{random_intercepts}{(logical) Whether to add random intercepts (RI-CLPM model;
+default \code{FALSE})}
 }
 \value{
 Character value to be used with \pkg{lavaan} as model syntax
 }
 \description{
 This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
-With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
+With random intercepts, the syntax yields the random-intercepts cross-lagged panel
 model (RI-CLPM). The function takes an arbitrary number of different variables,
 and an arbitrary number of repeated assessments.
 }
@@ -24,6 +26,12 @@ and an arbitrary number of repeated assessments.
 The RI-CLPM model requires a minimum of 3 assessments, and is described in
 Hamaker et al (2015).
 The corresponding model syntax is based on Mulder & Hamaker (2021).
+
+Direct paths are labelled using capital letters for variables and digits for time.
+For example, the direct path between the first variable (\code{A}) at time 1 (\code{1})
+in \code{vars_list} and the third variable (\code{C}) at time 2 (\code{2}) is labelled \code{A1C2}.
+With those labels, you can calculate custom parameters (like indirect effects)
+using the \verb{:=} syntax in \pkg{lavaan} (e.g.: \code{ind1 := A1B2*B2C3}).
 }
 \examples{
 library(lavaan)

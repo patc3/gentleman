@@ -338,7 +338,7 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' Generate lavaan syntax for cross-lagged model
 #'
 #' This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
-#' With random-intercepts, the syntax yields the random-intercepts cross-lagged panel
+#' With random intercepts, the syntax yields the random-intercepts cross-lagged panel
 #' model (RI-CLPM). The function takes an arbitrary number of different variables,
 #' and an arbitrary number of repeated assessments.
 #'
@@ -347,8 +347,16 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' Hamaker et al (2015).
 #' The corresponding model syntax is based on Mulder & Hamaker (2021).
 #'
-#' @param vars_list List of vectors of variable names of length t (number of repeated assessments)
-#' @param random_intercepts (logical) Whether to add random intercepts (RI-CLPM model)
+#' Direct paths are labelled using capital letters for variables and digits for time.
+#' For example, the direct path between the first variable (`A`) at time 1 (`1`)
+#' in `vars_list` and the third variable (`C`) at time 2 (`2`) is labelled `A1C2`.
+#' With those labels, you can calculate custom parameters (like indirect effects)
+#' using the `:=` syntax in \pkg{lavaan} (e.g.: `ind1 := A1B2*B2C3`).
+#'
+#' @param vars_list List of vectors of variable names of length t (number of repeated
+#' assessments)
+#' @param random_intercepts (logical) Whether to add random intercepts (RI-CLPM model;
+#' default `FALSE`)
 #'
 #' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
@@ -376,12 +384,6 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' @concept models
 get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 {
-  "
-  vars_list is list of vectors of vars of length t
-      ex.: list(c('x1','x2','x3'), c('y1', 'y2', 'y3')
-  random_intercepts is RI-CLPM
-  "
-
   # init model
   model <- ""
 
@@ -455,7 +457,9 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
   {
     for(i_v in 1:length(vars_list))
     {
-      paths <- vars_list[[i_v]][t] |> paste(paste0(vars_list |> sapply(\(v)v[t-1]), collapse=" + "), sep=" ~ ")
+      paths <- vars_list[[i_v]][t] %P% "~" %P% # lhs
+        (LETTERS[1:length(vars_list)] %p% (t-1) %p% LETTERS[i_v] %p% t %p% "*" %p% # labels
+           (vars_list |> sapply(\(v)v[t-1])) %C% "+") # rhs
       direct_paths <- direct_paths |> paste(paths, sep="\n")
     }
   }
