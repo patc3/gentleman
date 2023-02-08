@@ -31,6 +31,7 @@ Imports:
     parallel, 
     readxl,
     stats, 
+    stringdist,
     tibble, 
     tidyr, 
     utils, 
