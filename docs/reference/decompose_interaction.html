@@ -121,7 +121,8 @@ set of results and plot make most sense for your scenario.</p>
 or <code>at_x2</code> is not specified, then not all elements of the returned list will be useful
 (<code>$means</code> and <code>$contrasts</code> in particular may be difficult to use).</p>
 <p>If <code>model</code> is of class <code>lavaan</code>, an additional argument <code>lavaan.DV</code> must be
-passed to specify the name of the outcome variable.</p>
+passed to specify the name of the outcome variable. Transfer of model
+information to <span class="pkg">emmeans</span> is handled by <code><a href="https://rdrr.io/pkg/semTools/man/lavaan2emmeans.html" class="external-link">semTools::lavaan2emmeans()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -56,7 +56,8 @@ or \code{at_x2} is not specified, then not all elements of the returned list wil
 (\code{$means} and \code{$contrasts} in particular may be difficult to use).
 
 If \code{model} is of class \code{lavaan}, an additional argument \code{lavaan.DV} must be
-passed to specify the name of the outcome variable.
+passed to specify the name of the outcome variable. Transfer of model
+information to \pkg{emmeans} is handled by \code{\link[semTools:lavaan2emmeans]{semTools::lavaan2emmeans()}}.
 }
 \examples{
 \dontrun{

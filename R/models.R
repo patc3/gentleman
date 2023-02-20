@@ -507,7 +507,8 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' (\code{$means} and \code{$contrasts} in particular may be difficult to use).
 #'
 #' If `model` is of class `lavaan`, an additional argument `lavaan.DV` must be
-#' passed to specify the name of the outcome variable.
+#' passed to specify the name of the outcome variable. Transfer of model
+#' information to \pkg{emmeans} is handled by [semTools::lavaan2emmeans()].
 #'
 #' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
 #' @param df data.frame or NULL if \code{model} has \code{model$model}
