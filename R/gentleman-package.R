@@ -2,6 +2,7 @@
 #' @name gentleman
 #' @import dplyr
 #' @import ggplot2
+#' @import semTools
 #' @importFrom tibble rownames_to_column column_to_rownames remove_rownames
 #' @importFrom tidyr pivot_longer pivot_wider replace_na
 #' @importFrom broom tidy
