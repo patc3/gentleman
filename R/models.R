@@ -506,12 +506,16 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
 #' or \code{at_x2} is not specified, then not all elements of the returned list will be useful
 #' (\code{$means} and \code{$contrasts} in particular may be difficult to use).
 #'
+#' If `model` is of class `lavaan`, an additional argument `lavaan.DV` must be
+#' passed to specify the name of the outcome variable.
+#'
 #' @param model A model object compatible with \code{emmeans} (e.g. \code{lm})
 #' @param df data.frame or NULL if \code{model} has \code{model$model}
 #' @param x1,x2 (character) variable name
 #' @param at_x1,at_x2 (numeric or character vector) \code{x1} and \code{x2} values at which to calculate
 #' and compare means (if \code{NULL}, all unique values)
-#' @param ci (logical) Whether to plot confidence intervals
+#' @param ci (logical) Whether to plot confidence intervals (default `FALSE`)
+#' @param ... additional arguments passed to the \pkg{emmeans} functions (see Details)
 #'
 #' @return List with elements:
 #' \describe{
@@ -539,20 +543,23 @@ decompose_interaction <- function(model,
                                   x2,
                                   at_x1=NULL,
                                   at_x2=NULL,
-                                  ci=FALSE)
+                                  ci=FALSE,
+                                  ...)
 {
+  if(inherits(model,"lavaan")&!"lavaan.DV"%in%names(list(...)))
+    stop("Need to provide outcome variable name in `lavaan.DV`")
   if(is.null(df)) df <- model$model
   if(is.null(at_x1)) at_x1 <- unique(df[,x1])
   if(is.null(at_x2)) at_x2 <- unique(df[,x2])
   values <- list(at_x1, at_x2) |> setNames(c(x1, x2))
-  diff <- emtrends(model, "pairwise ~" |> paste(x1) |> formula(), var=x2, at=values)
-  means <- emmeans(model, "~" |> paste(paste(x2,x1,sep="*")) |> formula(), at=values)
+  diff <- emtrends(model, "pairwise ~" |> paste(x1) |> formula(), var=x2, at=values, ...)
+  means <- emmeans(model, "~" |> paste(paste(x2,x1,sep="*")) |> formula(), at=values, ...)
   contrasts <- contrast(means, "pairwise", by=x2)
 
   # plot
-  p_data <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=TRUE, at=values, plotit=FALSE)
+  p_data <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=TRUE, at=values, plotit=FALSE, ...)
   p_data[,x1] <- p_data[,x1] |> factor()
-  p <- ggplot(p_data, aes_string(x=x2, y="yvar")) + geom_line(aes_string(linetype=x1), size=1)
+  p <- ggplot(p_data, aes_string(x=x2, y="yvar")) + geom_line(aes_string(linetype=x1), linewidth=1)
   if(ci) p <- p + geom_ribbon(aes_string(ymax="UCL", ymin="LCL", fill=x1), alpha=0.4)
   p <- p + labs(x=x2, y="Estimated Outcome", linetype=x1, fill=x1)
   p <- p+theme(

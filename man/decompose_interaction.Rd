@@ -11,7 +11,8 @@ decompose_interaction(
   x2,
   at_x1 = NULL,
   at_x2 = NULL,
-  ci = FALSE
+  ci = FALSE,
+  ...
 )
 }
 \arguments{
@@ -24,7 +25,9 @@ decompose_interaction(
 \item{at_x1, at_x2}{(numeric or character vector) \code{x1} and \code{x2} values at which to calculate
 and compare means (if \code{NULL}, all unique values)}
 
-\item{ci}{(logical) Whether to plot confidence intervals}
+\item{ci}{(logical) Whether to plot confidence intervals (default \code{FALSE})}
+
+\item{...}{additional arguments passed to the \pkg{emmeans} functions (see Details)}
 }
 \value{
 List with elements:
@@ -51,6 +54,9 @@ set of results and plot make most sense for your scenario.
 Note that if \code{x1} or \code{x2} has many different distinct values and \code{at_x1}
 or \code{at_x2} is not specified, then not all elements of the returned list will be useful
 (\code{$means} and \code{$contrasts} in particular may be difficult to use).
+
+If \code{model} is of class \code{lavaan}, an additional argument \code{lavaan.DV} must be
+passed to specify the name of the outcome variable.
 }
 \examples{
 \dontrun{
