@@ -423,15 +423,23 @@ tbl_fn_fac <- function(df, vars)
 #' This function computes p-values using Chi-square tests
 #' for each variable in \code{vars} and grouping variable specified in \code{group}
 #'
-#' This should be passed as \code{ana_fn} when calling [get_desc_table()] with a \code{group} argument
-#' to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
+#' @details
+#' If `add_residuals` is requested, adjusted standardized residuals (from `$stdres`
+#' in the [stats::chisq.test()] object) are added to the table. Since these residuals
+#' follow a normal distribution, they are supplemented with asterisks to
+#' indicate significance.
+#'
+#' This function should be passed as \code{ana_fn} when calling [get_desc_table()]
+#' with a \code{group} argument to obtain p-values. If you want to create a
+#' custom \code{ana_fn}, you should model it after this one.
 #'
 #' @param df data.frame
 #' @param vars Vector of variable names
 #' @param group Name of grouping variable
-#' @param correct (logical) Whether to apply continuity correction (see [stats::chisq.test()])
-#' @param simulate.p.value (logical) Whether to compute p-values by Monte Carlo simulation (see [stats::chisq.test()])
-#' @param add_statistic (logical) Whether to add chi-square to table
+#' @param correct (logical) Apply continuity correction (see [stats::chisq.test()])
+#' @param simulate.p.value (logical) Compute p-values by Monte Carlo simulation (see [stats::chisq.test()])
+#' @param add_statistic (logical) Add chi-square to table (default `FALSE`)
+#' @param add_residuals (logical) Add adjusted standardized residuals (default `FALSE`)
 #'
 #' @return `data.frame` with columns `Var`, `p` (formatted p-values), and `Chi2` (if requested)
 #' @export
@@ -449,7 +457,8 @@ ana_fn_chisq <- function(df,
                          group,
                          correct=FALSE,
                          simulate.p.value=FALSE,
-                         add_statistic=FALSE)
+                         add_statistic=FALSE,
+                         add_residuals=FALSE)
 {
   # compute chi-square
   chisq <- vars |> lapply(
@@ -459,12 +468,11 @@ ana_fn_chisq <- function(df,
                  correct=correct,
                  simulate.p.value=simulate.p.value)
     }, error=\(e) return(NA))
-  )
+  ) |> setNames(vars)
 
   # get p-value
   ana <- chisq |>
     lapply(\(c)if(class(c)=="htest")c$p.value |> format_p() else NA) |>
-    setNames(vars) |>
     make_df_from_named_list(index="Var", value="p")
 
   # add chi-square?
@@ -472,14 +480,41 @@ ana_fn_chisq <- function(df,
   {
     s <- chisq |>
       lapply(\(c)if(class(c)=="htest")c$statistic |> sprintf(fmt="%.2f") else NA) |>
-      setNames(vars) |>
       make_df_from_named_list(index="Var", value="Chi2")
     ana <- ana |> left_join(s, by="Var")
+  }
+
+  # add residuals?
+  if(add_residuals)
+  {
+    pz<-\(z)(1-pnorm(abs(z)))*2
+    r <- list()
+    for(v in vars)
+    {
+      r[[v]] <- NA
+      if(class(chisq[[v]])=="htest")
+      {
+        r[[v]] <-
+          chisq[[v]]$stdres |>
+          apply(1:2,\(resid)
+                (resid |> sprintf(fmt="%.2f"))%p%
+                  weights::starmaker(pz(resid))) |>
+          as.data.frame() #|>
+        #(\(tbl){rownames(tbl)<-v%p%"."%p%rownames(tbl);tbl})() |>
+        #(\(tbl){colnames(tbl)<-"StdRes. ("%p%group%P%"#"%p%colnames(tbl)%p%")";tbl})() |>
+        #tibble::rownames_to_column("Var")
+        values_names <- "StdRes. ("%p%group%P%"#"%p%colnames(r[[v]])%p%")"
+      }
+
+    }
+    r <- r |> make_df_from_named_list(index="Var", value=values_names)
+    ana <- ana |> plyr::rbind.fill(r)
   }
 
   # out
   return(ana)
 }
+
 
 
 #### table ####

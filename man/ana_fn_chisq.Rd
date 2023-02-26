@@ -10,7 +10,8 @@ ana_fn_chisq(
   group,
   correct = FALSE,
   simulate.p.value = FALSE,
-  add_statistic = FALSE
+  add_statistic = FALSE,
+  add_residuals = FALSE
 )
 }
 \arguments{
@@ -20,11 +21,13 @@ ana_fn_chisq(
 
 \item{group}{Name of grouping variable}
 
-\item{correct}{(logical) Whether to apply continuity correction (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
+\item{correct}{(logical) Apply continuity correction (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
 
-\item{simulate.p.value}{(logical) Whether to compute p-values by Monte Carlo simulation (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
+\item{simulate.p.value}{(logical) Compute p-values by Monte Carlo simulation (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
 
-\item{add_statistic}{(logical) Whether to add chi-square to table}
+\item{add_statistic}{(logical) Add chi-square to table (default \code{FALSE})}
+
+\item{add_residuals}{(logical) Add adjusted standardized residuals (default \code{FALSE})}
 }
 \value{
 \code{data.frame} with columns \code{Var}, \code{p} (formatted p-values), and \code{Chi2} (if requested)
@@ -34,8 +37,14 @@ This function computes p-values using Chi-square tests
 for each variable in \code{vars} and grouping variable specified in \code{group}
 }
 \details{
-This should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}} with a \code{group} argument
-to obtain p-values. If you want to create a custom \code{ana_fn}, you should model it after this one.
+If \code{add_residuals} is requested, adjusted standardized residuals (from \verb{$stdres}
+in the \code{\link[stats:chisq.test]{stats::chisq.test()}} object) are added to the table. Since these residuals
+follow a normal distribution, they are supplemented with asterisks to
+indicate significance.
+
+This function should be passed as \code{ana_fn} when calling \code{\link[=get_desc_table]{get_desc_table()}}
+with a \code{group} argument to obtain p-values. If you want to create a
+custom \code{ana_fn}, you should model it after this one.
 }
 \examples{
 \dontrun{
