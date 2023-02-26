@@ -11,6 +11,7 @@ ana_fn_chisq(
   correct = FALSE,
   simulate.p.value = FALSE,
   add_statistic = FALSE,
+  add_effectsize = FALSE,
   add_residuals = FALSE
 )
 }
@@ -26,6 +27,8 @@ ana_fn_chisq(
 \item{simulate.p.value}{(logical) Compute p-values by Monte Carlo simulation (see \code{\link[stats:chisq.test]{stats::chisq.test()}})}
 
 \item{add_statistic}{(logical) Add chi-square to table (default \code{FALSE})}
+
+\item{add_effectsize}{(logical) Add effect size (Cramer's V) to table (default \code{FALSE})}
 
 \item{add_residuals}{(logical) Add adjusted standardized residuals (default \code{FALSE})}
 }

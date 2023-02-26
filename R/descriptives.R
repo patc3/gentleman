@@ -439,6 +439,7 @@ tbl_fn_fac <- function(df, vars)
 #' @param correct (logical) Apply continuity correction (see [stats::chisq.test()])
 #' @param simulate.p.value (logical) Compute p-values by Monte Carlo simulation (see [stats::chisq.test()])
 #' @param add_statistic (logical) Add chi-square to table (default `FALSE`)
+#' @param add_effectsize (logical) Add effect size (Cramer's V) to table (default `FALSE`)
 #' @param add_residuals (logical) Add adjusted standardized residuals (default `FALSE`)
 #'
 #' @return `data.frame` with columns `Var`, `p` (formatted p-values), and `Chi2` (if requested)
@@ -458,6 +459,7 @@ ana_fn_chisq <- function(df,
                          correct=FALSE,
                          simulate.p.value=FALSE,
                          add_statistic=FALSE,
+                         add_effectsize=FALSE,
                          add_residuals=FALSE)
 {
   # compute chi-square
@@ -482,6 +484,23 @@ ana_fn_chisq <- function(df,
       lapply(\(c)if(class(c)=="htest")c$statistic |> sprintf(fmt="%.2f") else NA) |>
       make_df_from_named_list(index="Var", value="Chi2")
     ana <- ana |> left_join(s, by="Var")
+  }
+
+  # add effect size?
+  if(add_effectsize)
+  {
+    es <- vars |> lapply(
+      \(v) tryCatch({
+        rcompanion::cramerV(x=df[,v] |> factor(),
+                            y=df[,group] |> factor())
+      }, error=\(e) return(NA))
+    ) |>
+      setNames(vars) |>
+      make_df_from_named_list(index="Var", value="CramerV") |>
+      mutate(CramerV=CramerV |> sprintf(fmt="%.2f"))
+
+    ana <- ana |> left_join(es, by="Var")
+
   }
 
   # add residuals?
@@ -510,6 +529,7 @@ ana_fn_chisq <- function(df,
     r <- r |> make_df_from_named_list(index="Var", value=values_names)
     ana <- ana |> plyr::rbind.fill(r)
   }
+
 
   # out
   return(ana)

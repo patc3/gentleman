@@ -20,6 +20,7 @@
 #' @importFrom dataPreparation build_scales fast_scale
 #' @importFrom psych outlier
 #' @importFrom stringdist stringdistmatrix
+#' @importFrom rcompanion cramerV
 #'
 #' @concept package
 "_PACKAGE"
