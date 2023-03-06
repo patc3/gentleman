@@ -230,7 +230,7 @@ substr_right <- function(x, n){
 
 
 
-#### lists ####
+#### lists & data.frames ####
 # helper fn: make named list into dataframe
 #' Combine rows of named list of data.frames
 #'
@@ -270,6 +270,27 @@ make_df_from_named_list <- function(list, index="Var", value="Value" |> paste0(1
     tibble::rownames_to_column() |>
     setNames(c(index, value))
 }
+
+
+#' Create empty data.frame with column names
+#'
+#' This function creates an empty `data.frame` with pre-defined column names
+#'
+#' @param colnames (character) vector of column names
+#'
+#' @return Empty `data.frame` with column names `colnames`
+#' @export
+#'
+#' @examples
+#' df <- empty_df("x"%p%1:10)
+#'
+#' @concept helpers
+empty_df<-function(colnames)
+{
+  data.frame(matrix(ncol = length(colnames), nrow = 0)) |>
+    setNames(colnames)
+}
+
 
 
 #### pairs ####
