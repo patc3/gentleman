@@ -4,7 +4,11 @@
 \alias{get_crosslagged_model}
 \title{Generate lavaan syntax for cross-lagged model}
 \usage{
-get_crosslagged_model(vars_list, random_intercepts = FALSE)
+get_crosslagged_model(
+  vars_list,
+  random_intercepts = FALSE,
+  parallel_paths_equal = FALSE
+)
 }
 \arguments{
 \item{vars_list}{List of vectors of variable names of length t (number of repeated
@@ -12,6 +16,9 @@ assessments)}
 
 \item{random_intercepts}{(logical) Whether to add random intercepts (RI-CLPM model;
 default \code{FALSE})}
+
+\item{parallel_paths_equal}{(logical) Whether to fix parallel paths (between
+the same pairs of variables at different times) to equality (default \code{FALSE})}
 }
 \value{
 Character value to be used with \pkg{lavaan} as model syntax
@@ -32,6 +39,10 @@ For example, the direct path between the first variable (\code{A}) at time 1 (\c
 in \code{vars_list} and the third variable (\code{C}) at time 2 (\code{2}) is labelled \code{A1C2}.
 With those labels, you can calculate custom parameters (like indirect effects)
 using the \verb{:=} syntax in \pkg{lavaan} (e.g.: \code{ind1 := A1B2*B2C3}).
+
+If \code{parallel_paths_equal} is set to \code{TRUE}, digits are removed from labels,
+and parallel paths (between the same pairs of variables) are constrained to be
+equal over time. For example, both \code{A1B2} and \code{A2B3} will become \code{AB}.
 }
 \examples{
 library(lavaan)

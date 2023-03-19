@@ -353,10 +353,16 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' With those labels, you can calculate custom parameters (like indirect effects)
 #' using the `:=` syntax in \pkg{lavaan} (e.g.: `ind1 := A1B2*B2C3`).
 #'
+#' If `parallel_paths_equal` is set to `TRUE`, digits are removed from labels,
+#' and parallel paths (between the same pairs of variables) are constrained to be
+#' equal over time. For example, both `A1B2` and `A2B3` will become `AB`.
+#'
 #' @param vars_list List of vectors of variable names of length t (number of repeated
 #' assessments)
 #' @param random_intercepts (logical) Whether to add random intercepts (RI-CLPM model;
 #' default `FALSE`)
+#' @param parallel_paths_equal (logical) Whether to fix parallel paths (between
+#' the same pairs of variables at different times) to equality (default `FALSE`)
 #'
 #' @return Character value to be used with \pkg{lavaan} as model syntax
 #' @export
@@ -382,7 +388,9 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' \url{https://doi.org/10.1080/10705511.2020.1784738}.
 #'
 #' @concept models
-get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
+get_crosslagged_model <- function(vars_list,
+                                  random_intercepts=FALSE,
+                                  parallel_paths_equal=FALSE)
 {
   # init model
   model <- ""
@@ -458,7 +466,10 @@ get_crosslagged_model <- function(vars_list, random_intercepts=FALSE)
     for(i_v in 1:length(vars_list))
     {
       paths <- vars_list[[i_v]][t] %P% "~" %P% # lhs
-        (LETTERS[1:length(vars_list)] %p% (t-1) %p% LETTERS[i_v] %p% t %p% "*" %p% # labels
+        (LETTERS[1:length(vars_list)] %p%
+           ifelse(parallel_paths_equal, "", (t-1)) %p%
+           LETTERS[i_v] %p%
+           ifelse(parallel_paths_equal, "", t) %p% "*" %p% # labels
            (vars_list |> sapply(\(v)v[t-1])) %C% "+") # rhs
       direct_paths <- direct_paths |> paste(paths, sep="\n")
     }

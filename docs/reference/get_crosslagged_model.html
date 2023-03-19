@@ -57,7 +57,11 @@ and an arbitrary number of repeated assessments.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_crosslagged_model</span><span class="op">(</span><span class="va">vars_list</span>, random_intercepts <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_crosslagged_model</span><span class="op">(</span></span>
+<span>  <span class="va">vars_list</span>,</span>
+<span>  random_intercepts <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  parallel_paths_equal <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,6 +74,11 @@ assessments)</p></dd>
 <dt>random_intercepts</dt>
 <dd><p>(logical) Whether to add random intercepts (RI-CLPM model;
 default <code>FALSE</code>)</p></dd>
+
+
+<dt>parallel_paths_equal</dt>
+<dd><p>(logical) Whether to fix parallel paths (between
+the same pairs of variables at different times) to equality (default <code>FALSE</code>)</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -88,6 +97,9 @@ For example, the direct path between the first variable (<code>A</code>) at time
 in <code>vars_list</code> and the third variable (<code>C</code>) at time 2 (<code>2</code>) is labelled <code>A1C2</code>.
 With those labels, you can calculate custom parameters (like indirect effects)
 using the <code>:=</code> syntax in <span class="pkg">lavaan</span> (e.g.: <code>ind1 := A1B2*B2C3</code>).</p>
+<p>If <code>parallel_paths_equal</code> is set to <code>TRUE</code>, digits are removed from labels,
+and parallel paths (between the same pairs of variables) are constrained to be
+equal over time. For example, both <code>A1B2</code> and <code>A2B3</code> will become <code>AB</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -103,6 +115,8 @@ Three extensions of the random intercept cross-lagged panel model.
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://lavaan.ugent.be" class="external-link">lavaan</a></span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> This is lavaan 0.6-14</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> lavaan is FREE software! Please report any bugs.</span>
 <span class="r-in"><span><span class="va">vars</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"x1"</span>, <span class="st">"x2"</span>, <span class="st">"x3"</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"y1"</span>, <span class="st">"y2"</span>, <span class="st">"y3"</span><span class="op">)</span></span></span>
@@ -110,7 +124,7 @@ Three extensions of the random intercept cross-lagged panel model.
 <span class="r-in"><span><span class="fu">get_crosslagged_model</span><span class="op">(</span><span class="va">vars</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/pkg/lavaan/man/sem.html" class="external-link">sem</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>   <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> lavaan 0.6.13 ended normally after 28 iterations</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> lavaan 0.6.14 ended normally after 28 iterations</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Estimator                                         ML</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   Optimization method                           NLMINB</span>
