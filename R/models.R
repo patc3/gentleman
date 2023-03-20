@@ -335,6 +335,300 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 
 
 
+#' Generate lavaan syntax for moderated mediation
+#'
+#' This function generates the \pkg{lavaan} syntax for a moderated mediation model
+#' with optional moderators on the *a* (`x -> m`), *b* (`m -> y`), and *c*
+#' (`x -> y`) paths. Optionally, covariates can be added, with effects partialled
+#' out from endogeneous (`m`, `y`) and exogenous (`x`, moderators) variables.
+#'
+#' This function is a more flexible alternative to the *PROCESS* macro (Hayes, 2022),
+#' which does not require manual specification of a model number. Also, because
+#' the model is estimated in the structural equation modeling framework, both
+#' normal-theory *p*-values and bootstrap intervals are available for indirect effects,
+#' and additional parameters can be computed using the `:=` operator in \pkg{lavaan}.
+#'
+#' @details
+#' If no moderators are specified, the model corresponds to the mediation model
+#' provided in [get_mediation_model()].
+#'
+#' If only one of the *a* and *b* paths is moderated, then indexes of moderated
+#' mediation are computed (labelled with the `i_` prefix in the output).
+#'
+#' If both `mod_a` and `mod_b` are specified and they overlap (they share at least
+#' one moderator), then the maximum number of moderators in each is set to 9.
+#' This is not a statistical limitation, but instead due to how the function is
+#' currently written. Also, if both the *a* and *b* paths are moderated, indexes
+#' of moderated mediation are not provided (similar to the *PROCESS* macro;
+#' see Hayes, 2022).
+#'
+#' @references
+#' Hayes, A. F. (2022).
+#' *Introduction to mediation, moderation, and conditional process analysis* (3rd ed.).
+#' New York: Guilford.
+#'
+#' @param x,m,y (character) variable name(s)
+#' @param mod_a,mod_b,mod_c (character) variable name(s) for moderators of
+#' *a* (`x -> m`), *b* (`m -> y`), and *c* (`x -> y`) paths (default `NULL`)
+#' @param values_at list of numeric vectors with values at which to evaluate
+#' the conditional effects; names correspond to `mod_a`, `mod_b`, and `mod_c`
+#' (default `NULL`)
+#' @param cov (character) variable name(s) of control variables (default `NULL`)
+#' @param adjust_exogenous (logical) adjust exogenous variables (`x`, mods)
+#' for the effect of covariates in `cov`? (default `TRUE`)
+#'
+#' @return Character value to be used with \pkg{lavaan} as model syntax
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' library(lavaan)
+#' get_moderated_mediation_model(
+#'      x=c("x1", "x2"),
+#'      m=c("m1", "m2"),
+#'      y=c("y1", "y2", "y3"),
+#'      mod_a=c("Sex","Ethnicity"),
+#'      mod_b=NULL,
+#'      mod_c="Sex",
+#'      cov=c("IQ","Age")
+#'    ) |>
+#'    sem(df) |>
+#'    summary()
+#' }
+#'
+#' @concept models
+get_moderated_mediation_model <- function(x,
+                                          m,
+                                          y,
+                                          mod_a=NULL,
+                                          mod_b=NULL,
+                                          mod_c=NULL,
+                                          values_at=NULL,
+                                          cov=NULL,
+                                          adjust_exogenous=TRUE)
+{
+  ##### checks #####
+  if((!c(mod_a,mod_b,mod_c)%in%names(values_at)) |> any())
+    stop("`values_at` is a named list with names `mod_a`, `mod_b`, and `mod_c`")
+  x <- x |> unique()
+  m <- m |> unique()
+  y <- y |> unique()
+  mod_a <- mod_a |> unique()
+  mod_b <- mod_b |> unique()
+  mod_c <- mod_c |> unique()
+  values_at <- values_at |> lapply(unique)
+  cov <- cov |> unique()
+
+
+
+  ##### mediator regression #####
+  regressions <- ""
+  for(i_m in 1:length(m))
+  {
+    regressions <- regressions %N%
+      m[i_m]%P%"~"%P%
+      ((sapply(1:length(x),\(i_x)"a"%p%i_m%p%i_x%p%"*"%p%x[i_x]))%C%"+")
+
+    if(!is.null(mod_a))
+      for(i_mod in 1:length(mod_a))
+      {
+        regressions <- regressions%P%"+ a"%p%i_m%p%"mod"%p%(i_mod)%p%"*"%p%mod_a[i_mod] # w
+        for(i_x in 1:length(x))
+          regressions <- regressions%P%
+            "+ a"%p%i_m%p%i_x%p%"mod"%p%(i_mod)%p%"int*"%p%x[i_x]%p%":"%p%mod_a[i_mod] # xw
+      }
+  }
+
+
+  ##### outcome regression #####
+  for(i_y in 1:length(y))
+  {
+    regressions <- regressions %N%
+      y[i_y]%P%"~"%P%
+      ((sapply(1:length(m),\(i_m)"b"%p%i_y%p%i_m%p%"*"%p%m[i_m]))%C%"+")%P%"+"%P% # m
+      ((sapply(1:length(x),\(i_x)"c"%p%i_y%p%i_x%p%"*"%p%x[i_x]))%C%"+") # x
+
+    if(!is.null(mod_b))
+      for(i_mod in 1:length(mod_b))
+      {
+        regressions <- regressions%P%"+ b"%p%i_y%p%"mod"%p%(i_mod)%p%"*"%p%mod_b[i_mod] # w
+        for(i_m in 1:length(m))
+          regressions <- regressions%P%
+            "+ b"%p%i_y%p%i_m%p%"mod"%p%(i_mod)%p%"int*"%p%m[i_m]%p%":"%p%mod_b[i_mod]
+      }
+
+    if(!is.null(mod_c))
+      for(i_mod in 1:length(mod_c))
+      {
+        regressions <- regressions%P%"+ c"%p%i_y%p%"mod"%p%(i_mod)%p%"*"%p%mod_c[i_mod] # w
+        for(i_x in 1:length(x))
+          regressions <- regressions%P%
+            "+ c"%p%i_y%p%i_x%p%"mod"%p%(i_mod)%p%"int*"%p%x[i_x]%p%":"%p%mod_c[i_mod]
+      }
+
+  }
+
+
+  ##### conditional effects #####
+  # helper fn to generate combinations of moderator values
+  generate_combinations <- \(l)l |> expand.grid() |> arrange(across(everything()))
+
+  path_conds <- list(a="",b="",c="")
+  for(path in c("a","b","c"))
+  {
+    mods <- get("mod_"%p%path)
+    path_vars <- if(path=="a")x else if(path=="b")m else if(path=="c")x # x ici?
+    outcome_vars <- if(path=="a")m else if(path%in%c("b","c"))y
+    if(!is.null(mods))
+    {
+      conditions <- values_at[mods] |> generate_combinations()
+      conditions_map <- values_at[mods] |> lapply(\(v)1:length(v)) |> generate_combinations()
+      for(i_out in 1:length(outcome_vars))
+        for(i_v in 1:length(path_vars))
+        {
+          adj_to_path <- conditions |>
+            apply(1,\(value)path%p%i_out%p%i_v%p%"mod"%p%(1:ncol(conditions))%p%"int*"%p%value%C%"+")
+          for(i_cond in 1:nrow(conditions))
+            path_conds[[path]] <- path_conds[[path]] %N%
+              path%p%i_out%p%i_v%p%"_cond"%p%(conditions_map[i_cond,]%c%"")%P%
+              ":="%P%path%p%i_out%p%i_v%P%"+"%P%adj_to_path[i_cond]
+        }
+    }
+  }
+  acond<-path_conds$a
+  bcond<-path_conds$b
+  ccond<-path_conds$c
+
+
+
+  ##### indirect effects #####
+
+  # all combinations of a and b conds
+  extract_labels_and_conds <- \(cond)cond |>
+    str_split("\n") |>
+    unlist() |>
+    (\(v)v[v!=""])() |>
+    str_split(" := ",simplify=T) |>
+    (\(m){m[,2]<-"("%p%m[,2]%p%")";m})()
+
+  get_all_products <- \(a,b,op="*")b |> sapply(paste0,op,a) |> as.vector()
+
+  # do
+  make_cond_vector<-\(cond,letter,pred,outcome){
+    vec<-letter%p%(expand.grid(1:length(outcome),1:length(pred)) |> apply(1,paste,collapse=""))
+    vec%P%":="%P%vec%c%"\n"
+  }
+
+  if(acond=="") acond<-acond |> make_cond_vector("a",pred=x,outcome=m)
+  if(bcond=="") bcond<-bcond |> make_cond_vector("b",pred=m,outcome=y)
+  a<-acond |> extract_labels_and_conds()
+  b<-bcond |> extract_labels_and_conds()
+  a_values<-a[,2]
+  b_values<-b[,2]
+  a_labels<-a[,1]
+  b_labels<-b[,1]
+  ind_values<-a_values |> get_all_products(b_values)
+  ind_labels<-a_labels |> get_all_products(b_labels,"_")
+  # remove impossible combinations if same mod in a-b paths
+  if(!is.null(mod_a)&!is.null(mod_b)&any(mod_a%in%mod_b))
+  {
+    # because use indexes, need only 1 digit for mod index and mod values
+    if(values_at[c(mod_a,mod_b)] |> sapply(length) |> (`>`)(9) |> any())
+      stop("Currently max. 9 values allowed for a-b moderators in `values_at` when they overlap")
+    if(length(mod_a)>9 | length(mod_b)>9)
+      stop("Currently max. 9 a-b moderators allowed each when they overlap")
+
+    # do
+    ind_remove<-c()
+    for(i_mod_a in 1:length(mod_a))
+    {
+      i_mod_b<-which(mod_a[i_mod_a]==mod_b)
+      if(length(i_mod_b)>0)
+      {
+        ind_remove <- ind_labels |>
+          strsplit("_") |>
+          lapply(\(v)v[c(2,4)] |> gsub("cond","",x=_)) |>
+          lapply(\(v)substr(v[2],i_mod_a,i_mod_a)!=
+                   substr(v[1],i_mod_b,i_mod_b)) |>
+          unlist() |>
+          which() |>
+          c(ind_remove) |>
+          unique()
+      }
+
+    }
+    ind_values<-ind_values[-ind_remove]
+    ind_labels<-ind_labels[-ind_remove]
+
+  }
+  ind<-"ind_"%p%ind_labels%P%":="%P%ind_values
+  ind<-ind%c%"\n"
+
+
+  ###### indices of moderated mediation ####
+  # for now only if a or b is not moderated
+  # could extend to if length(mod_a |> setdiff(mod_b))==0
+  ix_mod_med<-""
+  mod_path <- c(!is.null(mod_a),!is.null(mod_b)) |> which()
+  if(length(mod_path)==1)
+  {
+    mod_path <- ifelse(is.null(mod_a), "b", "a")
+    nonmod_path <- ifelse(mod_path=="b", "a", "b")
+    xory_mod <- ifelse(mod_path=="a","x","y")
+    xory_nonmod <- ifelse(mod_path=="a","y","x")
+    for(i_xory_nonmod in 1:length(get(xory_nonmod)))
+      for(i_m in 1:length(m))
+        for(i_xory_mod in 1:length(get(xory_mod)))
+          for(i_mod in 1:length(get("mod_"%p%mod_path)))
+          {
+            ix_mod_med <- ix_mod_med %N%
+              # label
+              "i_"%p%xory_nonmod%p%i_xory_nonmod%p%
+              "m"%p%i_m%p%
+              xory_mod%p%i_xory_mod%p%
+              "mod"%p%i_mod%P%
+
+              # moderated path
+              ":="%P%mod_path%p%
+              ifelse(mod_path=="a",i_m,i_xory_mod)%p%
+              ifelse(mod_path=="a",i_xory_mod,i_m)%p%
+              "mod"%p%i_mod%p%"int*"%p%
+
+              # non-moderated path
+              nonmod_path%p%
+              ifelse(mod_path=="a",i_xory_nonmod,i_m)%p%
+              ifelse(mod_path=="a",i_m,i_xory_nonmod)
+          }
+
+
+  }
+
+
+
+  ##### Covariates #####
+  adj_by_cov <- ""
+  if(!is.null(cov))
+  {
+    adjusted <- c(m,y)
+    if(adjust_exogenous) adjusted <- adjusted |> c(x,mod_a,mod_c) |> unique()
+    adj_by_cov <- (adjusted%C%"+")%P%"~"%P%(cov%C%"+")
+  }
+
+
+  ##### out #####
+  regressions %N%
+    path_conds$a %N%
+    path_conds$b %N%
+    path_conds$c %N%
+    ix_mod_med %N%
+    ind %N%
+    adj_by_cov
+
+}
+
+
+
+
 #' Generate lavaan syntax for cross-lagged model
 #'
 #' This function generates the \pkg{lavaan} syntax for a cross-lagged panel model (CLPM).
