@@ -190,6 +190,31 @@ cast <- function(df, type_from, type_to, vars=NULL)
 
 #### numeric vars ####
 
+#' Standardize all numeric variables in a data.frame
+#'
+#' This function standardizes (scales) all numeric variables (except binary
+#' variables) in a data.frame. This is done "in place" (no variables are added).
+#'
+#' @param df data.frame
+#'
+#' @return `df` with all numeric variables (except binary) scaled
+#' @export
+#'
+#' @examples
+#' dfz <- df |> standardize()
+#'
+#' @concept data_prep
+standardize <- function(df)
+{
+  print("Scaling all numeric vars (except binary)")
+  df |> mutate(across(where(~is.numeric(.x)&&
+                              length(unique(.x) |> na.omit())>2),
+                      ~as.numeric(scale(.x))))
+}
+
+
+
+
 # generic fn: combine numeric vars into one on same scale (z)
 #' Combine numeric variables into one
 #'
@@ -341,6 +366,53 @@ winsorize <- function(df, var, min=NULL, max=NULL)
 
   # out
   print("Replaced" |> paste(length(i_min)+length(i_max), "values in var", var))
+  df
+}
+
+
+#' Add composites (item means)
+#'
+#' This function adds composites (item means). The Cronbach's alpha is also
+#' printed to the console.
+#'
+#' @param df data.frame
+#' @param map named list where names are new variable names, elements are
+#' character vectors with variable names to use
+#' @param na.rm (logical) remove missing (NA) before computing mean?
+#' (default `TRUE`)
+#' @param standardize_items (logical) standardize items before computing mean?
+#' (default `FALSE`)
+#' @param check_already_exist (logical) stop if variable already exists?
+#' (default `FALSE`)
+#'
+#' @return `df` with added composite variables
+#' @export
+#'
+#' @examples
+#' comp <- list(X=c("x1","x2","x3"))
+#' df <- df |> add_composites(comp)
+#'
+#' @concept data_prep
+add_composites <- function(df,
+                           map,
+                           na.rm=TRUE,
+                           standardize_items=FALSE,
+                           check_already_exist=FALSE)
+{
+  v_add <- names(map)
+  if(check_already_exist & any(v_add %in% names(df)))
+    stop("Vars with same name already exist")
+  for(n in v_add)
+  {
+    .df <- df[map[[n]]]
+    if(standardize_items) .df <- .df |> standardize()
+    if(ncol(.df)>1)
+      psych::alpha(.df)$total[,c("raw_","std.")%p%"alpha"] |>
+        print()
+    df[,n] <- .df |> rowMeans(na.rm=na.rm)
+  }
+  print("Added vars:")
+  print(v_add)
   df
 }
 
