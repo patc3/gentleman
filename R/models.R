@@ -44,6 +44,96 @@ get_fmodel <- function(df, dv, preds, preds_link="+", ana_fn, ...)
 }
 
 
+
+#' Run qualitative comparative analysis (QCA)
+#'
+#' This function runs a QCA with necessary conditions, truth table, and
+#' minimized solution(s). This is merely a wrapper using the \pkg{QCA} package.
+#'
+#' @param df data.frame
+#' @param dv (character) outcome variable name
+#' @param negate (logical) negate outcome? (default `FALSE`)
+#' @param conditions (character) vector of variable names to use as conditions
+#' @param n.cut (integer) minimum number of observations in each configuration
+#' (if less than `n.cut`, observations are treated as remainders; default 1)
+#' @param incl.cut (numeric) minimum coherence threshold (default .8, recommended
+#' for fuzzy sets; another conventional value is .75 for crisp sets)
+#' @param complex (logical) complex solution? (default `TRUE`) if `FALSE` and
+#' `dir.exp` is `NULL` (default), the solution is parsimonious,
+#' otherwise solution is intermediate
+#' @param dir.exp (character) vector indicating directional expectations for each
+#' condition (required for intermediate solution); negate conditions with `~`
+#' (e.g. `c("cond1", "~cond2")`)
+#' @param ... (optional) additional named arguments passed to [QCA::truthTable()]
+#'
+#' @return list with elements:
+#' \describe{
+#' \item{nec}{Necessary conditions (from calling [QCA::pofind()])}
+#' \item{tt}{Truth table (from calling [QCA::truthTable()])}
+#' \item{eq}{Minimized solution(s) (from calling [QCA::minimize()])}
+#' }
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' df |> get_qca(
+#'    dv="numeric_transformation",
+#'    negate=FALSE,
+#'    conditions=c("RH", "RF", "RI", "RT"),
+#'    n.cut=1,
+#'    incl.cut=.8,
+#'    complex=TRUE
+#' )
+#' }
+#'
+#' @concept models
+get_qca <- function(df,
+                    dv,
+                    negate=FALSE,
+                    conditions,
+                    n.cut=1,
+                    incl.cut=.8,
+                    complex=TRUE,
+                    dir.exp=NULL,
+                    ...)
+{
+  # type of solution
+  type <- if(complex) "complex" else
+    if(is.null(dir.exp)) "parsimonious" else
+      "intermediate"
+  print("Type of solution:"%P%type)
+  if(type=="intermediate") {
+    print("Directional expectations:");
+    print(dir.exp)
+  } else if(complex) dir.exp<-NULL
+  include <- if(type=="complex") "" else "?"
+
+  # df: select only used vars & listwise
+  df_qca<- df |>
+    select(all_of(c(dv, conditions))) |>
+    na.omit()
+
+  # negate outcome?
+  if(negate) dv <- "~"%p%dv
+
+  # necessary conditions
+  nec <- pofind(df_qca, dv, conditions)
+
+  # truth table & minimization
+  tt <- truthTable(data=df_qca,# |> replace_dot50(),
+                   outcome = dv,
+                   conditions = conditions,
+                   incl.cut = incl.cut,
+                   n.cut=n.cut, # to declare a remainder
+                   sort.by = "incl",
+                   ...)
+  eq <- minimize(tt, details=T, include=include, dir.exp=dir.exp)
+  list(nec=nec, tt=tt, eq=eq)
+}
+
+
+
+
 #### model syntax ####
 
 #' Generate lavaan syntax for measurement model

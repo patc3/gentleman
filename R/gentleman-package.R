@@ -21,6 +21,7 @@
 #' @importFrom psych outlier
 #' @importFrom stringdist stringdistmatrix
 #' @importFrom rcompanion cramerV
+#' @importFrom QCA pofind truthTable minimize
 #'
 #' @concept package
 "_PACKAGE"
