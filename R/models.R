@@ -883,6 +883,86 @@ decompose_interaction <- function(model,
 
 
 
+#' Get interaction plot for lavaan model
+#'
+#' This function generates an interaction plot from a \pkg{lavaan} model
+#' with a 2-way (x*w) interaction.
+#'
+#' @details
+#' The predicted values are calculated using [lavaan::lavPredictY()] for the
+#' variable given in `y`, and observed variables are extracted from the
+#' `model` object using [lavaan::lavNames()].
+#'
+#' @param model \pkg{lavaan} object
+#' @param x (character) variable name to plot on the *x* axis
+#' @param w (character) variable name to plot on separate lines (moderator)
+#' @param y (character) variable name indicating the outcome
+#' @param values_at (named list) values at which to plot `x` and `w`
+#' (default -1, 0, and 1 for both)
+#'
+#' @return `ggplot2` plot
+#' @export
+#'
+#' @examples
+#' library(lavaan)
+#' "y2 ~ x1 + x2 + x1:x2" |>
+#'    sem(df) |>
+#'    get_lavaan_interaction_plot(x="x1", w="x2", y="y2")
+#'
+#' @concept models
+get_lavaan_interaction_plot<-function(model,
+                                      x,
+                                      w,
+                                      y,
+                                      values_at=NULL)
+{
+  if(values_at |> is.null())
+    values_at<-list(c(-1,0,1),
+                    c(-1,0,1)) |>
+      setNames(c(x,w))
+  if((!c(x,w)%in%names(values_at)) |> any())
+    stop("`values_at` is a named list with names `x`, `w`")
+
+
+  ana<-model
+  ynames<-lavNames(ana, "ov.y")
+  xnames<-lavNames(ana,"ov") |> setdiff(ynames)
+  ixn<-lavNames(ana,"ov.interaction")
+  ov<-ana |> lavNames("ov") |> setdiff(c(ixn))
+  df_pred<-empty_df(ov)
+  conds<- values_at |> expand.grid()
+  df_pred[1:nrow(conds),]<-0
+  df_pred[c(x,w)]<-conds
+
+  # calc ixn
+  for(pair in strsplit(ixn,":"))
+    df_pred[pair%c%":"]<-df_pred[,pair[1]]*df_pred[,pair[2]]
+
+  # pred
+  preds<-ana |> lavPredictY(newdata=df_pred,
+                            ynames=ynames,
+                            xnames=xnames)
+  df_pred<-df_pred |> select(-all_of(ynames)) |> cbind(preds)
+
+  # plot
+  p<-ggplot(df_pred,aes(x=get(x),y=get(y)))+
+    geom_line(aes(linetype=factor(get(w))),linewidth=1)
+  p <- p + labs(x=x, y=y, linetype=w, fill=w)
+  p <- p+theme(
+    text=element_text(size=20),
+    panel.border = element_rect(colour = "black", fill=NA),
+    panel.grid=element_blank(),
+    panel.background = element_blank(),
+    legend.key = element_blank(),
+    legend.position=NULL#c(.85,.5)#legend.position
+  )
+  p
+
+}
+
+
+
+
 #### publication tables ####
 # make table to copy-paste in excel
 #' Generate publication table from lavaan models

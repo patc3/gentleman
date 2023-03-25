@@ -7,7 +7,7 @@
 #' @importFrom tidyr pivot_longer pivot_wider replace_na
 #' @importFrom broom tidy
 #' @importFrom weights starmaker
-#' @importFrom lavaan parameterEstimates
+#' @importFrom lavaan parameterEstimates lavNames lavPredictY
 #' @importFrom fastDummies dummy_cols
 #' @importFrom stats aov formula as.formula chisq.test contr.treatment lm na.pass sd setNames t.test
 #' @importFrom utils combn write.csv2 write.table read.delim
