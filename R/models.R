@@ -1014,6 +1014,7 @@ get_lavaan_interaction_plot<-function(model,
       setNames(c(x,w))
   if((!c(x,w)%in%names(values_at)) |> any())
     stop("`values_at` is a named list with names `x`, `w`")
+  values_at<-values_at[c(x,w)]
 
 
   ynames<-lavNames(model, "ov.y")
