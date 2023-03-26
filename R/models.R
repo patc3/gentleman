@@ -1014,25 +1014,25 @@ get_lavaan_interaction_plot<-function(model,
     stop("`values_at` is a named list with names `x`, `w`")
 
 
-  ana<-model
-  ynames<-lavNames(ana, "ov.y")
-  xnames<-lavNames(ana,"ov") |> setdiff(ynames)
-  ixn<-lavNames(ana,"ov.interaction")
-  ov<-ana |> lavNames("ov") |> setdiff(c(ixn))
-  df_pred<-empty_df(ov)
+  ynames<-lavNames(model, "ov.y")
+  endo<-lavNames(model, "ov.nox")
+  xnames<-lavNames(model,"ov") |> setdiff(ynames)
+  ixn<-lavNames(model,"ov.interaction")
+  ov<-model |> lavNames("ov") |> setdiff(c(ixn))
+  df_pred<-empty_df(c(xnames,endo) |> unique())
   conds<- values_at |> expand.grid()
   df_pred[1:nrow(conds),]<-0
-  df_pred[c(x,w)]<-conds
+  df_pred[names(conds)]<-conds
 
   # calc ixn
   for(pair in strsplit(ixn,":"))
     df_pred[pair%c%":"]<-df_pred[,pair[1]]*df_pred[,pair[2]]
 
   # pred
-  preds<-ana |> lavPredictY(newdata=df_pred,
-                            ynames=ynames,
-                            xnames=xnames)
-  df_pred<-df_pred |> select(-all_of(ynames)) |> cbind(preds)
+  preds<-model |> lavPredictY(newdata=df_pred,
+                              ynames=y,
+                              xnames=xnames |> setdiff(y))
+  df_pred<-df_pred[!colnames(df_pred)%in%colnames(preds)] |> cbind(preds)
 
   # plot
   p<-ggplot(df_pred,aes(x=get(x),y=get(y)))+
