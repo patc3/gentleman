@@ -28,7 +28,9 @@ with a 2-way (x*w) interaction.
 \details{
 The predicted values are calculated using \code{\link[lavaan:lavPredictY]{lavaan::lavPredictY()}} for the
 variable given in \code{y}, and observed variables are extracted from the
-\code{model} object using \code{\link[lavaan:lavNames]{lavaan::lavNames()}}.
+\code{model} object using \code{\link[lavaan:lavNames]{lavaan::lavNames()}}. All other variables are assumed
+to be 0, so the \emph{y}-axis on the plot will only be meaningful if all
+observed variables were centered prior to entering the model.
 }
 \examples{
 library(lavaan)

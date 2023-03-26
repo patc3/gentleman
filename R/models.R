@@ -981,7 +981,9 @@ decompose_interaction <- function(model,
 #' @details
 #' The predicted values are calculated using [lavaan::lavPredictY()] for the
 #' variable given in `y`, and observed variables are extracted from the
-#' `model` object using [lavaan::lavNames()].
+#' `model` object using [lavaan::lavNames()]. All other variables are assumed
+#' to be 0, so the *y*-axis on the plot will only be meaningful if all
+#' observed variables were centered prior to entering the model.
 #'
 #' @param model \pkg{lavaan} object
 #' @param x (character) variable name to plot on the *x* axis

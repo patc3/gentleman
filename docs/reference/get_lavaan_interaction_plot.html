@@ -87,7 +87,9 @@ with a 2-way (x*w) interaction.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The predicted values are calculated using <code><a href="https://rdrr.io/pkg/lavaan/man/lavPredictY.html" class="external-link">lavaan::lavPredictY()</a></code> for the
 variable given in <code>y</code>, and observed variables are extracted from the
-<code>model</code> object using <code><a href="https://rdrr.io/pkg/lavaan/man/lavNames.html" class="external-link">lavaan::lavNames()</a></code>.</p>
+<code>model</code> object using <code><a href="https://rdrr.io/pkg/lavaan/man/lavNames.html" class="external-link">lavaan::lavNames()</a></code>. All other variables are assumed
+to be 0, so the <em>y</em>-axis on the plot will only be meaningful if all
+observed variables were centered prior to entering the model.</p>
     </div>
 
     <div class="section level2">
