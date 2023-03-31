@@ -443,14 +443,13 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #' provided in [get_mediation_model()].
 #'
 #' If only one of the *a* and *b* paths is moderated, then indexes of moderated
-#' mediation are computed (labelled with the `i_` prefix in the output).
+#' mediation are computed (labelled with the `i_` prefix in the output). If both
+#' the *a* and *b* paths are moderated, indexes of moderated mediation are not
+#' provided (similar to the *PROCESS* macro; see Hayes, 2022).
 #'
-#' If both `mod_a` and `mod_b` are specified and they overlap (they share at least
-#' one moderator), then the maximum number of moderators in each is set to 9.
-#' This is not a statistical limitation, but instead due to how the function is
-#' currently written. Also, if both the *a* and *b* paths are moderated, indexes
-#' of moderated mediation are not provided (similar to the *PROCESS* macro;
-#' see Hayes, 2022).
+#' Currently, the number of *x*, *m*, *y*, and *a*-*b*-*c* moderator variables is
+#' limited to 9 each. This is not a statistical limitation, but instead due to
+#' how the function is written.
 #'
 #' @references
 #' Hayes, A. F. (2022).
@@ -498,6 +497,10 @@ get_moderated_mediation_model <- function(x,
                                           adjust_exogenous=TRUE)
 {
   ##### checks #####
+  # because use indexes, need only 1 digit for vars
+  if(list(x,m,y,mod_a,mod_b,mod_c) |> sapply(length) |> (`>`)(9) |> any())
+    stop("Currently max. 9 x, m, y, and a-b-c moderators allowed each")
+  # mod values
   if((!c(mod_a,mod_b,mod_c)%in%names(values_at)) |> any())
     stop("`values_at` is a named list with names `mod_a`, `mod_b`, and `mod_c`")
   x <- x |> unique()
@@ -619,14 +622,21 @@ get_moderated_mediation_model <- function(x,
   b_labels<-b[,1]
   ind_values<-a_values |> get_all_products(b_values)
   ind_labels<-a_labels |> get_all_products(b_labels,"_")
+
+  # remove impossible combinations (keep only bym*amx, same m)
+  # here and below is why vars are capped at 9 each (we use indexes)
+  same_m <- ind_labels |> sapply(\(v)substr(v,3,3)==substr(v,6,6))
+  ind_labels <- ind_labels[same_m]
+  ind_values <- ind_values[same_m]
+
   # remove impossible combinations if same mod in a-b paths
   if(!is.null(mod_a)&!is.null(mod_b)&any(mod_a%in%mod_b))
   {
-    # because use indexes, need only 1 digit for mod index and mod values
+    # # because use indexes, need only 1 digit for mod index and mod values
     if(values_at[c(mod_a,mod_b)] |> sapply(length) |> (`>`)(9) |> any())
       stop("Currently max. 9 values allowed for a-b moderators in `values_at` when they overlap")
-    if(length(mod_a)>9 | length(mod_b)>9)
-      stop("Currently max. 9 a-b moderators allowed each when they overlap")
+    # if(length(mod_a)>9 | length(mod_b)>9)
+    #   stop("Currently max. 9 a-b moderators allowed each when they overlap")
 
     # do
     ind_remove<-c()

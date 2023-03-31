@@ -112,13 +112,12 @@ and additional parameters can be computed using the <code>:=</code> operator in 
 <p>If no moderators are specified, the model corresponds to the mediation model
 provided in <code><a href="get_mediation_model.html">get_mediation_model()</a></code>.</p>
 <p>If only one of the <em>a</em> and <em>b</em> paths is moderated, then indexes of moderated
-mediation are computed (labelled with the <code>i_</code> prefix in the output).</p>
-<p>If both <code>mod_a</code> and <code>mod_b</code> are specified and they overlap (they share at least
-one moderator), then the maximum number of moderators in each is set to 9.
-This is not a statistical limitation, but instead due to how the function is
-currently written. Also, if both the <em>a</em> and <em>b</em> paths are moderated, indexes
-of moderated mediation are not provided (similar to the <em>PROCESS</em> macro;
-see Hayes, 2022).</p>
+mediation are computed (labelled with the <code>i_</code> prefix in the output). If both
+the <em>a</em> and <em>b</em> paths are moderated, indexes of moderated mediation are not
+provided (similar to the <em>PROCESS</em> macro; see Hayes, 2022).</p>
+<p>Currently, the number of <em>x</em>, <em>m</em>, <em>y</em>, and <em>a</em>-<em>b</em>-<em>c</em> moderator variables is
+limited to 9 each. This is not a statistical limitation, but instead due to
+how the function is written.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

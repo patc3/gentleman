@@ -51,14 +51,13 @@ If no moderators are specified, the model corresponds to the mediation model
 provided in \code{\link[=get_mediation_model]{get_mediation_model()}}.
 
 If only one of the \emph{a} and \emph{b} paths is moderated, then indexes of moderated
-mediation are computed (labelled with the \code{i_} prefix in the output).
+mediation are computed (labelled with the \code{i_} prefix in the output). If both
+the \emph{a} and \emph{b} paths are moderated, indexes of moderated mediation are not
+provided (similar to the \emph{PROCESS} macro; see Hayes, 2022).
 
-If both \code{mod_a} and \code{mod_b} are specified and they overlap (they share at least
-one moderator), then the maximum number of moderators in each is set to 9.
-This is not a statistical limitation, but instead due to how the function is
-currently written. Also, if both the \emph{a} and \emph{b} paths are moderated, indexes
-of moderated mediation are not provided (similar to the \emph{PROCESS} macro;
-see Hayes, 2022).
+Currently, the number of \emph{x}, \emph{m}, \emph{y}, and \emph{a}-\emph{b}-\emph{c} moderator variables is
+limited to 9 each. This is not a statistical limitation, but instead due to
+how the function is written.
 }
 \examples{
 \dontrun{
