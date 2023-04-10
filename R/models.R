@@ -479,6 +479,7 @@ get_mediation_model_3wave <- function(x1, m1, m2, y1, y2, y3, add_resid_correl=F
 #'      mod_a=c("Sex","Ethnicity"),
 #'      mod_b=NULL,
 #'      mod_c="Sex",
+#'      values_at=list(Sex=c(0,1), Ethnicity=c(0,1)),
 #'      cov=c("IQ","Age")
 #'    ) |>
 #'    sem(df) |>

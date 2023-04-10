@@ -69,6 +69,7 @@ get_moderated_mediation_model(
      mod_a=c("Sex","Ethnicity"),
      mod_b=NULL,
      mod_c="Sex",
+     values_at=list(Sex=c(0,1), Ethnicity=c(0,1)),
      cov=c("IQ","Age")
    ) |>
    sem(df) |>
