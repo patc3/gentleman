@@ -12,7 +12,7 @@ This package provides a suite of modules to help with data preparation, descript
 Useful links:
 \itemize{
   \item \url{https://d22consulting.com/gentleman/}
-  \item \url{https://github.com/patc3-phd/gentleman}
+  \item \url{https://github.com/patc3/gentleman}
 }
 
 }

@@ -22,6 +22,7 @@
 #' @importFrom stringdist stringdistmatrix
 #' @importFrom rcompanion cramerV
 #' @importFrom QCA pofind truthTable minimize
+#' @importFrom plyr rbind.fill
 #'
 #' @concept package
 "_PACKAGE"

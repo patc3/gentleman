@@ -10,7 +10,7 @@ Description: This package provides a suite of modules to help with data preparat
     (or other useful statistic to compare groups). The Models module can be used to 
     generate lavaan model strings for mediation and cross-lagged models.
 License: GPL (>= 3) + file LICENSE
-URL: https://d22consulting.com/gentleman/, https://github.com/patc3-phd/gentleman
+URL: https://d22consulting.com/gentleman/, https://github.com/patc3/gentleman
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
@@ -29,6 +29,7 @@ Imports:
     lavaan, 
     NbClust, 
     parallel, 
+    plyr,
     psych,
     QCA,
     rcompanion,
