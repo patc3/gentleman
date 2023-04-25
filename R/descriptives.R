@@ -295,7 +295,7 @@ ana_fn_rm_aov <- function(df,
     \(v) tryCatch({
       aov("`" |> paste0(v, "` ~ factor(`", group, "`)") |> paste0("+ Error(factor(`", id, "`))") |> as.formula(), data=df) |>
         broom::tidy() |>
-        filter(stratum=="Within", term==group) |>
+        filter(stratum=="Within", term!="Residuals") |>
         pull(p.value)
     }, error=\(e) return(NA))
   ) |> setNames(vars) |>
