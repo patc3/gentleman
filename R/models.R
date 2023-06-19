@@ -961,9 +961,17 @@ decompose_interaction <- function(model,
   if(is.null(at_x1)) at_x1 <- unique(df[,x1])
   if(is.null(at_x2)) at_x2 <- unique(df[,x2])
   values <- list(at_x1, at_x2) |> setNames(c(x1, x2))
-  diff <- emtrends(model, "pairwise ~" |> paste(x1) |> formula(), var=x2, at=values, ...)
-  means <- emmeans(model, "~" |> paste(paste(x2,x1,sep="*")) |> formula(), at=values, ...)
-  contrasts <- contrast(means, "pairwise", by=x2)
+  diff <- emtrends(model,
+                   "pairwise ~" |> paste(x1) |> formula(),
+                   var=x2,
+                   at=values,
+                   adjust="none",
+                   ...)
+  means <- emmeans(model,
+                   "~" |> paste(paste(x2,x1,sep="*")) |> formula(),
+                   at=values,
+                   ...)
+  contrasts <- contrast(means, "pairwise", by=x2, adjust="none")
 
   # plot
   p_data <- emmip(model, x1 |> paste(x2, sep="~") |> formula(), CIs=TRUE, at=values, plotit=FALSE, ...)
