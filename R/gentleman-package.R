@@ -23,6 +23,7 @@
 #' @importFrom rcompanion cramerV
 #' @importFrom QCA pofind truthTable minimize
 #' @importFrom plyr rbind.fill
+#' @importFrom stringr str_split
 #'
 #' @concept package
 "_PACKAGE"

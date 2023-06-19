@@ -599,10 +599,10 @@ get_moderated_mediation_model <- function(x,
 
   # all combinations of a and b conds
   extract_labels_and_conds <- \(cond)cond |>
-    str_split("\n") |>
+    stringr::str_split("\n") |>
     unlist() |>
     (\(v)v[v!=""])() |>
-    str_split(" := ",simplify=T) |>
+    stringr::str_split(" := ",simplify=T) |>
     (\(m){m[,2]<-"("%p%m[,2]%p%")";m})()
 
   get_all_products <- \(a,b,op="*")b |> sapply(paste0,op,a) |> as.vector()
