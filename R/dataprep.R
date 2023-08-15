@@ -372,18 +372,25 @@ winsorize <- function(df, var, min=NULL, max=NULL)
 
 #' Add composites (item means)
 #'
-#' This function adds composites (item means). The Cronbach's alpha is also
-#' printed to the console.
+#' This function adds composites (item means by default). The Cronbach's
+#' alpha is also printed to the console.
 #'
 #' @param df data.frame
 #' @param map named list where names are new variable names, elements are
 #' character vectors with variable names to use
-#' @param na.rm (logical) remove missing (NA) before computing mean?
+#' @param fn function to apply to each row (default [base::rowMeans()])
+#' @param na.rm (logical) remove missing (NA) before computing composite?
 #' (default `TRUE`)
-#' @param standardize_items (logical) standardize items before computing mean?
+#' @param standardize_items (logical) standardize items before computing composite?
 #' (default `FALSE`)
 #' @param check_already_exist (logical) stop if variable already exists?
 #' (default `FALSE`)
+#' @param ... other arguments passed to `fn()`
+#'
+#' @details
+#' Function in `fn` must take `na.rm` as an argument, and return a vector with
+#' a value for each row in `df`. Good candidate functions are [base::rowMeans()]
+#' and [base::rowSums()]. Users can also supply custom functions.
 #'
 #' @return `df` with added composite variables
 #' @export
@@ -395,9 +402,11 @@ winsorize <- function(df, var, min=NULL, max=NULL)
 #' @concept data_prep
 add_composites <- function(df,
                            map,
+                           fn=rowMeans,
                            na.rm=TRUE,
                            standardize_items=FALSE,
-                           check_already_exist=FALSE)
+                           check_already_exist=FALSE,
+                           ...)
 {
   v_add <- names(map)
   if(check_already_exist & any(v_add %in% names(df)))
@@ -405,11 +414,11 @@ add_composites <- function(df,
   for(n in v_add)
   {
     .df <- df[map[[n]]]
-    if(standardize_items) .df <- .df |> standardize()
     if(ncol(.df)>1)
       psych::alpha(.df)$total[,c("raw_","std.")%p%"alpha"] |>
-        print()
-    df[,n] <- .df |> rowMeans(na.rm=na.rm)
+      print()
+    if(standardize_items) .df <- .df |> standardize()
+    df[,n] <- .df |> fn(na.rm=na.rm, ...)
   }
   print("Added vars:")
   print(v_add)

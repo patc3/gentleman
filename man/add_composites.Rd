@@ -7,9 +7,11 @@
 add_composites(
   df,
   map,
+  fn = rowMeans,
   na.rm = TRUE,
   standardize_items = FALSE,
-  check_already_exist = FALSE
+  check_already_exist = FALSE,
+  ...
 )
 }
 \arguments{
@@ -18,21 +20,30 @@ add_composites(
 \item{map}{named list where names are new variable names, elements are
 character vectors with variable names to use}
 
-\item{na.rm}{(logical) remove missing (NA) before computing mean?
+\item{fn}{function to apply to each row (default \code{\link[base:colSums]{base::rowMeans()}})}
+
+\item{na.rm}{(logical) remove missing (NA) before computing composite?
 (default \code{TRUE})}
 
-\item{standardize_items}{(logical) standardize items before computing mean?
+\item{standardize_items}{(logical) standardize items before computing composite?
 (default \code{FALSE})}
 
 \item{check_already_exist}{(logical) stop if variable already exists?
 (default \code{FALSE})}
+
+\item{...}{other arguments passed to \code{fn()}}
 }
 \value{
 \code{df} with added composite variables
 }
 \description{
-This function adds composites (item means). The Cronbach's alpha is also
-printed to the console.
+This function adds composites (item means by default). The Cronbach's
+alpha is also printed to the console.
+}
+\details{
+Function in \code{fn} must take \code{na.rm} as an argument, and return a vector with
+a value for each row in \code{df}. Good candidate functions are \code{\link[base:colSums]{base::rowMeans()}}
+and \code{\link[base:colSums]{base::rowSums()}}. Users can also supply custom functions.
 }
 \examples{
 comp <- list(X=c("x1","x2","x3"))
