@@ -791,6 +791,10 @@ recode_values_to_NA <- function(df, vars, values)
 #'
 #' @param df data.frame
 #' @param vars (character) vector of variable names
+#' @param scale_min (numeric, optional) minimum value on the scale (default is to
+#' use observed minimum value)
+#' @param scale_max (numeric, optional) maximum value on the scale (default is to
+#' use observed maximum value)
 #'
 #' @return `df` with `vars` reverse-coded
 #' @export
@@ -801,10 +805,14 @@ recode_values_to_NA <- function(df, vars, values)
 #' @seealso [recode_using_excel_map()]
 #'
 #' @concept data_prep
-reverse_code <- function(df, vars)
+reverse_code <- function(df, vars, scale_min=NULL, scale_max=NULL)
 {
   for(v in vars)
-    df[,v] <- max(df[,v], na.rm=T) + min(df[,v], na.rm=T) - df[,v]
+  {
+    minvalue <- is.null(scale_min) |> ifelse(min(df[,v], na.rm=T), scale_min)
+    maxvalue <- is.null(scale_max) |> ifelse(max(df[,v], na.rm=T), scale_max)
+    df[,v] <- maxvalue + minvalue - df[,v]
+  }
 
   # out
   print("Reverse-coded these variables:")

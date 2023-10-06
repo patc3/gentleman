@@ -4,12 +4,18 @@
 \alias{reverse_code}
 \title{Reverse-code numeric variables}
 \usage{
-reverse_code(df, vars)
+reverse_code(df, vars, scale_min = NULL, scale_max = NULL)
 }
 \arguments{
 \item{df}{data.frame}
 
 \item{vars}{(character) vector of variable names}
+
+\item{scale_min}{(numeric, optional) minimum value on the scale (default is to
+use observed minimum value)}
+
+\item{scale_max}{(numeric, optional) maximum value on the scale (default is to
+use observed maximum value)}
 }
 \value{
 \code{df} with \code{vars} reverse-coded
