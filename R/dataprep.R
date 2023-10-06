@@ -416,7 +416,9 @@ add_composites <- function(df,
     .df <- df[map[[n]]]
     if(ncol(.df)>1)
       psych::alpha(.df)$total[,c("raw_","std.")%p%"alpha"] |>
-      print()
+      print() |>
+      tryCatch(error=\(e)message(
+        "Error trying to obtain Cronbach's alpha from psych package:"%N%e))
     if(standardize_items) .df <- .df |> standardize()
     df[,n] <- .df |> fn(na.rm=na.rm, ...)
   }
