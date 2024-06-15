@@ -234,8 +234,8 @@ tot_x",i_pred,"_y",i_dv," := ind_x",i_pred,"_y",i_dv," + c",i_dv,i_pred,"
 
   # residual covariances
   model_residual_covariances <- paste(
-    "# predictor residual covariance",
-    if(length(x)>1) paste0(apply(t(combn(x, 2)), 1, paste, collapse=" ~~ "), collapse="\n"), # necessary?
+    # "# predictor covariance",
+    # if(length(x)>1) paste0(apply(t(combn(x, 2)), 1, paste, collapse=" ~~ "), collapse="\n"), # necessary?
     "
 # mediator residual covariance",
     if(length(m)>1) paste0(apply(t(combn(m, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
