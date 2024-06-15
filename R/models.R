@@ -563,6 +563,23 @@ get_moderated_mediation_model <- function(x,
   }
 
 
+  ##### residual covariances ####
+  # residual covariances
+  residual_covs <- paste(
+    # "# predictor covariance",
+    # if(length(x)>1) paste0(apply(t(combn(x, 2)), 1, paste, collapse=" ~~ "), collapse="\n"), # necessary?
+    "
+# mediator residual covariance",
+    if(length(m)>1) paste0(apply(t(combn(m, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
+    "
+# outcome residual covariance",
+    if(length(y)>1) paste0(apply(t(combn(y, 2)), 1, paste, collapse=" ~~ "), collapse="\n"),
+    "",
+    sep="\n"
+  )
+
+
+
   ##### conditional effects #####
   # helper fn to generate combinations of moderator values
   generate_combinations <- \(l)l |> expand.grid() |> arrange(across(everything()))
@@ -723,6 +740,7 @@ get_moderated_mediation_model <- function(x,
     path_conds$a %N%
     path_conds$b %N%
     path_conds$c %N%
+    residual_covs %N%
     ix_mod_med %N%
     ind %N%
     adj_by_cov
