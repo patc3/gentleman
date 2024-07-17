@@ -4,7 +4,7 @@
 \alias{get_cluster}
 \title{Get cluster assignment using Gower distance matrix}
 \usage{
-get_cluster(df, v_cluster = NULL, k = NULL)
+get_cluster(df, v_cluster = NULL, k = NULL, weights = NULL)
 }
 \arguments{
 \item{df}{data.frame}
@@ -12,6 +12,8 @@ get_cluster(df, v_cluster = NULL, k = NULL)
 \item{v_cluster}{variables used to compute Gower distances between rows (if \code{NULL}, use all)}
 
 \item{k}{number of clusters (if \code{NULL}, determined optimally; see Details)}
+
+\item{weights}{(numeric vector) variable weights for calculating Gower distances (default all 1)}
 }
 \value{
 (factor) vector of cluster assignments (0 to k-1)

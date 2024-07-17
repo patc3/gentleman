@@ -12,7 +12,8 @@ add_cluster_assignment(
   elimination = c("backward", "bidirectional"),
   max_vars_rm_or_add_each_it = Inf,
   return_df_cluster_instead = FALSE,
-  new_var_name = "Cluster"
+  new_var_name = "Cluster",
+  weights = NULL
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ at each iteration (see Details; default \code{Inf})}
 variables and cluster assignment (default \code{FALSE})}
 
 \item{new_var_name}{(character) new variable name}
+
+\item{weights}{(numeric vector) variable weights for calculating Gower distances (default all 1)}
 }
 \value{
 \code{df} with new cluster variable added

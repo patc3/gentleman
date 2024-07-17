@@ -17,6 +17,7 @@
 #' @param df data.frame
 #' @param v_cluster variables used to compute Gower distances between rows (if \code{NULL}, use all)
 #' @param k number of clusters (if \code{NULL}, determined optimally; see Details)
+#' @param weights (numeric vector) variable weights for calculating Gower distances (default all 1)
 #'
 #' @return (factor) vector of cluster assignments (0 to k-1)
 #' @export
@@ -25,14 +26,20 @@
 #' df |> get_cluster() |> table()
 #'
 #' @concept cluster
-get_cluster <- function(df, v_cluster=NULL, k=NULL)
+get_cluster <- function(df,
+                        v_cluster=NULL,
+                        k=NULL,
+                        weights=NULL)
 {
   # clustering vars
   if(is.null(v_cluster)) v_cluster <- names(df)
+  if(is.null(weights)) weights <- rep.int(1, length(v_cluster))
+  if(is.null(names(weights))) names(weights) <- v_cluster
+  print(weights)
 
   # df and distance matrix
   df_cluster <- df |> select(all_of(v_cluster))
-  distmat <- cluster::daisy(df_cluster, metric="gower", stand=TRUE)
+  distmat <- cluster::daisy(df_cluster, metric="gower", stand=TRUE, weights=weights)
 
   # choose number of clusters
   if(is.null(k))
@@ -46,7 +53,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 
   # clustering using distance matrix
   # see documentation for pam() and advantages over kmeans
-  pr <- pam(x = distmat, k = k, diss = TRUE)
+  pr <- cluster::pam(x = distmat, k = k, diss = TRUE)
   pr$clustering |> table() |> print()
 
   # cluster assignment
@@ -104,6 +111,7 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #' @param return_df_cluster_instead (logical) whether to return \code{df} with only final clustering
 #' variables and cluster assignment (default \code{FALSE})
 #' @param new_var_name (character) new variable name
+#' @param weights (numeric vector) variable weights for calculating Gower distances (default all 1)
 #'
 #' @return \code{df} with new cluster variable added
 #' @export
@@ -121,13 +129,14 @@ get_cluster <- function(df, v_cluster=NULL, k=NULL)
 #'
 #' @concept cluster
 add_cluster_assignment <- function(df,
-                                    v_cluster=NULL,
-                                    k=NULL,
-                                    maxit=100,
-                                    elimination=c("backward", "bidirectional"),
-                                    max_vars_rm_or_add_each_it=Inf,
-                                    return_df_cluster_instead=FALSE,
-                                    new_var_name="Cluster")
+                                   v_cluster=NULL,
+                                   k=NULL,
+                                   maxit=100,
+                                   elimination=c("backward", "bidirectional"),
+                                   max_vars_rm_or_add_each_it=Inf,
+                                   return_df_cluster_instead=FALSE,
+                                   new_var_name="Cluster",
+                                   weights=NULL)
 {
   # check
   if(maxit<0) stop("Max. iteration needs to be >= 0")
@@ -145,7 +154,9 @@ add_cluster_assignment <- function(df,
 
   # get init clusters
   if(is.null(v_cluster)) v_cluster <- names(df)
-  clusters[[1]] <- v_cluster |> get_cluster(df=df, k=k)
+  if(is.null(weights)) weights <- rep.int(1, length(v_cluster))
+  if(is.null(names(weights))) names(weights) <- v_cluster
+  clusters[[1]] <- v_cluster |> get_cluster(df=df, k=k, weights=weights[v_cluster])
   if(is.null(k)) k <- clusters[[1]] |> unique() |> length()
   df[,new_var_name] <- clusters[[1]]
 
@@ -172,7 +183,7 @@ add_cluster_assignment <- function(df,
     {
       current_sig <- updated_sig
       current_sig <- sample(current_sig) # randomize order
-      clusters[[it+1]] <- current_sig |> get_cluster(df=df, k=k)
+      clusters[[it+1]] <- current_sig |> get_cluster(df=df, k=k, weights=weights[current_sig])
       df[,new_var_name] <- clusters[[it+1]]
     }
 

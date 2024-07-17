@@ -2,8 +2,8 @@
 % Please edit documentation in R/gentleman-package.R
 \docType{package}
 \name{gentleman}
-\alias{gentleman}
 \alias{gentleman-package}
+\alias{gentleman}
 \title{gentleman: Helpers for Data Preparation, Descriptives, Models, & Publication}
 \description{
 This package provides a suite of modules to help with data preparation, descriptive statistics, modeling, and publication formatting. The Descriptives module is extensible to accommodate custom functions to generate tables and p-values (or other useful statistic to compare groups). The Models module can be used to generate lavaan model strings for mediation and cross-lagged models.
