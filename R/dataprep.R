@@ -428,6 +428,36 @@ add_composites <- function(df,
 }
 
 
+#' Make numeric if possible
+#'
+#' This function attempts to make all or certain variables numeric.
+#' If a warning or error is thrown, the variable is kept as is.
+#'
+#' @param df data.frame
+#' @param vars (character) variable names to make numeric (if `NULL`, all variables)
+#'
+#' @return `df` with `vars` cast into numeric when possible
+#' @export
+#'
+#' @examples
+#' df <- df |> make_numeric_if_possible()
+#'
+#' @concept data_prep
+make_numeric_if_possible<-function(df,vars=NULL)
+{
+  if(is.null(vars))vars<-colnames(df)
+  for(col in vars)
+  {
+    df[,col]<-tryCatch(
+      expr=as.numeric(df[,col]),
+      error=\(e)df[,col],
+      warning=\(w)df[,col]
+    )
+  }
+  df
+}
+
+
 
 #### factors ####
 
