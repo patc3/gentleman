@@ -644,7 +644,7 @@ get_moderated_mediation_model <- function(x,
   # remove impossible combinations (keep only bym*amx, same m)
   # here and below is why vars are capped at 9 each (we use indexes)
   same_m <- ind_labels |>
-    gsub(pattern="_cond.",replacement="") |> # remove conditional values
+    gsub(pattern="_cond.*_",replacement="_") |> # remove conditional values
     sapply(\(v)substr(v,3,3)==substr(v,6,6))
   ind_labels <- ind_labels[same_m]
   ind_values <- ind_values[same_m]
